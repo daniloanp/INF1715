@@ -1,8 +1,10 @@
 %{
-#define FOO 100
-#define BAR 101
-#define STRING 200
-#define ERROR 999999
+#define KEYWORD 2
+#define IDENTIFIER 4
+#define STRING 8
+#define COMMENT_BLOCK 16
+#define COMMENT_LINE 32
+#define ERROR 999
 
 int done = 0;
 
@@ -10,14 +12,16 @@ int done = 0;
 
 %%
 
+
+
+
 \"([^\n"\\]|\\["\\])*\" { return STRING; }
+[a-zA-Z_][a-zA-Z_0-9]*  {return IDENTIFIER;}
 
-foo	{ return FOO; }
-bar	{ return BAR; }
 
+
+([^ \t\n]*)     { return ERROR; }
 ([ \t\n]*)	{ }
-
-.           { return ERROR; }
 
 %%
 
