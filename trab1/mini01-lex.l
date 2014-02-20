@@ -18,15 +18,18 @@
 
 int done = 0;
 
+
+
 %}
 
 CHAR [^\n"\\]
 ESCAPED_CHAR \\[\\"nt]
-COMMENT_LINE ////[^\n]
+COMMENT_LINE [/][/][^\n]*
+COMMENT_BLOCK [/][*]([^*]*|[*]*[^/])[*][/]
+HEX_NUM 0x[abcdefABCDEF0-9]+
+DEC_NUM [0-9]+
 
 %%
-
-
 
 (if|else|end|while|loop|fun|return|new|string|int|char|bool|true|false|and|or|not) {
  return KEYWORD; 
@@ -34,10 +37,14 @@ COMMENT_LINE ////[^\n]
 
 [[:alpha:]_][[:alnum:]_]* {
 	return IDENTIFIER; 
-}
+}		
 
 ([\n][[:blank:]\n]*|[[:blank:]\n]*[\n]) { 
 	return NL; 
+}
+
+({DEC_NUM}|{HEX_NUM}) { 
+	return NUMBER; 
 }
 
 ["]({CHAR}|{ESCAPED_CHAR})*["] { 
@@ -46,8 +53,8 @@ COMMENT_LINE ////[^\n]
 '({CHAR}|{ESCAPED_CHAR})' { 
 	return CHAR; 
 }
- 	
-([[:blank:]]*) { 
+
+([[:blank:]]*|{COMMENT_BLOCK}|{COMMENT_LINE}) { 
 
 }
 
@@ -64,10 +71,10 @@ yywrap() {
 int main() {
 	while (!done) {
 		int b =  yylex();
-		if(b==999)
+		if(b==999&&b!=0)
 			printf("ERROR: ");
-		else
-			printf("%s::%d\n", yytext, b);
+		if(b!=0)
+		printf("%s::%d\n", yytext, b);
 	}
 	return 0;
 }
