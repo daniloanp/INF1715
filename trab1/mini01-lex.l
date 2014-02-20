@@ -1,41 +1,59 @@
 %{
 #define KEYWORD 2
 #define IDENTIFIER 4
+#define	NUMBER 8
+#define	CHAR 16
+#define STRING 32
 
+#define COMMENT_BLOCK 64
 
-#define STRING 8
-#define COMMENT_BLOCK 16
-#define COMMENT_LINE 32
+#define COMMENT_LINE 128
 #define ERROR 999
-
-
 
 #define PLUS 43
 #define MINUS 45
-#define ASTERISK 42
-#define SLASH 47
+#define MUL 42
+#define DIV 47
 #define NL 10
 
 int done = 0;
 
 %}
+
+CHAR [^\n"\\]
+ESCAPED_CHAR \\[\\"nt]
+COMMENT_LINE ////[^\n]
+
 %%
 
 
 
+(if|else|end|while|loop|fun|return|new|string|int|char|bool|true|false|and|or|not) {
+ return KEYWORD; 
+}
 
-\"([^\n"\\]|\\["\\])*\" { return STRING; }
+[[:alpha:]_][[:alnum:]_]* {
+	return IDENTIFIER; 
+}
 
+([\n][[:blank:]\n]*|[[:blank:]\n]*[\n]) { 
+	return NL; 
+}
 
-(if|else|end|while|loop|fun|return|new|string|int|char|bool|true|false|and|or|not) { return KEYWORD; }
+["]({CHAR}|{ESCAPED_CHAR})*["] { 
+	return STRING; 
+}
+'({CHAR}|{ESCAPED_CHAR})' { 
+	return CHAR; 
+}
+ 	
+([[:blank:]]*) { 
 
-[[:alpha:]_][[:alnum:]_]*  { return IDENTIFIER; }
+}
 
-
-([\n][ \t\n]*|[ \t\n]*[\n]) { return NL; }
-
-([ \t]*)	{ }
-.     { return ERROR; }
+. {
+ return ERROR; 
+}
 
 %%4
 
@@ -45,8 +63,11 @@ yywrap() {
 
 int main() {
 	while (!done) {
-		printf("%d\n", yylex());
-		printf("%s\n", yytext);
+		int b =  yylex();
+		if(b==999)
+			printf("ERROR: ");
+		else
+			printf("%s::%d\n", yytext, b);
 	}
 	return 0;
 }
