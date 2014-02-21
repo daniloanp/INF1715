@@ -1,4 +1,4 @@
-typedef struct *struct_token Token
+typedef struct struct_token* Token;
 
 
 
