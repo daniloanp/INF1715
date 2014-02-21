@@ -1,5 +1,38 @@
 foo bar "bla" "hello world"
-
+'a'
 foo"weeee" foo foo
 bar
 bar bar
+'b'
+'\n'	
+/*sAJKBASDCASHDVSCAHNDASTY
+JHDASJH
+Danilo*/
+//asasadjvsa
+/**/
+/***/
+/***********/
+/*sAJKBASDCASHDVSCAHNDASTYJHDASJH*/dsakjdshjsdasdsajhashjds
+0x0
+20
+0x20A
+0xF+48
+4015
+
+(
+)
+,
+:
+<  >
+>
+<
+>=
+<= 
+=
+<>
+[
+]
++
+-
+*
+/

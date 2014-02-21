@@ -1,5 +1,5 @@
 %{
-#include "type_token.h"
+#include "token.h"
 
 int done = 0;
 
