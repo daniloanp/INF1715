@@ -1,39 +1,43 @@
 %{
-#define KEYWORD 2
-#define IDENTIFIER 4
-#define	NUMBER 8
-#define	CHAR 16
-#define STRING 32
-
-#define COMMENT_BLOCK 64
-
-#define COMMENT_LINE 128
-#define ERROR 999
-
-#define PLUS 43
-#define MINUS 45
-#define MUL 42
-#define DIV 47
-#define NL 10
+#include "type_token.h"
 
 int done = 0;
-
-
 
 %}
 
 CHAR [^\n"\\]
 ESCAPED_CHAR \\[\\"nt]
 COMMENT_LINE [/][/][^\n]*
-COMMENT_BLOCK [/][*]([^*]*|[*]*[^/])[*][/]
+COMMENT_BLOCK [/][*]([^*]*|[*]*[^/])[*][/]	
 HEX_NUM 0x[abcdefABCDEF0-9]+
 DEC_NUM [0-9]+
 
 %%
 
-(if|else|end|while|loop|fun|return|new|string|int|char|bool|true|false|and|or|not) {
+[+] 	{ return PLUS;}
+[-] 	{ return MINUS;}
+[/] 	{ return DIV;}
+[*] 	{ return MUL;}
+[(] 	{ return OP_PARENTHESIS;}
+[)] 	{ return CL_PARENTHESIS;}
+[,] 	{ return COMMA;}
+[:] 	{ return COLON;}
+[>] 	{ return GREATER;}
+[<]		{ return LESS;}
+[>][=] 	{ return GREATER_EQUAL;}
+[<][=] 	{ return LESS_EQUAL;}
+[=] 	{ return EQUAL;}
+[<][>] 	{ return DIFFERENT;}
+[[] 	{ return OP_BRACKET;}
+[]] 	{ return CL_BRACKET;}
+
+
+
+(if|else|end|while|loop|fun|return|new|string|int|char|bool|and|or|not) {
  return KEYWORD; 
 }
+
+(true|false) { return BOOLEAN;}
 
 [[:alpha:]_][[:alnum:]_]* {
 	return IDENTIFIER; 
@@ -50,6 +54,7 @@ DEC_NUM [0-9]+
 ["]({CHAR}|{ESCAPED_CHAR})*["] { 
 	return STRING; 
 }
+
 '({CHAR}|{ESCAPED_CHAR})' { 
 	return CHAR; 
 }
