@@ -1,14 +1,19 @@
 mini01-lex: lex.yy.c
-	gcc -o mini01-lex lex.yy.c
+	clang -o mini01-lex lex.yy.c main.c
 
 lex.yy.c: mini01-lex.l
-	flex mini01-lex.l
+	flex --header-file=lex.yy.h mini01-lex.l 
 
 clean:
-	rm -f mini01-lex *.o lex.yy.c
+	rm -f mini01-lex *.o lex.yy.c lex.yy.h
 
 test: mini01-lex
 	@echo "Teste sem erros:"
+	@echo
 	./mini01-lex < teste_ok.txt
+	@echo
+	@echo "==========="
+	@echo
 	@echo "Teste com erros:"
+	@echo
 	./mini01-lex < teste_erro.txt
