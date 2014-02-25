@@ -5,10 +5,9 @@ bar
 bar bar
 'b'
 '\n'	
-/*sAJKBASDCASHDVSCAHNDASTY
-JHDASJH
-Danilo*/
-//asasadjvsa
+/*sAJKBASDCASHDVSCAHNDASTYJHD
+ASJHDanilo*/
+/*asasadjvsa*/
 /**/
 /***/
 /***********/
@@ -18,7 +17,6 @@ Danilo*/
 0x20A
 0xF+48
 4015
-
 (
 )
 ,

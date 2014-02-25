@@ -10,6 +10,7 @@ clean:
 test: mini01-lex
 	@echo "Teste sem erros:"
 	@echo
+	@echo
 	./mini01-lex teste_ok.txt
 	@echo
 	@echo "==========="

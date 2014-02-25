@@ -1,3 +1,6 @@
+#ifndef TOKEN_LIST_H
+#define TOKEN_LIST_H
+
 #include "token.h"
 #include <malloc.h>
 typedef struct struct_token_list* TokenList;
@@ -18,5 +21,4 @@ TokenList tokenListPrevious( TokenList tl );
 TokenList tokenListGetFirst(TokenList tl);
 TokenList tokenListGetLast(TokenList tl);
 TokenList tokenListExecuteForEach(TokenList tl, tokenCallBack func);
-
-
+#endif // TOKEN_LIST_H

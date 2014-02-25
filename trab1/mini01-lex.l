@@ -2,7 +2,7 @@
 #include "token.h"
 
 int done = 0;
-
+int line_num = 1;
 %}
 
 CHAR [^\n"\\]
@@ -12,7 +12,22 @@ COMMENT_BLOCK [/][*]([^*]*|[*]*[^/])[*][/]
 HEX_NUM 0x[abcdefABCDEF0-9]+
 DEC_NUM [0-9]+
 
+%x comment
+%x nl
 %%
+
+
+"/*"		BEGIN(comment);
+
+<comment>[^*\n]*
+<comment>[^*\n]*\n	   ++line_num;
+<comment>"*"+[^*/\n]*
+<comment>"*"+[^*/\n]*\n ++line_num;
+<comment>"*"+"/"	   BEGIN(INITIAL);
+
+
+
+
 
 [+] 	{ return PLUS;}
 [-] 	{ return MINUS;}
@@ -30,7 +45,6 @@ DEC_NUM [0-9]+
 [<][>] 	{ return DIFFERENT;}
 [[] 	{ return OP_BRACKET;}
 []] 	{ return CL_BRACKET;}
-
 if		{ return IF;}
 else	{ return ELSE;}
 end		{ return END;}
@@ -46,21 +60,14 @@ bool	{ return BOOL;}
 and		{ return AND;}
 or		{ return OR;}
 not		{ return NOT;}
-
 (true|false) { return BOOLEAN;}
-
 [[:alpha:]_][[:alnum:]_]* {
 	return IDENTIFIER; 
 }		
 
-([\n][[:blank:]\n]*|[[:blank:]\n]*[\n]) { 
-	return NL; 
-}
-
 ({DEC_NUM}|{HEX_NUM}) { 
 	return NUMBER; 
 }
-
 ["]({CHAR}|{ESCAPED_CHAR})*["] { 
 	return STRING; 
 }
@@ -68,10 +75,15 @@ not		{ return NOT;}
 '({CHAR}|{ESCAPED_CHAR})' { 
 	return CHAR; 
 }
+{COMMENT_LINE} { ++line_num;}
 
-([[:blank:]]*|{COMMENT_BLOCK}|{COMMENT_LINE}) { 
+[[:blank:]]* { }
 
+
+\n([[:blank:]\n]*|{COMMENT_BLOCK})* {
+	return NL;
 }
+
 
 . {
  return ERROR; 
