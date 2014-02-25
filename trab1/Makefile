@@ -10,10 +10,10 @@ clean:
 test: mini01-lex
 	@echo "Teste sem erros:"
 	@echo
-	./mini01-lex < teste_ok.txt
+	./mini01-lex teste_ok.txt
 	@echo
 	@echo "==========="
 	@echo
 	@echo "Teste com erros:"
 	@echo
-	./mini01-lex < teste_erro.txt
+	./mini01-lex teste_erro.txt
