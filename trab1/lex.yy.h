@@ -309,7 +309,7 @@ extern int yylex (void);
 #undef YY_DECL
 #endif
 
-#line 70 "mini01-lex.l"
+#line 80 "mini01-lex.l"
 
 
 #line 316 "lex.yy.h"

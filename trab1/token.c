@@ -1,11 +1,11 @@
 #include "token.h"
-#include "stdlib.h"
-#include "string.h"
+#include <stdlib.h>
+#include <string.h>
 
 
 union token_val
 {
-long number;
+unsigned long number;
 char* string;
 };
 
@@ -26,7 +26,9 @@ int cmpToken(void* e0, void* e1)
 	if(t0->kind != t1->kind )
 		return 1;
 	if(t1->kind == NUMBER)
-		if(t1->value->number != t0->value->number)
+		if(t1->value->number > t0->value->number)
+			return -1;
+		else if(t1->value->number < t0->value->number)
 			return 1;
 		else
 			return 0;
@@ -103,9 +105,7 @@ TokenValue tokenGetVal(Token t)
 
 int deleteToken(Token t)
 {
-	/*if(t->kind!=NUMBER)
-	{
-
-	}*/
+	if(t->kind==IDENTIFIER || t->kind == STRING)
+		free(t->value->string);
 	free(t);
 }		

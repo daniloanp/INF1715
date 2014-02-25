@@ -31,11 +31,21 @@ DEC_NUM [0-9]+
 [[] 	{ return OP_BRACKET;}
 []] 	{ return CL_BRACKET;}
 
-
-
-(if|else|end|while|loop|fun|return|new|string|int|char|bool|and|or|not) {
- return KEYWORD; 
-}
+if		{ return IF;}
+else	{ return ELSE;}
+end		{ return END;}
+while	{ return WHILE;}
+loop	{ return LOOP;}
+fun		{ return FUN;}
+return	{ return RETURN;}
+new		{ return NEW;}
+string	{ return STRING;}
+int		{ return INT;}
+char	{ return CHAR;}
+bool	{ return BOOL;}
+and		{ return AND;}
+or		{ return OR;}
+not		{ return NOT;}
 
 (true|false) { return BOOLEAN;}
 

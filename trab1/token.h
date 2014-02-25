@@ -1,15 +1,29 @@
+#ifndef TOKEN_H
+#define TOKEN_H
+
 typedef struct struct_token* Token;
 
 typedef union token_val* TokenValue;
 
-
 typedef enum{
-	KEYWORD = 2,
-	IDENTIFIER = 4,
-	BOOLEAN = 8,
-	NUMBER = 16,
-	CHAR = 32,
-	STRING = 64,
+	IDENTIFIER = 1,
+	IF = 2,
+	ELSE = 3,
+	END = 4,
+	WHILE = 5,
+	LOOP = 6,
+	FUN = 7,
+	RETURN = 8,
+	NEW = 9,
+	STRING = 10,
+	INT = 11,
+	CHAR = 12,
+	BOOL = 13,
+	AND = 14,
+	OR = 15,
+	NOT = 16,
+	BOOLEAN = 17,
+	NUMBER = 18,
 	PLUS = '+',
 	MINUS = '-',
 	MUL = '*',
@@ -39,6 +53,7 @@ TokenValue tokenGetVal(Token t);
 int deleteToken(Token t);
 int cmpToken(void* e0, void* e1);
 
+#endif // TOKEN_H
 
 
 
