@@ -31,7 +31,7 @@ int printToken(Token t)
 		case NUMBER:
 			printf("%d", tokenGetNumberValue(t));
 			break;
-		case STRING:
+		case STR:
 			printf("\"%s\"", tokenGetStringValue(t));
 			break;
 		case IDENTIFIER:
@@ -70,7 +70,7 @@ int main( int argc, char **argv ) {
 				line_num+=countCharOccurences(yytext,b);
 				break;
 			case IDENTIFIER:
-			case STRING:
+			case STR:
 				t = newToken((TokenKind)b, line_num, createTokenStringValue(yytext) );
 				break;
 			case NUMBER:

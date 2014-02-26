@@ -33,7 +33,7 @@ int cmpToken(void* e0, void* e1)
 			return 1;
 		else
 			return 0;
-	if(t1->kind==IDENTIFIER || t1->kind == STRING)
+	if(t1->kind==IDENTIFIER || t1->kind == STR)
 		return strcmp(t1->value->string, t0->value->string);
 	return 0;
 }
@@ -200,7 +200,7 @@ int deleteToken(Token t)
 		return -1;
 	if(t->value != NULL)
 	{
-		if( t->value->string!=NULL && (t->kind==IDENTIFIER || t->kind == STRING) )
+		if( t->value->string!=NULL && (t->kind==IDENTIFIER || t->kind == STR) )
 			free(t->value->string);
 		free(t->value);
 	}
@@ -220,7 +220,7 @@ char tokenGetCharValue(Token t)
 	return t->value->character;
 }			
 
-static char* token_string[] = { "IDENTIFIER","IF","ELSE","END","WHILE","LOOP","FUN","RETURN","NEW","NL","INT","CHAR","BOOL","AND","OR","NOT","BOOLEAN","NUMBER","STRING","CHARACTER","PLUS","MINUS","MUL","DIV","OP_BRACKET","CL_BRACKET","OP_PARENTHESIS","CL_PARENTHESIS","COMMA","COLON","GREATER","GREATER_EQUAL","LESS","LESS_EQUAL","EQUAL","DIFFERENT"};
+static char* token_string[] = { "IDENTIFIER","IF","ELSE","END","WHILE","LOOP","FUN","RETURN","NEW","NL","INT","CHAR","BOOL","AND","OR","NOT","BOOLEAN","NUMBER","STRING","CHARACTER","PLUS","MINUS","MUL","DIV","OP_BRACKET","CL_BRACKET","OP_PARENTHESIS","CL_PARENTHESIS","COMMA","COLON","GREATER","GREATER_EQUAL","LESS","LESS_EQUAL","EQUAL","DIFFERENT", "STR"};
 
 char* tokenToString(Token t)
 {

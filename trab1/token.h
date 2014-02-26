@@ -42,6 +42,7 @@ typedef enum{
 	LESS_EQUAL = 34,
 	EQUAL = 35,
 	DIFFERENT = 36,
+	STR = 37,
 	ERROR = 999
 } TokenKind;
 

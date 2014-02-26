@@ -65,11 +65,11 @@ not		{ return NOT;}
 
 [[:alpha:]_][[:alnum:]_]* {
 	return IDENTIFIER; 
-}		
+}
 
 
 ["]({CHAR}|{ESCAPED_CHAR})*["] { 
-	return STRING; 
+	return STR; 
 }
 
 '({CHAR}|{ESCAPED_CHAR})' { 
