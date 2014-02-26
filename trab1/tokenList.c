@@ -10,7 +10,8 @@ struct struct_token_list
 //Unsafe! The below functions assume that Token instances can be "destroyed" when convenient
 TokenList tokenListCreate(Token t)
 {
-	TokenList tl= (TokenList)malloc(sizeof(struct struct_token_list));
+	TokenList tl=NULL;
+	tl= (TokenList)malloc(sizeof(struct struct_token_list));
 	tl->previous = NULL;
 	tl->next = NULL;
 	tl->token = t;

@@ -2,6 +2,7 @@
 #include "token.h"
 #include "tokenList.h"
 #include <stdlib.h>
+
 extern int done;
 extern int line_num;
 extern int nline;
@@ -28,24 +29,25 @@ int printToken(Token t)
 	if(tline == 1)
 		line = 1;
 	
-	switch (tokenGetKind(t)) {
-		
+	switch (tokenGetKind(t)) {	
 		case NUMBER:
-			printf("%d ", tokenGetNumberValue(t));
+			printf("%d", tokenGetNumberValue(t));
 			break;
 		case STRING:
-			printf("\"%s\" ", tokenGetStringValue(t));
+			printf("\"%s\"", tokenGetStringValue(t));
 			break;
 		case IDENTIFIER:
-			printf("%s " , tokenGetStringValue(t));
+			printf("%s" , tokenGetStringValue(t));
 			break;
 		case CHARACTER:
 			printf("%c", tokenGetCharValue(t));
 			break;
 		default:
-		break;	
+			printf("%s", tokenToString(t));
+		break;
 	}
-	printf("(%d)", tokenGetKind(t));
+	printf(" ");
+	
 
 	//printf("%s::%d ", tokenGetNumberValue, t->kind);
 }
@@ -53,11 +55,9 @@ int printToken(Token t)
 int main( int argc, char **argv ) {
 	Token t = NULL; 
 	TokenList tl = NULL	;
+	TokenKind b;
 	long aux;
 	char c;
-	const char *hexstring = "0xabcdef0";
-
-
 	++argv, --argc;
 	if ( argc > 0 )
 		yyin = fopen( argv[0], "r" );
@@ -65,7 +65,7 @@ int main( int argc, char **argv ) {
 		yyin = stdin;
 
 	while (!done) {
-		int b =  yylex();
+		b =  yylex();
 		switch (b) {
 			case NL:
 				t = newToken((TokenKind)b, line_num, NULL);
@@ -106,10 +106,10 @@ int main( int argc, char **argv ) {
 				t=NULL;
 				printf("Error at line %d near to %s\n", line_num, yytext);
 				break;
-
 			default:
 				if(b)
 					t = newToken((TokenKind)b, line_num, NULL);
+				break;
 		}
 		if(t!=NULL)
 			if(tl!=NULL)
@@ -118,21 +118,12 @@ int main( int argc, char **argv ) {
 				tl= tokenListCreate(t);
 		t= NULL;
 	}
+	
 	tokenListExecuteForEach(tl, printToken);
+
 	tokenListDestroy(tl);
+	if( yyin != stdin)
+		fclose(yyin);
+	
 	return 0;
 }
-
-
-/*{
-
-			line_num+=countCharOccurences(yytext,b);
-			printf("\n%3d|",line_num);
-		}
-		else if(b==999)
-			printf("ERROR:(%s)", yytext);
-		else if(b!=0)
-		{
-			
-			printf(" %s::%d ", yytext, b);
-		}*/

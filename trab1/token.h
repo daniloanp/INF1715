@@ -26,22 +26,22 @@ typedef enum{
 	NUMBER = 18,
 	STRING = 19,
 	CHARACTER = 20,
-	PLUS = '+',
-	MINUS = '-',
-	MUL = '*',
-	DIV = '/',
-	OP_BRACKET = '[',
-	CL_BRACKET = ']',
-	OP_PARENTHESIS = '(',
-	CL_PARENTHESIS = ')',
-	COMMA = ',',
-	COLON = ':',
-	GREATER  = '>',
-	GREATER_EQUAL = '>'*10,
-	LESS = ('<'),
-	LESS_EQUAL = ('<'*10),
-	EQUAL = '=',
-	DIFFERENT = '^',
+	PLUS = 21,
+	MINUS = 22,
+	MUL = 23,
+	DIV = 24,
+	OP_BRACKET = 25,
+	CL_BRACKET = 26,
+	OP_PARENTHESIS = 27,
+	CL_PARENTHESIS = 28,
+	COMMA = 29,
+	COLON = 30,
+	GREATER  = 31,
+	GREATER_EQUAL = 32,
+	LESS = 33,
+	LESS_EQUAL = 34,
+	EQUAL = 35,
+	DIFFERENT = 36,
 	ERROR = 999
 } TokenKind;
 
@@ -57,6 +57,8 @@ char* tokenGetStringValue(Token t);
 long tokenGetNumberValue(Token t);
 int deleteToken(Token t);
 int cmpToken(void* e0, void* e1);
+char* tokenToString(Token t);
+
 
 #endif // TOKEN_H
 

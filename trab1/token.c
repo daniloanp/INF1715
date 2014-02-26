@@ -41,11 +41,17 @@ int cmpToken(void* e0, void* e1)
 
 static char* fixString(char *s)
 {
-	char* t = malloc((strlen(s)+1)*sizeof(char));
+	int i=0;
+	char* t = NULL;
+	t = malloc((strlen(s)+1)*sizeof(char));
+	//initializeing value cause valgrind is boring;
+	memset(t,0,(strlen(s)+1));
+	// end_valgrind
+	if(t==NULL)
+		exit(1);
 	if(*s=='\"')
 		++s;
-	char c0,c1;
-	int i=0;
+	
 	for( ; *s; s++ ) {
 		if(*s=='\"' && *(s+1)=='\0')
 		{
@@ -82,7 +88,7 @@ TokenValue createTokenStringValue(char* str)
 //unsafe, you must remember of call free
 TokenValue createTokenNumberValue(long number)
 {
-	TokenValue pt;
+	TokenValue pt = NULL;
 	pt = (TokenValue) malloc(sizeof(union token_val));
 	if(pt != NULL)
 		pt->number = number;
@@ -90,14 +96,17 @@ TokenValue createTokenNumberValue(long number)
 		return NULL;
 	return pt;
 }
+
 TokenValue createTokenCharValue(char c)
 {
-	TokenValue pt;
+	TokenValue pt = NULL;
 	pt = (TokenValue) malloc(sizeof(union token_val));
+	memset(pt,0,sizeof(union token_val));
 	if(pt != NULL)
 		pt->character = c;
-	else 
+	else {
 		return NULL;
+	}
 	return pt;
 }
 
@@ -145,7 +154,7 @@ TokenValue tokenGetVal(Token t)
 
 int deleteToken(Token t)
 {
-	if(t== NULL)
+	if(t==NULL)
 		return -1;
 	if(t->value != NULL)
 	{
@@ -168,3 +177,12 @@ char tokenGetCharValue(Token t)
 {
 	return t->value->character;
 }			
+
+static char* token_string[] = { "IDENTIFIER","IF","ELSE","END","WHILE","LOOP","FUN","RETURN","NEW","NL","INT","CHAR","BOOL","AND","OR","NOT","BOOLEAN","NUMBER","STRING","CHARACTER","PLUS","MINUS","MUL","DIV","OP_BRACKET","CL_BRACKET","OP_PARENTHESIS","CL_PARENTHESIS","COMMA","COLON","GREATER","GREATER_EQUAL","LESS","LESS_EQUAL","EQUAL","DIFFERENT"};
+
+char* tokenToString(Token t)
+{
+	if(t->kind == ERROR)
+		return "ERROR";
+	else return token_string[((int)t->kind)-1];
+}
