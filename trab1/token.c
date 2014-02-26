@@ -5,9 +5,9 @@
 
 union token_val
 {
-unsigned long number;
-char* string;
-char character;
+	unsigned long number;
+	char* string;
+	char character;
 };
 
 struct struct_token {
