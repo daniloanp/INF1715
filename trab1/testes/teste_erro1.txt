@@ -5,4 +5,21 @@ foo foo
 "mais um
 'danilo'"
 Danilo
+/**/
+&&
+|
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+if( 10 || foo )

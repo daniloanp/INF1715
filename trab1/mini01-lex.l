@@ -9,11 +9,13 @@ CHAR [^\n"\\]
 ESCAPED_CHAR \\[\\"nt]
 COMMENT_LINE [/][/][^\n]*
 COMMENT_BLOCK [/][*]([^*]*|[*]*[^/])[*][/]	
-HEX_NUM [-+]?[0][x](([abcdefABCDEF]|[0-9])+)
-DEC_NUM [-+]?[0-9]+
+HEX_NUM [0][x](([abcdefABCDEF]|[0-9])+)
+DEC_NUM [0-9]+
+ALPHA [a-zA-Z]
+ALNUM [a-zA-Z0-9]
+
 
 %x comment
-%x nl
 %%
 
 
@@ -63,18 +65,21 @@ not		{ return NOT;}
 	return INT_VAL; 
 }
 
-[[:alpha:]_][[:alnum:]_]* {
+({ALPHA}|[_])({ALNUM}|[_])* {
 	return IDENTIFIER; 
 }
+
+
 
 
 ["]({CHAR}|{ESCAPED_CHAR})*["] { 
 	return STRING_VAL; 
 }
 
-'({CHAR}|{ESCAPED_CHAR})' { 
+[']({CHAR}|{ESCAPED_CHAR})['] { 
 	return CHAR_VAL; 
 }
+
 {COMMENT_LINE} { ++line_num;}
 
 [[:blank:]]* { }

@@ -1,5 +1,30 @@
+if(a>12 and b < 10) then
+	printf(a)
+	next(b,20)
+end
+
+while life_is_going
+	increaseHappiness(current_happiness+1)
+loop
 
 "danilo"
+
+
+if foo=true
+
+
+
+	led=-14
+
+
+	
+else if
+	luz = 12
+else if
+	vila=0x19
+else
+	amizade = amizada+10
+end
 
 foo bar "bla\n"		  "hello world"
 'a'
@@ -36,3 +61,5 @@ ASJHDanilo*//*asasadjvsa*/
 -
 *
 /
+
+1+2+3=x

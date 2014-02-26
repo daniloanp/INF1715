@@ -7,6 +7,8 @@ extern int done;
 extern int line_num;
 extern int nline;
 
+
+//Auxiliar Function that count how many times a char exists into a string
 int countCharOccurences(char *s, char c)
 {
 	int i=0;
@@ -16,6 +18,9 @@ int countCharOccurences(char *s, char c)
 	return i;
 }
 
+
+
+//Funtion that print a Token
 int printToken(Token t)
 {
 	static int line=-1;
@@ -27,7 +32,7 @@ int printToken(Token t)
 		line = tline;
 	}
 	
-	switch (tokenGetKind(t)) {	
+	switch ( tokenGetKind(t) ) {	
 		case INT_VAL:
 			printf("%d", tokenGetNumberValue(t));
 			break;
@@ -42,7 +47,7 @@ int printToken(Token t)
 			break;
 		default:
 			printf("%s", tokenToString(t));
-		break;
+			break;
 	}
 	printf(" ");
 	
@@ -119,14 +124,15 @@ int main( int argc, char **argv ) {
 				tl= tokenListCreate(t);
 		}
 
-		t= NULL;
+		t = NULL;
 	}
 	
-	if(!error_flag)
-		tokenListExecuteForEach(tl, printToken);
-
-	if(tl!=NULL)
+	if( tl != NULL ) {
+		if(!error_flag)
+			tokenListExecuteForEach(tl, printToken);
 		tokenListDestroy(tl);
+	}
+	
 	if( yyin != stdin)
 		fclose(yyin);
 	
