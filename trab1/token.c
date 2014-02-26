@@ -39,7 +39,7 @@ int cmpToken(void* e0, void* e1)
 }
 
 
-static char* fixString(char *s)
+/*static char* fixString(char *s)
 {
 	int i=0;
 	char* t = NULL;
@@ -65,6 +65,48 @@ static char* fixString(char *s)
 			i++;
 		}
 	}
+	return t;
+
+}
+*/
+
+static char* fixString(char *s)
+{
+	int i=0;
+	char* t = NULL;
+	t = malloc((strlen(s)+1)*sizeof(char));
+	//initializeing value cause valgrind is boring;
+	memset(t,0,(strlen(s)+1));
+	// end_valgrind
+	if(*s=='\"')
+		++s;
+	if(t==NULL)
+		exit(1);
+	for( ; *s; ++s ) {
+		if(*s=='\"' && *(s+1)=='\0')
+			break;
+		if( *s=='\\' )
+		{
+			switch (*(s+1)) {
+				case 'n':
+					t[i] = '\n'; break;
+				case 't':
+					t[i] = '\t'; break;
+				case '\\':
+					t[i] = '\\'; break;
+				case '\"':
+					t[i] = '\"'; break;
+				default: 
+					exit(1); break;
+			}
+			++i;
+			++s;
+		}else{
+			t[i]=*s;
+			++i;
+		}
+	}
+	
 	return t;
 
 }

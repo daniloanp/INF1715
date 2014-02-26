@@ -26,8 +26,6 @@ int printToken(Token t)
 		printf("\n%3d| ",tline);
 		line = tline;
 	}
-	if(tline == 1)
-		line = 1;
 	
 	switch (tokenGetKind(t)) {	
 		case NUMBER:
@@ -98,7 +96,8 @@ int main( int argc, char **argv ) {
 							c = '\\'; break;
 						case '\"':
 							c = '\"'; break;
-						default: break;
+						default: 
+							exit(1); break;
 					}
 				t = newToken((TokenKind)b, line_num, createTokenCharValue(c) );
 				break;
