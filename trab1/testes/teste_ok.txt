@@ -7,7 +7,7 @@ while life_is_going
 	increaseHappiness(current_happiness+1)
 loop
 
-"danilo\n\tAndré\n\tdo Nascimento\n\t\nRio de Janeiro\\Estudante da PUC-Rio"
+"danilo\n\tAndré\n\tdo Nascimento\n\t\n\tRio de Janeiro\\\tEstudante da \"PUC-Rio\""
 
 
 if foo=true

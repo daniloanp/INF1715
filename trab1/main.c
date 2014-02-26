@@ -7,6 +7,9 @@ extern int done;
 extern int line_num;
 extern int nline;
 
+char header[] ="  Passou na Análise Léxica Sem Erros!!! \n\t"; 
+
+char footer[] ="\n\n\t*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados\n\t**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.\n\t***Booleanos são prefixados de $ para melhoras a visualização\n\t"; 
 
 //Auxiliar Function that count how many times a char exists into a string
 int countCharOccurences(char *s, char c)
@@ -43,7 +46,13 @@ int printToken(Token t)
 			printf("%s" , tokenGetStringValue(t));
 			break;
 		case CHAR_VAL:
-			printf("%c", tokenGetCharValue(t));
+			printf("'%c'", tokenGetCharValue(t));
+			break;
+		case BOOL_VAL:
+			if(tokenGetNumberValue(t))
+				printf("$true");
+			else
+				printf("$false");
 			break;
 		default:
 			printf("%s", tokenToString(t));
@@ -129,7 +138,11 @@ int main( int argc, char **argv ) {
 	
 	if( tl != NULL ) {
 		if(!error_flag)
+		{
+			printf("%s",header);
 			tokenListExecuteForEach(tl, printToken);
+			printf("%s",footer);
+		}
 		tokenListDestroy(tl);
 	}
 	
