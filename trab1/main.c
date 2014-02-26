@@ -28,7 +28,7 @@ int printToken(Token t)
 	}
 	
 	switch (tokenGetKind(t)) {	
-		case NUMBER:
+		case INT_VAL:
 			printf("%d", tokenGetNumberValue(t));
 			break;
 		case STRING_VAL:
@@ -74,14 +74,14 @@ int main( int argc, char **argv ) {
 			case STRING_VAL:
 				t = newToken((TokenKind)b, line_num, createTokenStringValue(yytext) );
 				break;
-			case NUMBER:
+			case INT_VAL:
 				if(strstr(yytext, "0x") != NULL)
 					aux = strtol(yytext,NULL,0);
 				else
 					aux = atol(yytext);
 				t = newToken((TokenKind)b, line_num, createTokenNumberValue( aux ));
 				break;
-			case BOOLEAN:
+			case BOOL_VAL:
 				aux = (strcmp(yytext, "false")==0)? 0 : 1;
 				t = newToken((TokenKind)b, line_num, createTokenNumberValue(aux));
 				break;

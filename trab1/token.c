@@ -26,7 +26,7 @@ int cmpToken(void* e0, void* e1)
 		exit(1);
 	if(t0->kind != t1->kind )
 		return 1;
-	if(t1->kind == NUMBER)
+	if(t1->kind == INT_VAL)
 		if(t1->value->number > t0->value->number)
 			return -1;
 		else if(t1->value->number < t0->value->number)
@@ -189,7 +189,7 @@ char tokenGetCharValue(Token t)
 	return t->value->character;
 }			
 
-static char* token_string[] = { "IDENTIFIER","IF","ELSE","END","WHILE","LOOP","FUN","RETURN","NEW","NL","INT","CHAR","BOOL","AND","OR","NOT","BOOLEAN","NUMBER","STRING","CHAR_VAL","PLUS","MINUS","MUL","DIV","OP_BRACKET","CL_BRACKET","OP_PARENTHESIS","CL_PARENTHESIS","COMMA","COLON","GREATER","GREATER_EQUAL","LESS","LESS_EQUAL","EQUAL","DIFFERENT", "STRING_VAL"};
+static char* token_string[] = { "IDENTIFIER","IF","ELSE","END","WHILE","LOOP","FUN","RETURN","NEW","NL","INT","CHAR","BOOL","AND","OR","NOT","BOOL_VAL","INT_VAL","STRING","CHAR_VAL","PLUS","MINUS","MUL","DIV","OP_BRACKET","CL_BRACKET","OP_PARENTHESIS","CL_PARENTHESIS","COMMA","COLON","GREATER","GREATER_EQUAL","LESS","LESS_EQUAL","EQUAL","DIFFERENT", "STRING_VAL"};
 
 char* tokenToString(Token t)
 {

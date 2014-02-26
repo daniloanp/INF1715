@@ -57,10 +57,10 @@ bool	{ return BOOL;}
 and		{ return AND;}
 or		{ return OR;}
 not		{ return NOT;}
-(true|false) { return BOOLEAN;}
+(true|false) { return BOOL_VAL;}
 
 ({DEC_NUM}|{HEX_NUM}) { 
-	return NUMBER; 
+	return INT_VAL; 
 }
 
 [[:alpha:]_][[:alnum:]_]* {
