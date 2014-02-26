@@ -11,17 +11,4 @@ test: mini01-lex
 	@echo "Teste sem erros:"
 	@echo
 	@echo
-	./mini01-lex teste_ok.txt
-	@echo
-	@echo "==========="
-	@echo
-	@echo "Teste com erros:"
-	@echo
-	./mini01-lex teste_erro.txt
-	
-test-valgrind: mini01-lex
-	@echo "Teste sem erros:"
-	@echo
-	@echo
-	valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes  ./mini01-lex teste_ok.txt
-	
+	bash teste.sh	

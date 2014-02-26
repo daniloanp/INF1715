@@ -1,8 +1,7 @@
 #ifndef TOKEN_LIST_H
 #define TOKEN_LIST_H
-
 #include "token.h"
-#include <malloc.h>
+
 typedef struct struct_token_list* TokenList;
 
 typedef int (*tokenCallBack) (Token t);

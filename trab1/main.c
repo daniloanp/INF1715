@@ -23,7 +23,7 @@ int printToken(Token t)
 	
 	if( line != tline )
 	{
-		printf("\n%3d| ",tline);
+		printf("\n%5d| ",tline);
 		line = tline;
 	}
 	
@@ -31,13 +31,13 @@ int printToken(Token t)
 		case NUMBER:
 			printf("%d", tokenGetNumberValue(t));
 			break;
-		case STR:
+		case STRING_VAL:
 			printf("\"%s\"", tokenGetStringValue(t));
 			break;
 		case IDENTIFIER:
 			printf("%s" , tokenGetStringValue(t));
 			break;
-		case CHARACTER:
+		case CHAR_VAL:
 			printf("%c", tokenGetCharValue(t));
 			break;
 		default:
@@ -56,6 +56,7 @@ int main( int argc, char **argv ) {
 	TokenKind b;
 	long aux;
 	char c;
+	short error_flag = 0;
 	++argv, --argc;
 	if ( argc > 0 )
 		yyin = fopen( argv[0], "r" );
@@ -70,7 +71,7 @@ int main( int argc, char **argv ) {
 				line_num+=countCharOccurences(yytext,b);
 				break;
 			case IDENTIFIER:
-			case STR:
+			case STRING_VAL:
 				t = newToken((TokenKind)b, line_num, createTokenStringValue(yytext) );
 				break;
 			case NUMBER:
@@ -84,7 +85,7 @@ int main( int argc, char **argv ) {
 				aux = (strcmp(yytext, "false")==0)? 0 : 1;
 				t = newToken((TokenKind)b, line_num, createTokenNumberValue(aux));
 				break;
-			case CHARACTER:
+			case CHAR_VAL:
 				c = *(yytext+1);
 				if(c == '\\')
 					switch (*(yytext+2)) {
@@ -102,25 +103,30 @@ int main( int argc, char **argv ) {
 				t = newToken((TokenKind)b, line_num, createTokenCharValue(c) );
 				break;
 			case ERROR:
+				error_flag = 1;
 				t=NULL;
-				printf("Error at line %d near to %s\n", line_num, yytext);
+				printf("    Error at line %d near to %s\n", line_num, yytext);
 				break;
 			default:
 				if(b)
 					t = newToken((TokenKind)b, line_num, NULL);
 				break;
 		}
-		if(t!=NULL)
+		if(t!=NULL) {
 			if(tl!=NULL)
 				tokenListInsert(tl,t);
 			else
 				tl= tokenListCreate(t);
+		}
+
 		t= NULL;
 	}
 	
-	tokenListExecuteForEach(tl, printToken);
+	if(!error_flag)
+		tokenListExecuteForEach(tl, printToken);
 
-	tokenListDestroy(tl);
+	if(tl!=NULL)
+		tokenListDestroy(tl);
 	if( yyin != stdin)
 		fclose(yyin);
 	

@@ -25,7 +25,7 @@ typedef enum{
 	BOOLEAN = 17,
 	NUMBER = 18,
 	STRING = 19,
-	CHARACTER = 20,
+	CHAR_VAL = 20,
 	PLUS = 21,
 	MINUS = 22,
 	MUL = 23,
@@ -42,7 +42,7 @@ typedef enum{
 	LESS_EQUAL = 34,
 	EQUAL = 35,
 	DIFFERENT = 36,
-	STR = 37,
+	STRING_VAL = 37,
 	ERROR = 999
 } TokenKind;
 

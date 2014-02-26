@@ -69,11 +69,11 @@ not		{ return NOT;}
 
 
 ["]({CHAR}|{ESCAPED_CHAR})*["] { 
-	return STR; 
+	return STRING_VAL; 
 }
 
 '({CHAR}|{ESCAPED_CHAR})' { 
-	return CHARACTER; 
+	return CHAR_VAL; 
 }
 {COMMENT_LINE} { ++line_num;}
 

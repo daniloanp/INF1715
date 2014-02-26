@@ -1,3 +1,4 @@
+#include <malloc.h>
 #include "tokenList.h"
 
 struct struct_token_list
