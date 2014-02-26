@@ -9,8 +9,8 @@ CHAR [^\n"\\]
 ESCAPED_CHAR \\[\\"nt]
 COMMENT_LINE [/][/][^\n]*
 COMMENT_BLOCK [/][*]([^*]*|[*]*[^/])[*][/]	
-HEX_NUM 0x[abcdefABCDEF0-9]+
-DEC_NUM [0-9]+
+HEX_NUM [-+]?[0][x](([abcdefABCDEF]|[0-9])+)
+DEC_NUM [-+]?[0-9]+
 
 %x comment
 %x nl
@@ -24,9 +24,6 @@ DEC_NUM [0-9]+
 <comment>"*"+[^*/\n]*
 <comment>"*"+[^*/\n]*\n ++line_num;
 <comment>"*"+"/"	   BEGIN(INITIAL);
-
-
-
 
 
 [+] 	{ return PLUS;}
@@ -61,19 +58,22 @@ and		{ return AND;}
 or		{ return OR;}
 not		{ return NOT;}
 (true|false) { return BOOLEAN;}
-[[:alpha:]_][[:alnum:]_]* {
-	return IDENTIFIER; 
-}		
 
 ({DEC_NUM}|{HEX_NUM}) { 
 	return NUMBER; 
 }
+
+[[:alpha:]_][[:alnum:]_]* {
+	return IDENTIFIER; 
+}		
+
+
 ["]({CHAR}|{ESCAPED_CHAR})*["] { 
 	return STRING; 
 }
 
 '({CHAR}|{ESCAPED_CHAR})' { 
-	return CHAR; 
+	return CHARACTER; 
 }
 {COMMENT_LINE} { ++line_num;}
 

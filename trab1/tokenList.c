@@ -23,8 +23,12 @@ int tokenListDestroy(TokenList tl)
 	if(tl == NULL)
 		return -1;
 	tl = tokenListGetFirst(tl);
-	for( next = tl->next; next != NULL; tl=next, next=tl->next)
+	next = tl->next;
+
+	while(  next != NULL )
 	{
+		tl=next; 
+		next=tl->next;
 		deleteToken(tl->token);
 		free(tl);
 	}

@@ -7,6 +7,7 @@ union token_val
 {
 unsigned long number;
 char* string;
+char character;
 };
 
 struct struct_token {
@@ -37,15 +38,43 @@ int cmpToken(void* e0, void* e1)
 	return 0;
 }
 
+
+static char* fixString(char *s)
+{
+	char* t = malloc((strlen(s)+1)*sizeof(char));
+	if(*s=='\"')
+		++s;
+	char c0,c1;
+	int i=0;
+	for( ; *s; s++ ) {
+		if(*s=='\"' && *(s+1)=='\0')
+		{
+			if(*(s-1)=='\\')
+			{
+				t[i]=*s;
+				i++;
+			}
+		}else if( !(*s=='\\' && *(s+1)=='\\')) {
+			t[i]=*s;
+			i++;
+		}
+	}
+	return t;
+
+}
+
 //unsafe, you must remember of call free
 TokenValue createTokenStringValue(char* str)
 {
+	char *temp;
 	TokenValue pt;
 	pt = (TokenValue) malloc(sizeof(union token_val));
 	if(pt != NULL){
-	
-		pt->string = malloc(strlen(str)*sizeof(char));
-		strcpy(pt->string, str);
+		temp = fixString(str);
+		pt->string = malloc((strlen(temp)+1)*sizeof(char));
+		strcpy(pt->string, temp);
+		free(temp);
+		return pt;
 	}else 
 		return NULL;
 }
@@ -59,6 +88,17 @@ TokenValue createTokenNumberValue(long number)
 		pt->number = number;
 	else 
 		return NULL;
+	return pt;
+}
+TokenValue createTokenCharValue(char c)
+{
+	TokenValue pt;
+	pt = (TokenValue) malloc(sizeof(union token_val));
+	if(pt != NULL)
+		pt->character = c;
+	else 
+		return NULL;
+	return pt;
 }
 
 Token newToken(TokenKind kind, long line, TokenValue value )
@@ -84,7 +124,7 @@ int tokenGetLine(Token t)
 	return -1;
 }
 
-TokenKind tokenKind(Token t)
+TokenKind tokenGetKind(Token t)
 {
 	if(t!=NULL)
 		return t->kind;
@@ -105,7 +145,26 @@ TokenValue tokenGetVal(Token t)
 
 int deleteToken(Token t)
 {
-	if(t->kind==IDENTIFIER || t->kind == STRING)
-		free(t->value->string);
+	if(t== NULL)
+		return -1;
+	if(t->value != NULL)
+	{
+		if( t->value->string!=NULL && (t->kind==IDENTIFIER || t->kind == STRING) )
+			free(t->value->string);
+		free(t->value);
+	}
+
 	free(t);
-}		
+}
+
+char* tokenGetStringValue(Token t){
+	return t->value->string;
+}
+long tokenGetNumberValue(Token t)
+{
+	return t->value->number;
+}
+char tokenGetCharValue(Token t)
+{
+	return t->value->character;
+}			

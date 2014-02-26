@@ -25,11 +25,11 @@ typedef enum{
 	BOOLEAN = 17,
 	NUMBER = 18,
 	STRING = 19,
+	CHARACTER = 20,
 	PLUS = '+',
 	MINUS = '-',
 	MUL = '*',
 	DIV = '/',
-	
 	OP_BRACKET = '[',
 	CL_BRACKET = ']',
 	OP_PARENTHESIS = '(',
@@ -47,10 +47,14 @@ typedef enum{
 
 TokenValue createTokenStringValue(char* str);
 TokenValue createTokenNumberValue(long number);
+TokenValue createTokenCharValue(char c);
 Token newToken(TokenKind t, long line, TokenValue value );
 int tokenGetLine(Token t);
-TokenKind tokenKind(Token t);
+TokenKind tokenGetKind(Token t);
 TokenValue tokenGetVal(Token t);
+char tokenGetCharValue(Token t);
+char* tokenGetStringValue(Token t);
+long tokenGetNumberValue(Token t);
 int deleteToken(Token t);
 int cmpToken(void* e0, void* e1);
 

@@ -1,4 +1,4 @@
-foo bar "bla" "hello world"
+foo bar "bla"		  "hello world"
 'a'
 foo"weeee" foo foo
 bar
@@ -6,16 +6,15 @@ bar bar
 'b'
 '\n'	
 /*sAJKBASDCASHDVSCAHNDASTYJHD
-ASJHDanilo*/
-/*asasadjvsa*/
+ASJHDanilo*//*asasadjvsa*/
 /**/
 /***/
 /***********/
 /*sAJKBASDCASHDVSCAHNDASTYJHDASJH*/dsakjdshjsdasdsajhashjds
-0x0
+0x01
 20
 0x20A
-0xF+48
+0xF + 48
 4015
 (
 )
