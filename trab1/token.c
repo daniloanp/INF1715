@@ -65,6 +65,8 @@ static char* fixString(char *s)
 					t[i] = '\\'; break;
 				case '\"':
 					t[i] = '\"'; break;
+				case '\'':
+					t[i] = '\''; break;
 				default: 
 					exit(1); break;
 			}

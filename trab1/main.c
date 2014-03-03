@@ -111,6 +111,8 @@ int main( int argc, char **argv ) {
 							c = '\\'; break;
 						case '\"':
 							c = '\"'; break;
+						case '\'':
+							c = '\''; break;
 						default: 
 							exit(1); break;
 					}

@@ -5,8 +5,9 @@ int done = 0;
 int line_num = 1;
 %}
 
-CHAR [^\n"\\]
-ESCAPED_CHAR \\[\\"nt]
+STR_CHAR [^\n"\\]
+CHAR [^\n'\\]
+ESCAPED_CHAR \\[\\"'nt]
 COMMENT_LINE [/][/][^\n]*
 COMMENT_BLOCK [/][*]([^*]*|[*]*[^/])[*][/]	
 HEX_NUM [0][x](([abcdefABCDEF]|[0-9])+)
@@ -72,7 +73,7 @@ not		{ return NOT;}
 
 
 
-["]({CHAR}|{ESCAPED_CHAR})*["] { 
+["]({STR_CHAR}|{ESCAPED_CHAR})*["] { 
 	return STRING_VAL; 
 }
 

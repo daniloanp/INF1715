@@ -9,6 +9,9 @@ loop
 
 "danilo\n\tAndré\n\tdo Nascimento\n\t\n\tRio de Janeiro\\\tEstudante da \"PUC-Rio\""
 
+print("\'André do Nascimento'")
+print('\'')
+print('"')
 
 if foo=true
 
