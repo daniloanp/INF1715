@@ -45,9 +45,9 @@ int printToken(Token t)
 		case IDENTIFIER:
 			printf("%s" , tokenGetStringValue(t));
 			break;
-		case CHAR_VAL:
+		/*case CHAR_VAL:
 			printf("'%c'", tokenGetCharValue(t));
-			break;
+			break;*/
 		case BOOL_VAL:
 			if(tokenGetNumberValue(t))
 				printf("$true");
@@ -99,7 +99,7 @@ int main( int argc, char **argv ) {
 				aux = (strcmp(yytext, "false")==0)? 0 : 1;
 				t = newToken((TokenKind)b, line_num, createTokenNumberValue(aux));
 				break;
-			case CHAR_VAL:
+/*			case CHAR_VAL:
 				c = *(yytext+1);
 				if(c == '\\')
 					switch (*(yytext+2)) {
@@ -118,6 +118,7 @@ int main( int argc, char **argv ) {
 					}
 				t = newToken((TokenKind)b, line_num, createTokenCharValue(c) );
 				break;
+				*/
 			case ERROR:
 				error_flag = 1;
 				t=NULL;
