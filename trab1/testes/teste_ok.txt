@@ -29,9 +29,9 @@ end
 
 foo bar "bla\n"		  "hello world"
 
-foo"weeee" foo foo
-bar
-bar bar
+	foo"weeee" foo foo
+	bar
+	bar bar
 /*sAJKBASDCASHDVSCAHNDASTYJHD
 ASJHDanilo*//*asasadjvsa*/
 /**/

@@ -1,5 +1,5 @@
 mini01-lex: lex.yy.c
-	gcc -o mini01-lex lex.yy.c main.c token.h token.c tokenList.h tokenList.c
+	gcc -o mini01-lex lex.yy.c teste-lex.c lex.h lex.c token.h token.c tokenList.h tokenList.c
 
 lex.yy.c: mini01-lex.l
 	flex --header-file=lex.yy.h mini01-lex.l 

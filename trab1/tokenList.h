@@ -20,4 +20,5 @@ TokenList tokenListPrevious( TokenList tl );
 TokenList tokenListGetFirst(TokenList tl);
 TokenList tokenListGetLast(TokenList tl);
 TokenList tokenListExecuteForEach(TokenList tl, tokenCallBack func);
+
 #endif // TOKEN_LIST_H

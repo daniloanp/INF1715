@@ -8,8 +8,4 @@ do
 	./mini01-lex $f
 	echo
 	echo
-	
-
-	
-	
 done
