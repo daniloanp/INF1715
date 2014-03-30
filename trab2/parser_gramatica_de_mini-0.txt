@@ -21,7 +21,7 @@ cmdif     → 'if' exp nl
             [ 'else' nl
                bloco
             ]
-            'end'
+            'end' nl
 cmdwhile  → 'while' exp nl
                bloco
             'loop'

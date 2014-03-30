@@ -17,6 +17,12 @@ struct struct_token {
 	long line;
 };
 
+Token tokenListGetCurrentToken(tl) {
+	if(!tl)
+		return NULL;
+	return tl->token
+}
+
 //assuming that t0 and t1 are valid pointers to Token
 int cmpToken(void* e0, void* e1) {
 	Token t0= (Token)e0;

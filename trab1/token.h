@@ -5,7 +5,7 @@ typedef struct struct_token* Token;
 
 typedef union token_val* TokenValue;
 
-typedef enum{
+typedef enum {
 	IDENTIFIER = 1,
 	IF = 2,
 	ELSE = 3,

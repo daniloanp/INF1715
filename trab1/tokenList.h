@@ -14,7 +14,7 @@ TokenList tokenListInsert(TokenList tl, Token t);
 int tokenListFind(TokenList tl, Token t);
 void tokenListRemove(TokenList tl, Token t);
 
-
+Token tokenListGetCurrentToken(TokenList tl);
 TokenList tokenListNext( TokenList tl );
 TokenList tokenListPrevious( TokenList tl );
 TokenList tokenListGetFirst(TokenList tl);
