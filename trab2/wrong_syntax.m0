@@ -1,0 +1,5 @@
+fun main():int
+	a:int
+	a = 10 * 2 * -2
+	return
+end

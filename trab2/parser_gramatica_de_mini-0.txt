@@ -24,8 +24,8 @@ cmdif     → 'if' exp nl
             'end' nl
 cmdwhile  → 'while' exp nl
                bloco
-            'loop'
-cmdatrib  → var '=' exp
+            'loop' nl
+cmdatrib  → var '=' exp nl
 chamada   → ID '(' listaexp ')'
 listaexp  → /*vazio*/ | exp { ',' exp }
 cmdreturn → 'return' exp | 'return'
