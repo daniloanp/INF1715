@@ -13,7 +13,7 @@ int main( int argc, char **argv ) {
 	else
 		input = stdin;
 	tl = generateTokens(input);
-	tl = start(tl);
+	tl = program(tl);
 
 	if( input != stdin )
 		fclose(input);

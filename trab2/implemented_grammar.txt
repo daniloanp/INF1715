@@ -1,0 +1,88 @@
+program -> {NL} decl {decl};
+
+decl -> declGlobalVar start 
+decl -> declFunction start
+
+
+declGlobalVar -> 'ID' ':' type 'NL'
+
+type ->  CHAR
+type -> STRING
+type -> INT
+type -> BOOL
+type -> { '[' ']' } type
+
+declFunction -> 'FUN' 'ID' '(' params ')' [ ':' type ] 'NL'
+					block
+				'END' ->NL-< 
+
+
+params -> param { ','' param }
+param -> 'ID' ':' type
+
+block -> { 'ID' declOrCommand }
+		 { command }
+
+
+declOrCommand -> ':' type 'NL' [ 'ID declOrCommand ]
+				| commandAttrOrCall 'NL'
+
+
+command -> commandWhile 'NL'
+command -> commandIf 'NL'
+command -> commandReturn 'NL'
+command -> 'ID' commandAttrOrCall 'NL'
+
+commandIF -> 'IF' expression'NL'
+				block	
+			{ 'ELSE' [ 'IF' expression] bloco } //achei falha
+			'END'
+
+commandReturn -> 'RETURN' [ expression] 
+commandWhile -> 'WHILE' expression'NL'
+					block
+				'LOOP'
+arrayAccess -> 	{ '['  expression']' }
+attr -> 	arrayAccess '=' expression
+call -> 	'(' expressionList ')'
+commandAttrOrCall -> attr | call
+
+expressionList -> expression { ',' expression }
+
+expression -> C 'AND' expression
+expression -> C 'OR'  expression
+expression -> C
+
+new -> 'new' '[' expression ']' type
+varOrCall -> 'ID' '(' expressionList ')'
+varOrCall -> 'ID' {[exp]}
+
+C -> E 
+C -> E '>' expression
+C -> E '>=' expression
+C -> E '<' expression
+C -> E '<=' expression
+C -> E '=' expression
+C -> E '<>' expression
+
+E -> T
+E -> T '+' expression
+E -> T '-' expression
+
+T -> F '*' expression
+T -> F '/' expression
+
+
+F -> '(' expression ')'
+F -> 'BOOL_VAL'
+F -> 'INT_VAL'
+F -> 'STRING_VAL'
+F -> varOrCall
+F-> new
+F-> '-' expression;
+F-> 'NOT' expression
+
+
+
+
+

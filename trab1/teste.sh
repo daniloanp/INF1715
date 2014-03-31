@@ -5,7 +5,7 @@ do
 	echo
 	echo "============ --- |  Testing $f  | --- =====>>>>>>>>"
 	echo ''
-	./mini01-lex $f
+	./mini0-lex $f
 	echo
 	echo
 done

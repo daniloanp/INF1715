@@ -1,6 +1,6 @@
 #ifndef REC_PARSER_H
 #include "../trab1/tokenList.h"
-TokenList start( TokenList tl );
+TokenList program( TokenList tl );
 
 
 #endif //REC_PARSER_H

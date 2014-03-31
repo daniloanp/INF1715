@@ -36,6 +36,5 @@
 ehthumbs.db
 Thumbs.db
 
-mini0-lex
-lex.yy.c
+mini0-parser
 lex.yy.h
