@@ -124,4 +124,9 @@ TokenList tokenListExecuteForEach(TokenList tl, tokenCallBack func)
 	}
 }
 
+Token tokenListGetCurrentToken(TokenList tl) {
+	if(!tl)
+		return NULL;
+	return tl->token;
+}
 

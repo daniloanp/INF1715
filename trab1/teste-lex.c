@@ -1,8 +1,8 @@
 #include "token.h"
 #include "tokenList.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include "lex.h"
-
 
 
 char header[] ="  Passou na Análise Léxica Sem Erros!!! \n\t"; 
@@ -53,7 +53,7 @@ int main( int argc, char **argv ) {
 	else
 		input = stdin;
 	tl = generateTokens(input);
-	if( tl != NULL ) {
+	if ( tl != NULL ) {
 		printf("%s",header);
 		tokenListExecuteForEach(tl, printToken);
 		printf("%s",footer);
@@ -62,6 +62,5 @@ int main( int argc, char **argv ) {
 	
 	if( input != stdin )
 		fclose(input);
-	
 	return 0;
 }

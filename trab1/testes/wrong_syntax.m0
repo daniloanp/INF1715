@@ -16,10 +16,7 @@ fun main():int
 	else if a
 		print(b)
 	end
-
 	return
-
 	while 1
 	loop
-	
 end

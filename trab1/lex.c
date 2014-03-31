@@ -57,7 +57,7 @@ TokenList generateTokens(FILE* f) {
 				printf("    Error at line %d near to %s\n", line_num, yytext);
 				break;
 			default:
-				if(b)
+				if( (b >=1 && b <= 37) )
 					t = newToken((TokenKind)b, line_num, NULL);
 				break;
 		}
@@ -72,7 +72,7 @@ TokenList generateTokens(FILE* f) {
 	}
 	if( error_flag )  {
 		tokenListDestroy(tl);
-		return NULL;
+		return (TokenList)NULL;
 	}
 	else {
 		return tl;

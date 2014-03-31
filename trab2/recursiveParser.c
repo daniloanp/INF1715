@@ -4,81 +4,81 @@
 #include "../trab1/tokenList.h"
 
 static error_flag = 0;
+static int b = 0;
 /*
 
 */
 
-TokenList expression(TokenList tl);
-TokenList commandAttrOrCall( TokenList tl );
-TokenList block( TokenList tl );
+static TokenList expression(TokenList tl);
+static TokenList commandAttrOrCall( TokenList tl );
+static TokenList block( TokenList tl );
+static TokenList command( TokenList tl );
+static TokenList arrayBrackets( TokenList tl);
 
-
-
-int verifyCurrentToken(TokenList tl, TokenKind tk) {
+static  int verifyCurrentToken(TokenList tl, TokenKind tk) {
+	if (tl == NULL)
+		return 0;
 	Token t = tokenListGetCurrentToken( tl );
 	return tokenGetKind( t ) == tk;
 }
 
-TokenList processTerminal( TokenList tl, TokenKind tk ) {
+static  TokenList processTerminal( TokenList tl, TokenKind tk ) {
+	if(tl == NULL)
+		return NULL;
 	Token t = tokenListGetCurrentToken(tl);
 
 	if( tokenGetKind(t) == tk ) {
-		printf("\nToken: %s\n", tokenToString(t));
 		return tokenListNext( tl );
 	}
 	else {
 		error_flag++;
-
-		printf("Error(27): ");
-		printf("<%s> but <%s>\n", tokenToString(t), tokenKindToString(tk));
+		printf("Line %d.\nExpected <%s> but got <%s>\n", tokenGetLine(t), tokenKindToString(tk),  tokenToString(t));
 		return NULL;
 	}
 }
 
-TokenList processTerminalIfCurrent( TokenList tl, TokenKind tk) {
+static  TokenList processTerminalIfCurrent( TokenList tl, TokenKind tk) {
 	if( verifyCurrentToken(tl, tk) ) {
 		processTerminal(tl, tk);
 	}	
 	return tl;
 }
 
-TokenList tipoBase( TokenList tl ) {
-	return tokenListNext(tl);
-}
 
-TokenList tipo( TokenList tl ) {
+static TokenList tipo( TokenList tl ) {
 	Token t = tokenListGetCurrentToken( tl );
 	switch( tokenGetKind(t) ) {
 		case INT: case STRING: case CHAR: case BOOL:
-			return tipoBase( tl );
+			tl = processTerminal(tl, tokenGetKind(t));
+			break;
 		case OP_BRACKET:
-			tl=tokenListNext( tl );
-			t  = tokenListGetCurrentToken( tl );
-			if( tokenGetKind( t ) != CL_BRACKET ) {
-				return NULL;
-			}	
-			return tipo(tokenListNext(tl));
+			while( verifyCurrentToken( tl, OP_BRACKET ) ) {
+				tl = processTerminal( tl, OP_BRACKET );
+				tl = processTerminal( tl, CL_BRACKET );	
+			}
+			tl = tipo( tl ) ;
 			break;
 		default:
-			return tl;
+			break;
 	}
+	return tl;
 }
 
 
-TokenList declVar(TokenList tl) {	
+static TokenList declVar(TokenList tl) {	
 	tl = processTerminal( tl, IDENTIFIER );
 	tl = processTerminal( tl, COLON );
 	tl = tipo(tl);
-	return processTerminal( tl, NL);
+	return processTerminal( tl, NL );
 }
 
-TokenList param(TokenList tl) {
+static TokenList param(TokenList tl) {
 	tl = processTerminal(tl, IDENTIFIER);
 	tl = processTerminal(tl, COLON);
 	return tipo(tl);
 }
 
-TokenList params(TokenList tl) {
+static TokenList params(TokenList tl) {
 	Token t = tokenListGetCurrentToken(tl);
 	switch( tokenGetKind(t) ) {
 		case CL_PARENTHESIS:
@@ -99,23 +99,24 @@ TokenList params(TokenList tl) {
 	return tl;
 }
 
-TokenList declOrCommand( TokenList tl ) {
+static  TokenList declOrCommand( TokenList tl ) {
 	if( verifyCurrentToken( tl, COLON ) )	{
 		tl = processTerminal( tl, COLON );
 		tl = tipo( tl );
 		tl = processTerminal( tl, NL );
-		if( verifyCurrentToken( tl, IDENTIFIER ) ) {
+		if( verifyCurrentToken( tl, IDENTIFIER ) ) {		
 			tl = processTerminal( tl, IDENTIFIER );
-			return declOrCommand(tl);
+			tl = declOrCommand(tl);
 		}	
 		return tl;
 	}
 	else {
-		return commandAttrOrCall(tl);	
+		tl = commandAttrOrCall(tl);	
+		return processTerminal(tl, NL);
 	}
 }
 
-TokenList F(TokenList tl) {
+static  TokenList F(TokenList tl) {
 	Token t;
 	t = tokenListGetCurrentToken(tl);
 	switch( tokenGetKind(t) ) {
@@ -135,6 +136,7 @@ TokenList F(TokenList tl) {
 			break;
 		case IDENTIFIER:
 			tl = processTerminal(tl, IDENTIFIER);
+			tl = arrayBrackets(tl);
 			break;
 		case NEW:
 			tl = processTerminal(tl, IDENTIFIER);
@@ -149,44 +151,46 @@ TokenList F(TokenList tl) {
 			break;
 		case NOT:
 			tl = processTerminal(tl, NOT);
+			tl = expression(tl);
 			break;
 		default:
 			error_flag++;
-			printf("Error(141)\n");
-			return NULL;
+			printf("Error(156)\n");
+			tl = NULL;
+			break;
 	}
 	return tl;
 }
 
-TokenList T(TokenList tl) {
+static TokenList T(TokenList tl) {
 	tl = F(tl);
 	if ( verifyCurrentToken( tl, MUL ) ) {
 		tl = processTerminal( tl, MUL );
-		tl = T( tl );
+		tl = expression( tl );
 	}
 	else if ( verifyCurrentToken( tl, DIV ) ) {
 		tl = processTerminal( tl, DIV );
-		tl = T( tl );
+		tl = expression( tl );
 	}
 	return tl;
 }
 
 
-TokenList E( TokenList tl) {
+static TokenList E( TokenList tl) {
 	tl = T( tl );
 	if ( verifyCurrentToken( tl, PLUS ) ) {
-		processTerminal( tl, PLUS );
-		tl = E(tl);
+		tl = processTerminal( tl, PLUS );
+		tl = expression(tl);
 	}
 	else if ( verifyCurrentToken( tl, MINUS ) ) {
-		processTerminal( tl, MINUS );
-		tl = E( tl );
+		tl = processTerminal( tl, MINUS );
+		tl = expression( tl );
 	}
 
 	return tl;
 }
 
-TokenList C( TokenList tl) {
+static TokenList C( TokenList tl) {
 	Token t;
 	tl = E( tl );
 	t = tokenListGetCurrentToken(tl);
@@ -198,7 +202,7 @@ TokenList C( TokenList tl) {
 		case EQUAL:
 		case DIFFERENT:
 			tl = processTerminal( tl, tokenGetKind(t) );
-			tl = C( tl );
+			tl = expression( tl );
 			break;
 		default:
 			break;
@@ -207,7 +211,9 @@ TokenList C( TokenList tl) {
 }
 	
 
-TokenList expression(TokenList tl) {
+static TokenList expression(TokenList tl) {
+	if(tl == NULL)
+		return NULL;
 	Token t;
 	tl = C( tl );
 	t = tokenListGetCurrentToken( tl );
@@ -223,24 +229,24 @@ TokenList expression(TokenList tl) {
 	return tl;
 }
 
-TokenList expressionList( TokenList tl ) {
+static TokenList expressionList( TokenList tl ) {
 	tl = expression( tl );
 	while(verifyCurrentToken(tl, COMMA)) {
-		processTerminal(tl, COMMA);
+		tl = processTerminal(tl, COMMA);
 		tl = expression(tl);
 	}
 
 	return tl;
 }
-TokenList call( TokenList tl ) {
+static TokenList call( TokenList tl ) {
 	tl = processTerminal(tl, OP_PARENTHESIS );
 	tl = expressionList( tl );
 	tl = processTerminal( tl, CL_PARENTHESIS );
-	tl = processTerminal( tl, NL );
+	//tl = processTerminal( tl, NL );
 	return tl;
 }
 
-TokenList arrayBrackets( TokenList tl) {
+static TokenList arrayBrackets( TokenList tl) {
 	while( verifyCurrentToken( tl, OP_BRACKET ) ) {
 		tl = processTerminal( tl, OP_BRACKET );
 		tl = expression( tl );
@@ -249,12 +255,11 @@ TokenList arrayBrackets( TokenList tl) {
 	return tl;
 }
 
-TokenList commandAttrOrCall( TokenList tl ) {
+static TokenList commandAttrOrCall( TokenList tl ) {
 	if( verifyCurrentToken(tl, EQUAL) || verifyCurrentToken(tl, OP_BRACKET) ) {
 		tl = arrayBrackets(tl);
 		tl = processTerminal( tl, EQUAL );
 		tl = expression( tl );
-		tl = processTerminal( tl, NL ); 
 	}
 	else if ( verifyCurrentToken(tl, OP_PARENTHESIS) ) {
 		tl = call(tl);
@@ -262,18 +267,22 @@ TokenList commandAttrOrCall( TokenList tl ) {
 	else {
 		error_flag++;
 		printf("Error(250)\n");
-		return NULL;
 	}
 	return tl;
 }
 
-TokenList commandWhile( TokenList tl ) {
+static TokenList commandWhile( TokenList tl ) {
+	printf("\tWHILE\n");
 	tl = processTerminal(tl, WHILE);
 	tl = expression(tl);
-	return processTerminal(tl, NL);
+	tl = processTerminal(tl, NL);
+	tl = block(tl);
+	tl = processTerminal(tl, LOOP);
+	printf("\tLOOP\n");
+	return tl;
 }
 
-TokenList commandReturn( TokenList tl ) {
+static  TokenList commandReturn( TokenList tl ) {
 	Token t;
 	tl = processTerminal( tl, RETURN );
 	t = tokenListGetCurrentToken(tl);		
@@ -291,18 +300,30 @@ TokenList commandReturn( TokenList tl ) {
 		default:
 			break;
 	}
-	
-	return processTerminal( tl, NL );
+	return tl;
 }
 
-TokenList commandIf( TokenList tl ) {
+static TokenList commandIf( TokenList tl ) {
 	tl = processTerminal( tl, IF );
 	tl = expression( tl );
 	tl =  processTerminal( tl, NL );
 	tl = block( tl );
+	while( verifyCurrentToken( tl, ELSE ) ) {
+		tl = processTerminal( tl, ELSE);
+		if(verifyCurrentToken (tl, IF)) {
+			tl = processTerminal( tl, IF );
+			tl = expression( tl );
+		}
+		tl = processTerminal( tl, NL);
+		tl = block(tl);
+	}
+	
+	tl = processTerminal(tl, END);
+	
+	return tl;
 
 }
-TokenList command( TokenList tl ) {
+static  TokenList command( TokenList tl ) {
 	Token t = tokenListGetCurrentToken( tl );
 	switch( tokenGetKind( t ) ) {
 		case WHILE:
@@ -318,32 +339,50 @@ TokenList command( TokenList tl ) {
 			tl = processTerminal( tl, IDENTIFIER );
 			tl = commandAttrOrCall( tl );
 			break;
-		case NL:
-			tl = processTerminal( tl, NL );
 		default:
 			error_flag++;
 			Token t = tokenListGetCurrentToken( tl );
 			printf( "\nToken: %s ", tokenToString(t));
-			printf( "Error(293)\n" );
+			printf( "Line %d.\nExpected identifier, if, return or while but got %s.\n", tokenGetLine(t),  tokenToString(t) );
 			return NULL;
 			break;
 	}
-	return tl;
+	//printf("<-FIM COMANDO->\n");
+	return processTerminal( tl, NL );
 };
 
-TokenList block( TokenList tl ) {
-	Token t = tokenListGetCurrentToken( tl );
+
+
+static TokenList block( TokenList tl ) {
+	printf("BLOCONIVEL: %d\n", ++b);
+	TokenList tlf;
+	Token t;
 	if ( verifyCurrentToken( tl, IDENTIFIER ) ) {
 		tl = processTerminal( tl, IDENTIFIER );
 		tl = declOrCommand( tl );
 	}
-	while( !verifyCurrentToken( tl, END ) ) {
-		tl = command( tl );
-	} 
+	tlf = NULL;
+	t = tokenListGetCurrentToken( tl );
+	switch( tokenGetKind(t) ) {
+		case ELSE: 
+		case END: 
+		case LOOP:
+			break;
+		default:
+			while( tlf!=tl && tl ) {
+				tlf = tl;
+				tl = command( tl );				
+			}
+		break;
+	}
+	
+	
+	--b;
+	printf("ENDBLOCO\n");
 	return tl;
 }
 
-TokenList declFunction( TokenList tl ) {
+static TokenList declFunction( TokenList tl ) {
 	tl = processTerminal( tl, FUN );
 	tl = processTerminal( tl, IDENTIFIER );
 	tl = processTerminal( tl, OP_PARENTHESIS );
@@ -353,9 +392,9 @@ TokenList declFunction( TokenList tl ) {
 		tl = processTerminal( tl, COLON );
 		tl = tipo( tl );
 	}
-	tl=processTerminal(tl, NL);
+	tl = processTerminal(tl, NL);
 	tl = block( tl );
-	tl=processTerminal(tl, END);
+	tl = processTerminal(tl, END);
 
 	//Temporary, we need make decision about that
 	tl = processTerminalIfCurrent(tl, NL);
@@ -370,6 +409,7 @@ TokenList start( TokenList tl ) {
 		t = tokenListGetCurrentToken( tl );
 		switch ( tokenGetKind(t) ) {
 			case NL:
+				processTerminal(tl, NL);
 				break;
 			case IDENTIFIER:
 				tl = declVar( tl );
@@ -382,7 +422,6 @@ TokenList start( TokenList tl ) {
 				tl=NULL;
 				continue;
 		}
-		tl = tokenListNext( tl );
 	}
 	return tl;
 }

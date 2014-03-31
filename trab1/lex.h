@@ -2,6 +2,6 @@
 #define LEX_H
 #include <stdio.h>
 #include "tokenList.h"
-TokenList generateTokens( FILE* f);
+TokenList generateTokens( FILE* f );
 
 #endif

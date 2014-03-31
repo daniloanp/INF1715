@@ -17,12 +17,6 @@ struct struct_token {
 	long line;
 };
 
-Token tokenListGetCurrentToken(tl) {
-	if(!tl)
-		return NULL;
-	return tl->token
-}
-
 //assuming that t0 and t1 are valid pointers to Token
 int cmpToken(void* e0, void* e1) {
 	Token t0= (Token)e0;
@@ -162,7 +156,8 @@ int tokenGetLine(Token t) {
 }
 
 TokenKind tokenGetKind(Token t) {
-	assert(t);
+	if(!t)
+		return (TokenKind)NULL;
 	return t->kind;
 }
 
@@ -246,8 +241,17 @@ static char* token_string[] = {
 };
 
 char* tokenToString(Token t) {
-	assert(t);
+	//assert(t);
+	if(!t)
+		return "<--Invalido-->";
 	if(t->kind == ERROR)
 		return "ERROR";
 	else return token_string[((int)t->kind)-1];
+}
+
+char* tokenKindToString(TokenKind tk) {
+	if ( tk == ERROR ){
+		return "ERROR";
+	}
+	return token_string[((int)tk)-1];
 }

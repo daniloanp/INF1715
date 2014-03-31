@@ -59,6 +59,7 @@ long tokenGetNumberValue(Token t);
 int deleteToken(Token t);
 int cmpToken(void* e0, void* e1);
 char* tokenToString(Token t);
+char* tokenKindToString(TokenKind tk);
 
 
 #endif // TOKEN_H
