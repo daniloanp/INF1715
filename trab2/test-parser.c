@@ -12,10 +12,15 @@ int main( int argc, char **argv ) {
 		input = fopen( argv[0], "r" );
 	else
 		input = stdin;
-	tl = generateTokens(input);
-	tl = program(tl);
+	if(input) {
+		tl = generateTokens(input);
+		tl = program(tl);
 
-	if( input != stdin )
-		fclose(input);
+		if( input != stdin )
+			fclose(input);
+	}
+	else {
+		"Cannot open file";
+	}
 	return 0;
 }

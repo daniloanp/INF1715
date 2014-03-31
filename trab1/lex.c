@@ -30,11 +30,13 @@ TokenList generateTokens(FILE* f) {
 	yyin = f;
 
 	while (!done) {
+		
 		b =  yylex();
+		
 		switch (b) {
 			case NL:
 				t = newToken((TokenKind)b, line_num, NULL);
-				line_num+=countCharOccurences(yytext,b);
+				line_num+=countCharOccurences(yytext,'\n');
 				break;
 			case IDENTIFIER:
 			case STRING_VAL:

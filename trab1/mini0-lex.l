@@ -3,6 +3,16 @@
 
 int done = 0;
 int line_num = 1;
+
+static int countCharOccurences(char *s, char c) {
+	int i=0;
+	for( ; *s; s++ )
+		if( *s == c )
+			i++;
+	return i;
+}
+
+
 %}
 
 STR_CHAR [^\n"\\]
@@ -15,17 +25,16 @@ ALPHA [a-zA-Z]
 ALNUM [a-zA-Z0-9]
 
 
-%x comment
+%x C_COMMENT
+
 %%
 
+<C_COMMENT>"/*"            { BEGIN(C_COMMENT); }
+<C_COMMENT>"*/" { BEGIN(INITIAL); line_num+=countCharOccurences(yytext,'\n');  }
+<C_COMMENT>[^*\n]+   // eat comment in chunks
+<C_COMMENT>"*"       // eat the lone star
+<C_COMMENT>[\n]        line_num++;
 
-"/*"		BEGIN(comment);
-
-<comment>[^*\n]*
-<comment>[^*\n]*\n	   ++line_num;
-<comment>"*"+[^*/\n]*
-<comment>"*"+[^*/\n]*\n ++line_num;
-<comment>"*"+"/"	   BEGIN(INITIAL);
 
 
 [+] 	{ return PLUS;}

@@ -439,7 +439,7 @@ static TokenList declFunction( TokenList tl ) {
 
 static TokenList decl( TokenList tl ) {
 	Token t;
-	//while(tl) {
+	
 	t = tokenListGetCurrentToken( tl );
 	switch ( tokenGetKind(t) ) {
 		case IDENTIFIER:
