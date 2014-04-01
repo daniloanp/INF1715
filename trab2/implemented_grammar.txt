@@ -20,7 +20,7 @@ declFunction -> 'FUN' 'ID' '(' params ')' [ ':' type ] 'NL'
 params -> param { ','' param }
 param -> 'ID' ':' type
 
-block -> { 'ID' declOrCommand }
+block -> ['ID' declOrCommand]
 		 { command }
 
 
@@ -58,20 +58,26 @@ varOrCall -> 'ID' '(' expressionList ')'
 varOrCall -> 'ID' {[exp]}
 
 C -> E 
-C -> E '>' expression
-C -> E '>=' expression
-C -> E '<' expression
-C -> E '<=' expression
-C -> E '=' expression
-C -> E '<>' expression
+C -> E '>' C
+C -> E '>=' C
+C -> E '<' C
+C -> E '<=' C
+C -> E '=' C
+C -> E '<>' C
 
 E -> T
-E -> T '+' expression
-E -> T '-' expression
+E -> T '+' E
+E -> T '-' E
+-- First(E) == First(U) u First(F)
 
-T -> F '*' expression
-T -> F '/' expression
+T -> F '*' E
+T -> F '/' E
+First(U) u First(F)
 
+
+U-> ['-'] U;
+U-> ['NOT'] U;
+U->F
 
 F -> '(' expression ')'
 F -> 'BOOL_VAL'
@@ -79,8 +85,7 @@ F -> 'INT_VAL'
 F -> 'STRING_VAL'
 F -> varOrCall
 F-> new
-F-> '-' expression;
-F-> 'NOT' expression
+
 
 
 

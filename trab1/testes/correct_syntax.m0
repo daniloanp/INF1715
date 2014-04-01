@@ -44,7 +44,7 @@ fun main(a:int, b:[]int):[][]int
 	c[1][2] = 12
 	c[5][4] = a
 	a=1
-	a = -nota(a - 10 * 2 * (-2 /2) + (2 *(12))+1/(20/12)/b )
+	a = not not nota-----(a - 10 * 2 * (-2 /2) + (2 *(12))+1/(20/12)/b )
 	if a < 2
 		print(a)
 	else if exp 
