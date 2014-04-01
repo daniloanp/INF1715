@@ -33,11 +33,17 @@ command -> commandIf 'NL'
 command -> commandReturn 'NL'
 command -> 'ID' commandAttrOrCall 'NL'
 
-commandIF -> 'IF' expression'NL'
+commandIf->'IF' expression 'NL'
 				block	
-			{ 'ELSE' [ 'IF' expression] bloco } //achei falha
+			{ 
+			'ELSE' 'IF' expression
+				block }
+			[
+			'ELSE'
+				block
+			]
 			'END'
-
+			
 commandReturn -> 'RETURN' [ expression] 
 commandWhile -> 'WHILE' expression'NL'
 					block

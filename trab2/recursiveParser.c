@@ -3,7 +3,11 @@
 #include "../trab1/token.h"
 #include "../trab1/tokenList.h"
 
+
+//global_variable is more intuitive;
 static error_flag = 0;
+
+
 /*
 
 */
@@ -15,6 +19,9 @@ static TokenList block( TokenList tl );
 static TokenList command( TokenList tl );
 static TokenList arrayAccess( TokenList tl );
 
+
+
+// -- Auxiliar Functions:
 static  int verifyCurrentToken(TokenList tl, TokenKind tk) {
 	if (tl == NULL)
 		return 0;
@@ -43,14 +50,19 @@ static  TokenList processTerminal( TokenList tl, TokenKind tk ) {
 	}
 }
 
-static  TokenList processTerminalIfCurrent( TokenList tl, TokenKind tk) {
-	if( verifyCurrentToken(tl, tk) ) {
-		processTerminal(tl, tk);
-	}	
-	return tl;
+static void printError(int line, char *expected, char *got){
+	printf("Line %d: The expected was %s but got %s", line, expected, got);	
 }
+// end_auxiliar.
 
 
+/*
+type ->  CHAR
+type -> STRING
+type -> INT
+type -> BOOL
+type -> { '[' ']' } type
+*/
 static TokenList type( TokenList tl ) {
 	Token t = tokenListGetCurrentToken( tl );
 	switch( tokenGetKind(t) ) {
@@ -65,46 +77,50 @@ static TokenList type( TokenList tl ) {
 			tl = type( tl ) ;
 			break;
 		default:
+			printError(tokenGetLine(t), "a type", tokenToString(t));
+			tl = NULL;
 			break;
 	}
 	return tl;
 }
 
-
+/*
+declGlobalVar -> 'ID' ':' type 'NL'
+*/
 static TokenList declGlobalVar(TokenList tl) {	
 	tl = processTerminal( tl, IDENTIFIER );
 	tl = processTerminal( tl, COLON );
 	tl = type(tl);
 	return processTerminal( tl, NL );
 }
-
+/*
+param -> 'ID' ':' type
+*/
 static TokenList param(TokenList tl) {
 	tl = processTerminal(tl, IDENTIFIER);
 	tl = processTerminal(tl, COLON);
 	return type(tl);
 }
 
+/*
+params -> param { ','' param }
+*/
 static TokenList params(TokenList tl) {
-	Token t = tokenListGetCurrentToken(tl);
-	switch( tokenGetKind(t) ) {
-		case CL_PARENTHESIS: //FOLLOW
-			return tl;
-			break;
-		case  IDENTIFIER:
-			tl = param(tl);
-			//pay attention, loop
-			while( verifyCurrentToken(tl, COMMA) ) {
-				tl = processTerminal(tl, COMMA);
-				tl = param(tl);
-			}
-			break;
-		default:
-			printf("Error(83)\n");
-			break;
+	tl = param(tl);
+	//pay attention, loop
+	while( verifyCurrentToken(tl, COMMA) ) {
+		tl = processTerminal(tl, COMMA);
+		tl = param(tl);
 	}
 	return tl;
 }
 
+
+/*
+declOrCommand -> ':' type 'NL'
+declOrCommand -> ':' type 'NL' 'ID' declOrCommand
+declOrCommand ->  commandAttrOrCall 'NL'
+*/
 static  TokenList declOrCommand( TokenList tl ) {
 	if( verifyCurrentToken( tl, COLON ) )	{
 		tl = processTerminal( tl, COLON );
@@ -112,17 +128,20 @@ static  TokenList declOrCommand( TokenList tl ) {
 		tl = processTerminal( tl, NL );
 		if( verifyCurrentToken( tl, IDENTIFIER ) ) {		
 			tl = processTerminal( tl, IDENTIFIER );
-			tl = declOrCommand(tl);
+			tl = declOrCommand( tl );
 		}	
 		return tl;
 	}
 	else {
-		tl = commandAttrOrCall(tl);	
-		return processTerminal(tl, NL);
+		tl = commandAttrOrCall( tl );	
+		return processTerminal( tl, NL );
 	}
 }
 
-
+/*
+varOrCall -> 'ID' '(' expressionList ')'
+varOrCall -> 'ID' {[exp]}
+*/
 static TokenList varOrCall(TokenList tl) {
 	tl = processTerminal(tl, IDENTIFIER);
 	if( verifyCurrentToken( tl, OP_PARENTHESIS) ) {
@@ -133,8 +152,9 @@ static TokenList varOrCall(TokenList tl) {
 	}
 }
 
-
-
+/*
+new -> 'new' '[' expression ']' type
+*/
 static TokenList new(TokenList tl) {
 	tl = processTerminal(tl, NEW);
 	tl = processTerminal(tl, OP_BRACKET);
@@ -144,6 +164,14 @@ static TokenList new(TokenList tl) {
 	return tl;
 }
 
+/*
+F -> '(' expression ')'
+F -> 'BOOL_VAL'
+F -> 'INT_VAL'
+F -> 'STRING_VAL'
+F -> varOrCall
+F-> new
+*/
 static  TokenList F(TokenList tl) {
 	Token t;
 	int i=0;
@@ -191,20 +219,15 @@ static  TokenList F(TokenList tl) {
 
 static TokenList U(TokenList tl) {
 	Token t;
-	if ( verifyCurrentToken( tl, MINUS)) {
-		tl = processTerminal(tl, MINUS);
-		return U(tl);
+	t = tokenListGetCurrentToken(tl);
+	switch ( tokenGetKind(t) ) {
+		case MINUS: case NOT:
+			tl = processTerminal( tl, tokenGetKind( t ) );
+			return U(tl);	
+		default:
+			break;
 	}
-	else if ( verifyCurrentToken(tl, NOT) ) {
-		tl = processTerminal(tl, NOT);
-		return U(tl);
-	}
-	else {
-		tl = F(tl);	
-	}
-	
-	return tl;
-			
+	return F(tl);			
 }
 
 static TokenList T(TokenList tl) {
@@ -283,7 +306,6 @@ static TokenList expressionList( TokenList tl ) {
 		tl = processTerminal(tl, COMMA);
 		tl = expression(tl);
 	}
-
 	return tl;
 }
 
@@ -334,7 +356,7 @@ static TokenList commandAttrOrCall( TokenList tl ) {
 	}
 	else {
 		error_flag++;
-		printf("Expected a function call or a variable declaration, but got %s", tokenToString(tokenListGetCurrentToken(tl)));
+		printf("Expected a function call or attribution, but got %s", tokenToString(tokenListGetCurrentToken(tl)));
 		tl = NULL;
 	}
 	return tl;
@@ -379,7 +401,7 @@ static  TokenList commandReturn( TokenList tl ) {
 
 
 /*
-commandIF->'IF' expression 'NL'
+commandIf->'IF' expression 'NL'
 				block	
 			{ 
 			'ELSE' 'IF' expression
@@ -486,7 +508,9 @@ static TokenList declFunction( TokenList tl ) {
 	tl = processTerminal( tl, FUN );
 	tl = processTerminal( tl, IDENTIFIER );
 	tl = processTerminal( tl, OP_PARENTHESIS );
-	tl = params( tl );
+	if(verifyCurrentToken(tl, IDENTIFIER)) {
+		tl = params( tl );
+	}
 	tl = processTerminal( tl, CL_PARENTHESIS );
 	if( verifyCurrentToken( tl, COLON ) ) {
 		tl = processTerminal( tl, COLON );
@@ -519,8 +543,6 @@ static TokenList decl( TokenList tl ) {
 			tl = declFunction( tl );
 			break;
 		default:
-			error_flag++;
-			printf("Error at line %d. Expected 'fun' or identifier but got %s", tokenGetLine(t), tokenToString(t));
 			break;
 			
 	}
@@ -535,21 +557,31 @@ program -> {NL} decl {decl};
 */
 TokenList program( TokenList tl ) {
 	Token t;
-	while( tl ) {
-		// "{NL}"
-		while( verifyCurrentToken(tl, NL)) {
+	if(tl == NULL) {
+		printf("Error Empty Program.");
+	}
+
+	while( verifyCurrentToken(tl, NL) ) {
 			tl = processTerminal( tl, NL );
-		}
+	}
+
+	do{
+		// "{NL}"
+		
 
 		t = tokenListGetCurrentToken( tl );
+		
 		switch ( tokenGetKind( t ) ) {
 			case IDENTIFIER: case FUN:
 				tl = decl( tl );
 				break;
 			default:
+				error_flag++;
+				printf("Error at line %d. Expected 'fun' or identifier but got %s", tokenGetLine(t), tokenToString(t));
 				tl=NULL; // loop protection
 				break;
-		}
-	}
+			}
+	} while(tl);
+	
 	return tl;
 }

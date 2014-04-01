@@ -151,7 +151,9 @@ Token newToken(TokenKind kind, long line, TokenValue value ) {
 }
 
 int tokenGetLine(Token t) {
-	assert(t);
+	if(!t)
+		return (TokenKind)NULL;
+	
 	return t->line;
 }
 
