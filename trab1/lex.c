@@ -9,18 +9,10 @@
 extern int done;
 extern int line_num;
 extern int nline;
+extern  int countCharOccurences(char *s, char c);
+/* /* */
 
-
-//Auxiliar Function that count how many times a char exists into a string
-static int countCharOccurences(char *s, char c) {
-	int i=0;
-	for( ; *s; s++ )
-		if( *s == c )
-			i++;
-	return i;
-}
-
-TokenList generateTokens(FILE* f) {
+TokenList generateTokens(FILE* f, int* status) {
 	Token t = NULL; 
 	TokenList tl = NULL	;
 	TokenKind b;
@@ -28,7 +20,7 @@ TokenList generateTokens(FILE* f) {
 	char c;
 	short error_flag = 0;
 	yyin = f;
-
+	*status = 0; //no error;
 	while (!done) {
 		
 		b =  yylex();
@@ -74,6 +66,7 @@ TokenList generateTokens(FILE* f) {
 	}
 	if( error_flag )  {
 		tokenListDestroy(tl);
+		*status = error_flag;
 		return (TokenList)NULL;
 	}
 	else {

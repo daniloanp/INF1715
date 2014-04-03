@@ -4,6 +4,14 @@
 int done = 0;
 int line_num = 1;
 
+//Auxiliar Function that count how many times a char exists into a string
+int countCharOccurences(char *s, char c) {
+	int i=0;
+	for( ; *s; s++ )
+		if( *s == c )
+			i++;
+	return i;
+}
 
 %}
 
@@ -16,18 +24,16 @@ DEC_NUM [0-9]+
 ALPHA [a-zA-Z]
 ALNUM [a-zA-Z0-9]
 
-
-%x C_COMMENT
+%x comment
 
 %%
 
-<C_COMMENT>"/*"            { BEGIN(C_COMMENT); }
-<C_COMMENT>"*/" { BEGIN(INITIAL);  }
-<C_COMMENT>[^*\n]+   // eat comment in chunks
-<C_COMMENT>"*"       // eat the lone star
-<C_COMMENT>[\n]        line_num++;
-
-
+"/*"		{ BEGIN(comment); }
+<comment><<EOF>>	{return ERROR;}
+<comment>"*/"	   { BEGIN(INITIAL); }
+<comment>[^*\n]*
+<comment>[\n]	   { ++line_num; }
+<comment>"*"
 
 [+] 	{ return PLUS;}
 [-] 	{ return MINUS;}
@@ -77,12 +83,12 @@ not		{ return NOT;}
 	return STRING_VAL; 
 }
 
-{COMMENT_LINE} { ++line_num;}
+{COMMENT_LINE} { }
 
 [[:blank:]]* { }
 
 
-\n([[:blank:]\n]*|{COMMENT_BLOCK})* {
+\n([[:blank:]\n]*|{COMMENT_BLOCK}|{COMMENT_LINE})* {
 	return NL;
 }
 

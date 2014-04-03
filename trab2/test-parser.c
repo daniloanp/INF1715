@@ -5,6 +5,7 @@
 #include "recursiveParser.h"
 
 int main( int argc, char **argv ) {	
+	int ret;
 	TokenList tl;
 	FILE *input;
 	++argv, --argc;
@@ -13,14 +14,21 @@ int main( int argc, char **argv ) {
 	else
 		input = stdin;
 	if(input) {
-		tl = generateTokens(input);
-		tl = program(tl);
+		tl = generateTokens(input, &ret);
+		if(!ret)
+			ret = parser(tl);
 
 		if( input != stdin )
 			fclose(input);
 	}
 	else {
 		"Cannot open file";
+		return 1;
 	}
-	return 0;
+
+	if(ret == 0 )
+		printf("Correct Syntax!!!\n");
+
+
+	return ret;
 }

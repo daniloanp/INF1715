@@ -28,7 +28,7 @@ end
 
 fun x()
 	h:int
-	return h = a + b(h=12)
+	return h = a + b
 end
 
 fun y()
@@ -36,6 +36,16 @@ fun y()
 	b:int
 end
 
+/*addsfjdhsgdshjgfhsdi*/
+
+/*DDSAFVDNAKMDSFSAFASDA*/
+
+a:int
+
+
+
+
+/*SADSDFGSFGHFDSF*/
 
 fun main(a:int, b:[]int):[][]int
 	a:int
@@ -44,7 +54,9 @@ fun main(a:int, b:[]int):[][]int
 	c[1][2] = 12
 	c[5][4] = a
 	a=1
-	a = -nota(a - 10 * 2 * (-2 /2) + (2 *(12))+1//(20/12)/b )
+	b=1--2
+	a = -nota(a)-(( - ((((((((10)))))))) * (9 * (-8 )/ 7) + (6 *(5))+4/(3/2)/b )
+	a = (-nota(a - 10 * 1- 2 * (-2 /2) + (2 *(12))+1/(20/12)/b and G) or (a < i) and B<4) - -2
 	if a < 2
 		print(a)
 	else if exp 

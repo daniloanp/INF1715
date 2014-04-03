@@ -34,7 +34,8 @@ fun main(a:int, b:[]int):[][]int
 	return
 	return c/a
 	while 1
-	loop
+	loopa
 end
 
-/*
+A:int
+

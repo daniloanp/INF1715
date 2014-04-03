@@ -7,10 +7,9 @@
 //global_variable is more intuitive;
 static error_flag = 0;
 
+//it's a bit graceless, but I think that is more efficient because it allow decrease the stack use;
+static int count_parenthesis = 0;
 
-/*
-
-*/
 
 static TokenList expression(TokenList tl);
 static TokenList expressionList(TokenList tl);
@@ -18,6 +17,8 @@ static TokenList commandAttrOrCall( TokenList tl );
 static TokenList block( TokenList tl );
 static TokenList command( TokenList tl );
 static TokenList arrayAccess( TokenList tl );
+static TokenList call( TokenList tl );
+static TokenList U(TokenList tl);
 
 
 
@@ -29,39 +30,44 @@ static  int verifyCurrentToken(TokenList tl, TokenKind tk) {
 	return tokenGetKind( t ) == tk;
 }
 
+static void printError(int line, char *expected, char *got){
+	error_flag++;
+	printf("Error at Line %d: The expected was %s but got %s", line, expected, got);	
+
+}
+
 static  TokenList processTerminal( TokenList tl, TokenKind tk ) {
 	Token t = tokenListGetCurrentToken(tl);
 	if(!error_flag && tl == NULL) {
-		printf("Expected <%s> but <EOF>\n", tokenKindToString(tk) );
 		error_flag++;
+		printf("Unexpected End of File. The expected was <%s>\n", tokenKindToString(tk) );
+		
 	}
-	if(tl == NULL)
-
+	if(tl == NULL) {
+		error_flag++;
 		return NULL;
-	
-
-	if( tokenGetKind(t) == tk ) {
+	}	
+	if( t!= NULL && tokenGetKind(t) == tk ) {
+		printf("Token: %s, Line: %d\n", tokenToString(t), tokenGetLine(t));
 		return tokenListNext( tl );
 	}
 	else {
 		error_flag++;
-		printf("Line %d.\nExpected <%s> but got <%s>\n", tokenGetLine(t), tokenKindToString(tk),  tokenToString(t));
+		printError( tokenGetLine(t), tokenKindToString(tk),  tokenToString(t));
 		return NULL;
 	}
 }
 
-static void printError(int line, char *expected, char *got){
-	printf("Line %d: The expected was %s but got %s", line, expected, got);	
-}
+
 // end_auxiliar.
 
 
 /*
-type ->  CHAR
-type -> STRING
-type -> INT
-type -> BOOL
-type -> { '[' ']' } type
+type ->  'CHAR'
+type -> 'STRING'
+type -> 'INT'
+type -> 'BOOL'
+type -> '[' ']' type
 */
 static TokenList type( TokenList tl ) {
 	Token t = tokenListGetCurrentToken( tl );
@@ -136,6 +142,7 @@ static  TokenList declOrCommand( TokenList tl ) {
 		tl = commandAttrOrCall( tl );	
 		return processTerminal( tl, NL );
 	}
+	return tl;
 }
 
 /*
@@ -145,11 +152,15 @@ varOrCall -> 'ID' {[exp]}
 static TokenList varOrCall(TokenList tl) {
 	tl = processTerminal(tl, IDENTIFIER);
 	if( verifyCurrentToken( tl, OP_PARENTHESIS) ) {
+		tl = call(tl);
+		/*tl = processTerminal( tl, OP_PARENTHESIS);
 		tl = expressionList(tl);
+		tl = processTerminal( tl, CL_PARENTHESIS);*/
 	}
 	else {
 		tl = arrayAccess(tl);
 	}
+	return tl;
 }
 
 /*
@@ -174,25 +185,27 @@ F-> new
 */
 static  TokenList F(TokenList tl) {
 	Token t;
-	int i=0;
-	t = tokenListGetCurrentToken(tl);
-	switch( tokenGetKind(t) ) {
+	int exp_ret=1;
+
+	while( tl && exp_ret ) {
+		t = tokenListGetCurrentToken(tl);
+		switch ( tokenGetKind(t) ) {
+		case MINUS: case NOT:
+			tl = processTerminal( tl, tokenGetKind( t ) );
+			break;
 		case OP_PARENTHESIS:
-			/*for(i=0; verifyCurrentToken(tl, OP_PARENTHESIS);
-				i++) {
-				tl = processTerminal( tl, OP_PARENTHESIS );;
-			}*/
 			tl = processTerminal( tl, OP_PARENTHESIS );
-			tl = expression(tl);
-			tl = processTerminal( tl, CL_PARENTHESIS );
-			/*for (i;
-				i;
-				--i) {
-					tl = processTerminal( tl, CL_PARENTHESIS );
-				}
-			
-			*/
-		break;
+			count_parenthesis ++;
+			break;
+		default:
+			exp_ret = 0;
+			break;
+		}
+	}
+
+	t = tokenListGetCurrentToken(tl);
+
+	switch( tokenGetKind(t) ) {
 		case BOOL_VAL:
 			tl = processTerminal(tl, BOOL_VAL);
 			break;
@@ -214,25 +227,18 @@ static  TokenList F(TokenList tl) {
 			tl = NULL;
 			break;
 	}
-	return tl;
-}
-
-static TokenList U(TokenList tl) {
-	Token t;
-	t = tokenListGetCurrentToken(tl);
-	switch ( tokenGetKind(t) ) {
-		case MINUS: case NOT:
-			tl = processTerminal( tl, tokenGetKind( t ) );
-			return U(tl);	
-		default:
-			break;
+		
+	while( tl!=NULL && count_parenthesis > 0 && verifyCurrentToken(tl, CL_PARENTHESIS) ) {
+		tl = processTerminal(tl, CL_PARENTHESIS);
+		count_parenthesis--;
 	}
-	return F(tl);			
+
+	return tl;
 }
 
 static TokenList T(TokenList tl) {
 	Token t;
-	tl = U(tl);
+	tl = F(tl);
 	t = tokenListGetCurrentToken(tl);
 	switch( tokenGetKind(t) ) {
 		case MUL:case DIV:
@@ -281,6 +287,7 @@ static TokenList C( TokenList tl) {
 }
 	
 
+
 static TokenList expression( TokenList tl ) {
 	Token t;
 	tl = C( tl );
@@ -293,6 +300,12 @@ static TokenList expression( TokenList tl ) {
 			break;
 		default:
 			break;
+	}
+	if( count_parenthesis != 0 )
+	{	
+		error_flag++;
+		tl = NULL;
+		printf("Error: unbalanced parenthesis;");
 	}
 	return tl;
 }
@@ -316,7 +329,6 @@ static TokenList call( TokenList tl ) {
 	tl = processTerminal(tl, OP_PARENTHESIS );
 	tl = expressionList( tl );
 	tl = processTerminal( tl, CL_PARENTHESIS );
-	//tl = processTerminal( tl, NL );
 	return tl;
 }
 
@@ -327,8 +339,6 @@ static TokenList attr( TokenList tl ) {
 	tl = arrayAccess(tl);
 	tl = processTerminal( tl, EQUAL );
 	tl = expression( tl );
-
-	//tl = processTerminal( tl, NL );
 	return tl;
 }
 
@@ -356,7 +366,7 @@ static TokenList commandAttrOrCall( TokenList tl ) {
 	}
 	else {
 		error_flag++;
-		printf("Expected a function call or attribution, but got %s", tokenToString(tokenListGetCurrentToken(tl)));
+		printf("Expected a function call or attribution, but got %s\n", tokenToString(tokenListGetCurrentToken(tl)));
 		tl = NULL;
 	}
 	return tl;
@@ -559,29 +569,36 @@ TokenList program( TokenList tl ) {
 	Token t;
 	if(tl == NULL) {
 		printf("Error Empty Program.");
+		return tl;
 	}
 
+	// "{NL}"
 	while( verifyCurrentToken(tl, NL) ) {
 			tl = processTerminal( tl, NL );
 	}
 
 	do{
-		// "{NL}"
 		
-
 		t = tokenListGetCurrentToken( tl );
-		
 		switch ( tokenGetKind( t ) ) {
 			case IDENTIFIER: case FUN:
 				tl = decl( tl );
 				break;
 			default:
 				error_flag++;
-				printf("Error at line %d. Expected 'fun' or identifier but got %s", tokenGetLine(t), tokenToString(t));
+				printf("Error at line %d. Expected 'fun' or identifier but got %s\n", tokenGetLine(t), tokenToString(t));
 				tl=NULL; // loop protection
 				break;
 			}
 	} while(tl);
 	
 	return tl;
+}
+
+
+
+int parser( TokenList tl )
+{
+	program(tl);
+	return error_flag;
 }

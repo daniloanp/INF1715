@@ -1,0 +1,783 @@
+flex --header-file=lex.yy.h mini0-lex.l 
+gcc -o mini0-lex lex.yy.c teste-lex.c lex.h lex.c token.h token.c tokenList.h tokenList.c
+Teste sem erros:
+
+
+bash teste.sh	
+
+============ --- |  Testing testes/00-empty.m0  | --- =====>>>>>>>>
+
+
+
+
+============ --- |  Testing testes/01-multicomment1.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| NL 
+    4| preceding NL 
+    5| afterwards NL 
+    6| preceding 
+    7| NL 
+    9| afterwards NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/02-err-multicomment2.m0  | --- =====>>>>>>>>
+
+    Error at line 1 near to 
+
+
+
+============ --- |  Testing testes/03-singlecomment.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| NL 
+    2| bla bla bla NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/04-singlecomment-enter.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| ouch 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/05-nesting-is-invalid.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| bla this is mult AND div COLON MUL DIV NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/06-strings.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| "sou uma string" NL 
+    2| "contenho um escape \" NL 
+    3| "\\ faz o escape de \ em strings" NL 
+    4| "um enter se faz com \n" NL 
+    5| "tab	tab	tab" NL 
+    6| "veja: 
+sou outra linha" NL 
+    7| "aspas dentro de "strings" assim" NL 
+    8| "escreve-se " usando \"" NL 
+    9| "" NL 
+   10| " eu nao sou um comentario: /* hello */ " NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/07-err-multistring.m0  | --- =====>>>>>>>>
+
+    Error at line 1 near to "
+    Error at line 3 near to "
+
+
+
+============ --- |  Testing testes/08-ints.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| 0 NL 
+    2| 1 NL 
+    3| 15 NL 
+    4| MINUS 2 NL 
+    5| 450 NL 
+    6| -1 NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/09-hex.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| 16 NL 
+    2| 0 NL 
+    3| 0 x NL 
+    4| 10 NL 
+    5| 27 NL 
+    6| 43690 NL 
+    7| 160 xa NL 
+    8| -1 NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/10-maxint.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| -1 NL 
+    3| -1 NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/11-nl.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| one NL 
+    2| another NL 
+    4| two_later NL 
+    8| three_later NL 
+   10| then_two NL 
+   14| after_a_comment NL 
+   18| after_a_line_comment NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/12-keywords.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| IF ELSE END WHILE LOOP FUN RETURN NEW goto STRING INT CHAR BOOL $true $false AND OR NOT NL 
+    2| "this and that are not keywords" NL 
+    4| function NL 
+    5| LESS END GREATER NL 
+    6| LESS_EQUAL END EQUAL GREATER NL 
+    7| OP_PARENTHESIS x GREATER 2 CL_PARENTHESIS AND OP_PARENTHESIS y LESS 3 CL_PARENTHESIS NL 
+    8| returnif NL 
+    9| andor NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/13-ids.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| NL 
+    2| a a0 _ _A NL 
+    4| _0 NL 
+    5| __ NL 
+    6| ___ NL 
+    7| ____ NL 
+    8| _____ NL 
+    9| ____ NL 
+   10| ___ NL 
+   11| __ NL 
+   12| _ NL 
+   13| _0 NL 
+   15| a_ A_ Z NL 
+   17| 0 a 0 foo123 foo NL 
+   19| ovo NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/14-invalidids.m0  | --- =====>>>>>>>>
+
+    Error at line 2 near to $
+    Error at line 4 near to $
+    Error at line 6 near to $
+    Error at line 8 near to @
+    Error at line 10 near to %
+    Error at line 12 near to ^
+    Error at line 12 near to ^
+    Error at line 17 near to .
+
+
+
+============ --- |  Testing testes/15-punct.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| OP_PARENTHESIS CL_PARENTHESIS COMMA COLON GREATER LESS GREATER_EQUAL LESS_EQUAL EQUAL DIFFERENT OP_BRACKET CL_BRACKET PLUS MINUS MUL DIV NL 
+    2| OP_PARENTHESIS a CL_PARENTHESIS NL 
+    3| OP_PARENTHESIS OP_PARENTHESIS a CL_PARENTHESIS CL_PARENTHESIS NL 
+    4| OP_PARENTHESIS OP_PARENTHESIS CL_PARENTHESIS CL_PARENTHESIS NL 
+    5| x COLON STRING NL 
+    6| x OP_BRACKET i CL_BRACKET NL 
+    7| table OP_BRACKET 18 CL_BRACKET NL 
+    8| GREATER_EQUAL NL 
+    9| LESS_EQUAL NL 
+   10| GREATER LESS NL 
+   11| DIFFERENT NL 
+   12| LESS DIFFERENT GREATER NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/16-punctbrk.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| i PLUS PLUS NL 
+    2| MINUS MINUS i NL 
+    3| MUL DIV NL 
+    7| IF x GREATER_EQUAL MINUS 1 NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/50-allanschottler.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| NL 
+    2| FUN foo OP_PARENTHESIS var COLON BOOL COMMA _var2 COLON INT CL_PARENTHESIS COLON STRING NL 
+    4| IF 250 DIFFERENT var2 NL 
+    6| intarray COLON NEW OP_BRACKET 2 CL_BRACKET INT NL 
+    7| _int COLON INT NL 
+    8| a COLON STRING NL 
+    9| int2 COLON INT NL 
+   11| a EQUAL "string" NL 
+   13| _int EQUAL 46 PLUS OP_PARENTHESIS 46 MINUS 2 CL_PARENTHESIS NL 
+   14| _int EQUAL _int DIV 2 NL 
+   19| END NL 
+   21| RETURN a NL 
+   23| END NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/51-daniloanp-erro1.m0  | --- =====>>>>>>>>
+
+    Error at line 1 near to "
+    Error at line 2 near to '
+    Error at line 5 near to "
+    Error at line 6 near to '
+    Error at line 6 near to '
+    Error at line 6 near to "
+    Error at line 9 near to &
+    Error at line 9 near to &
+    Error at line 10 near to |
+    Error at line 25 near to |
+    Error at line 25 near to |
+
+
+
+============ --- |  Testing testes/52-daniloanp-erro2.m0  | --- =====>>>>>>>>
+
+    Error at line 8 near to $
+    Error at line 10 near to "
+    Error at line 11 near to \
+    Error at line 12 near to "
+    Error at line 15 near to �
+    Error at line 15 near to �
+    Error at line 15 near to �
+    Error at line 15 near to �
+
+
+
+============ --- |  Testing testes/52-daniloanp-ok.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| IF OP_PARENTHESIS a GREATER 12 AND b LESS 10 CL_PARENTHESIS then NL 
+    2| printf OP_PARENTHESIS a CL_PARENTHESIS NL 
+    3| next OP_PARENTHESIS b COMMA 20 CL_PARENTHESIS NL 
+    4| END NL 
+    6| WHILE life_is_going NL 
+    7| increaseHappiness OP_PARENTHESIS current_happiness PLUS 1 CL_PARENTHESIS NL 
+    8| LOOP NL 
+   10| "danilo
+	André
+	do Nascimento
+	
+	Rio de Janeiro\	Estudante da "PUC-Rio"" NL 
+   12| print OP_PARENTHESIS "'André do Nascimento'" CL_PARENTHESIS NL 
+   14| IF foo EQUAL $true NL 
+   18| led EQUAL MINUS 14 NL 
+   22| ELSE IF NL 
+   23| luz EQUAL 12 NL 
+   24| ELSE IF NL 
+   25| vila EQUAL 25 NL 
+   26| ELSE NL 
+   27| amizade EQUAL amizada PLUS 10 NL 
+   28| END NL 
+   30| foo bar "bla
+" "hello world" NL 
+   32| foo "weeee" foo foo NL 
+   33| bar NL 
+   34| bar bar NL 
+   40| dsakjdshjsdasdsajhashjds NL 
+   41| 1 NL 
+   42| 20 NL 
+   43| 522 NL 
+   44| 15 PLUS 48 NL 
+   45| 4015 NL 
+   46| OP_PARENTHESIS NL 
+   47| CL_PARENTHESIS NL 
+   48| COMMA NL 
+   49| COLON NL 
+   50| LESS GREATER NL 
+   51| GREATER NL 
+   52| LESS NL 
+   53| GREATER_EQUAL NL 
+   54| LESS_EQUAL NL 
+   55| EQUAL NL 
+   56| DIFFERENT NL 
+   57| OP_BRACKET NL 
+   58| CL_BRACKET NL 
+   59| PLUS NL 
+   60| MINUS NL 
+   61| MUL NL 
+   62| DIV NL 
+   64| 1 PLUS 2 PLUS 3 EQUAL x 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/53-jpfabris-aloc.m0  | --- =====>>>>>>>>
+
+    Error at line 1 near to {
+    Error at line 3 near to }
+
+
+
+============ --- |  Testing testes/54-jpfabris-exp.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| FUN main OP_PARENTHESIS CL_PARENTHESIS COLON BOOL NL 
+    2| a COLON NEW OP_BRACKET 20 CL_BRACKET CHAR NL 
+    3| a EQUAL "Teste Lexico" NL 
+    4| b COLON NEW INT NL 
+    5| b EQUAL 10 NL 
+    6| c COLON NEW INT NL 
+    7| c EQUAL 25 NL 
+    8| IF c GREATER b NL 
+    9| b EQUAL b MUL 3 NL 
+   10| WHILE c DIFFERENT 0 NL 
+   11| c EQUAL c MINUS 1 NL 
+   12| RETURN c AND b NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/55-jpfabris-test.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| FUN soma OP_PARENTHESIS a COLON INT COMMA b COLON INT CL_PARENTHESIS COLON INT 
+   32| NL 
+   33| a NL 
+   34| a NL 
+   35| MUL DIV a NL 
+   36| a NL 
+   37| MUL MUL MUL MUL MUL MUL DIV a NL 
+   38| a MUL MUL MUL NL 
+   40| FUN main OP_PARENTHESIS CL_PARENTHESIS NL 
+   41| a COLON NEW OP_BRACKET 20 CL_BRACKET CHAR NL 
+   42| a EQUAL "Testando primeira string" NL 
+   43| a EQUAL "Testando em 
+ duas linhas" NL 
+   44| a EQUAL "\
+ Uma linha" NL 
+   45| a EQUAL "\
+
+ Mais um espaco" NL 
+   47| RETURN NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/56-malelu-comentario_aberto.m0  | --- =====>>>>>>>>
+
+    Error at line 4 near to 
+
+
+
+============ --- |  Testing testes/57-malelu-comentario.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| FUN main OP_PARENTHESIS CL_PARENTHESIS COLON INT NL 
+    3| END NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/58-malelu-exp.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| FUN main OP_PARENTHESIS CL_PARENTHESIS COLON INT NL 
+    2| a COLON INT NL 
+    3| _b COLON INT NL 
+    4| C COLON BOOL NL 
+    5| variavel COLON STRING NL 
+    6| A_ COLON OP_BRACKET CL_BRACKET CHAR NL 
+    7| a EQUAL 8 NL 
+    8| _b EQUAL 52 NL 
+    9| C EQUAL $true NL 
+   11| IF a EQUAL 8 OR _b DIFFERENT 9 NL 
+   12| variavel EQUAL "marina" NL 
+   13| ELSE IF a LESS_EQUAL 4 AND _b GREATER 0 NL 
+   14| RETURN 4 MUL 5 MINUS 4 PLUS 1 DIV OP_PARENTHESIS 1 PLUS 3 CL_PARENTHESIS NL 
+   16| WHILE NOT C NL 
+   17| func OP_PARENTHESIS 5 COMMA 6 CL_PARENTHESIS NL 
+   18| END NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/59-malelu-str_aberta.m0  | --- =====>>>>>>>>
+
+    Error at line 3 near to "
+    Error at line 4 near to }
+
+
+
+============ --- |  Testing testes/60-malelu-str.m0  | --- =====>>>>>>>>
+
+    Error at line 14 near to "
+    Error at line 14 near to \
+    Error at line 14 near to "
+    Error at line 14 near to \
+    Error at line 14 near to \
+    Error at line 15 near to "
+    Error at line 15 near to \
+    Error at line 15 near to "
+
+
+
+============ --- |  Testing testes/61-ojunqueira-general1.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| NL 
+    9| p COLON " ola ola " NL 
+   14| x DIFFERENT 3 NL 
+   15| _ LESS 3 NL 
+   16| y EQUAL 4 PLUS 6 NL 
+   17| temp EQUAL 0 NL 
+   18| _temp EQUAL 2 MINUS 10 NL 
+   19| _temp2 EQUAL 4 NL 
+   21| IF OP_PARENTHESIS x LESS_EQUAL 5 CL_PARENTHESIS NL 
+   22| y EQUAL 2 NL 
+   23| END 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/62-ojunqueira-keyword1.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| INT STRING NL 
+    2| CHAR NL 
+    3| FUN LOOP NL 
+    4| BOOL NL 
+    5| IF then ELSE NL 
+    6| END NL 
+    7| $true NL 
+    8| $false NL 
+    9| AND OR NOT NL 
+   10| NEW number NL 
+   11| RETURN 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/63-ojunqueira-operator1.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| LESS GREATER NL 
+    2| DIFFERENT NL 
+    3| EQUAL NL 
+    4| COLON NL 
+    5| OP_PARENTHESIS CL_PARENTHESIS NL 
+    6| LESS_EQUAL NL 
+    7| PLUS NL 
+    8| GREATER_EQUAL NL 
+    9| MINUS NL 
+   10| OP_BRACKET CL_BRACKET NL 
+   11| MUL NL 
+   12| DIV 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/64-ojunqueira-string1.m0  | --- =====>>>>>>>>
+
+    Error at line 3 near to "
+    Error at line 3 near to \
+    Error at line 3 near to "
+
+
+
+============ --- |  Testing testes/65-lhpelosi.m0  | --- =====>>>>>>>>
+
+    Error at line 52 near to ~
+    Error at line 52 near to ?
+    Error at line 52 near to @
+    Error at line 52 near to $
+    Error at line 52 near to $
+    Error at line 52 near to $
+    Error at line 52 near to $
+    Error at line 52 near to {
+    Error at line 52 near to }
+    Error at line 52 near to !
+    Error at line 52 near to ;
+    Error at line 55 near to $
+    Error at line 55 near to $
+
+
+
+============ --- |  Testing testes/correct_syntax.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| h COLON INT NL 
+    2| f COLON OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET INT NL 
+    4| FUN b OP_PARENTHESIS CL_PARENTHESIS COLON OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET INT NL 
+    5| print OP_PARENTHESIS a CL_PARENTHESIS NL 
+    6| END NL 
+    8| FUN c OP_PARENTHESIS CL_PARENTHESIS NL 
+    9| h EQUAL NOT a NL 
+   10| END NL 
+   12| FUN c OP_PARENTHESIS CL_PARENTHESIS NL 
+   13| h EQUAL NOT a MINUS a NL 
+   14| h EQUAL NOT a NL 
+   15| h EQUAL MINUS b NL 
+   16| h EQUAL MINUS MINUS MINUS MINUS MINUS MINUS MINUS MINUS a NL 
+   17| END NL 
+   19| FUN x OP_PARENTHESIS CL_PARENTHESIS NL 
+   20| h COLON INT NL 
+   21| h EQUAL a PLUS b NL 
+   22| END NL 
+   24| FUN x OP_PARENTHESIS CL_PARENTHESIS NL 
+   25| h COLON INT NL 
+   26| RETURN 1 EQUAL a PLUS b NL 
+   27| END NL 
+   29| FUN x OP_PARENTHESIS CL_PARENTHESIS NL 
+   30| h COLON INT NL 
+   31| RETURN h EQUAL a PLUS b OP_PARENTHESIS h EQUAL 12 CL_PARENTHESIS NL 
+   32| END NL 
+   34| FUN y OP_PARENTHESIS CL_PARENTHESIS NL 
+   35| a COLON CHAR NL 
+   36| b COLON INT NL 
+   37| END NL 
+   40| FUN main OP_PARENTHESIS a COLON INT COMMA b COLON OP_BRACKET CL_BRACKET INT CL_PARENTHESIS COLON OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET INT NL 
+   41| a COLON INT NL 
+   42| b COLON STRING NL 
+   43| c COLON CHAR NL 
+   44| c OP_BRACKET 1 CL_BRACKET OP_BRACKET 2 CL_BRACKET EQUAL 12 NL 
+   45| c OP_BRACKET 5 CL_BRACKET OP_BRACKET 4 CL_BRACKET EQUAL a NL 
+   46| a EQUAL 1 NL 
+   47| a EQUAL NOT NOT nota MINUS MINUS MINUS MINUS MINUS OP_PARENTHESIS a MINUS 10 MUL 2 MUL OP_PARENTHESIS MINUS 2 DIV 2 CL_PARENTHESIS PLUS OP_PARENTHESIS 2 MUL OP_PARENTHESIS 12 CL_PARENTHESIS CL_PARENTHESIS PLUS 1 DIV OP_PARENTHESIS 20 DIV 12 CL_PARENTHESIS DIV b CL_PARENTHESIS NL 
+   48| IF a LESS 2 NL 
+   49| print OP_PARENTHESIS a CL_PARENTHESIS NL 
+   50| ELSE IF exp NL 
+   51| print OP_PARENTHESIS MINUS 1 CL_PARENTHESIS NL 
+   52| ELSE IF a NL 
+   54| ELSE IF a NL 
+   55| print OP_PARENTHESIS "c" CL_PARENTHESIS NL 
+   56| ELSE NL 
+   57| print OP_PARENTHESIS "c" CL_PARENTHESIS NL 
+   58| END NL 
+   63| WHILE 1 NL 
+   64| LOOP NL 
+   65| END NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/teste_erro1.txt  | --- =====>>>>>>>>
+
+    Error at line 1 near to "
+    Error at line 2 near to '
+    Error at line 5 near to "
+    Error at line 6 near to '
+    Error at line 6 near to '
+    Error at line 6 near to "
+    Error at line 9 near to &
+    Error at line 9 near to &
+    Error at line 10 near to |
+    Error at line 25 near to |
+    Error at line 25 near to |
+
+
+
+============ --- |  Testing testes/teste_erro2.txt  | --- =====>>>>>>>>
+
+    Error at line 8 near to $
+    Error at line 10 near to "
+    Error at line 11 near to \
+    Error at line 12 near to "
+    Error at line 15 near to �
+    Error at line 15 near to �
+    Error at line 15 near to �
+    Error at line 15 near to �
+
+
+
+============ --- |  Testing testes/teste_ok.txt  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| IF OP_PARENTHESIS a GREATER 12 AND b LESS 10 CL_PARENTHESIS then NL 
+    2| printf OP_PARENTHESIS a CL_PARENTHESIS NL 
+    3| next OP_PARENTHESIS b COMMA 20 CL_PARENTHESIS NL 
+    4| END NL 
+    6| WHILE life_is_going NL 
+    7| increaseHappiness OP_PARENTHESIS current_happiness PLUS 1 CL_PARENTHESIS NL 
+    8| LOOP NL 
+   10| "danilo
+	André
+	do Nascimento
+	
+	Rio de Janeiro\	Estudante da "PUC-Rio"" NL 
+   12| print OP_PARENTHESIS "'André do Nascimento'" CL_PARENTHESIS NL 
+   14| IF foo EQUAL $true NL 
+   18| led EQUAL MINUS 14 NL 
+   22| ELSE IF NL 
+   23| luz EQUAL 12 NL 
+   24| ELSE IF NL 
+   25| vila EQUAL 25 NL 
+   26| ELSE NL 
+   27| amizade EQUAL amizada PLUS 10 NL 
+   28| END NL 
+   30| foo bar "bla
+" "hello world" NL 
+   32| foo "weeee" foo foo NL 
+   33| bar NL 
+   34| bar bar NL 
+   40| dsakjdshjsdasdsajhashjds NL 
+   41| 1 NL 
+   42| 20 NL 
+   43| 522 NL 
+   44| 15 PLUS 48 NL 
+   45| 4015 NL 
+   46| OP_PARENTHESIS NL 
+   47| CL_PARENTHESIS NL 
+   48| COMMA NL 
+   49| COLON NL 
+   50| LESS GREATER NL 
+   51| GREATER NL 
+   52| LESS NL 
+   53| GREATER_EQUAL NL 
+   54| LESS_EQUAL NL 
+   55| EQUAL NL 
+   56| DIFFERENT NL 
+   57| OP_BRACKET NL 
+   58| CL_BRACKET NL 
+   59| PLUS NL 
+   60| MINUS NL 
+   61| MUL NL 
+   62| DIV NL 
+   64| 1 PLUS 2 PLUS 3 EQUAL x 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
+
+============ --- |  Testing testes/wrong_syntax.m0  | --- =====>>>>>>>>
+
+  Passou na Análise Léxica Sem Erros!!! 
+	
+    1| h COLON INT NL 
+    2| f COLON OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET OP_BRACKET CL_BRACKET INT NL 
+    4| FUN main OP_PARENTHESIS CL_PARENTHESIS COLON INT NL 
+    5| a COLON INT NL 
+    6| b COLON STRING NL 
+    7| c COLON CHAR NL 
+    8| c OP_BRACKET 1 CL_BRACKET OP_BRACKET 2 CL_BRACKET EQUAL 12 NL 
+    9| c OP_BRACKET 5 CL_BRACKET OP_BRACKET 4 CL_BRACKET EQUAL a NL 
+   10| a EQUAL 1 NL 
+   11| a EQUAL OP_PARENTHESIS a MINUS 10 MUL 2 MUL OP_PARENTHESIS MINUS 2 DIV 2 CL_PARENTHESIS PLUS OP_PARENTHESIS 2 MUL OP_PARENTHESIS 12 CL_PARENTHESIS CL_PARENTHESIS PLUS 1 DIV OP_PARENTHESIS 20 DIV 12 CL_PARENTHESIS DIV b CL_PARENTHESIS NL 
+   12| IF a LESS 2 NL 
+   13| print OP_PARENTHESIS a CL_PARENTHESIS NL 
+   14| ELSE IF exp NL 
+   15| print OP_PARENTHESIS MINUS 1 CL_PARENTHESIS NL 
+   16| ELSE IF a NL 
+   17| print OP_PARENTHESIS b CL_PARENTHESIS NL 
+   18| END NL 
+   20| RETURN NL 
+   22| WHILE 1 NL 
+   23| LOOP NL 
+   25| END NL 
+   27| a COLON INT NL 
+
+	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
+	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos são prefixados de $ para melhoras a visualização
+	
+
