@@ -6,11 +6,11 @@ decl -> declFunction start
 
 declGlobalVar -> 'ID' ':' type 'NL'
 
-type ->  CHAR
-type -> STRING
-type -> INT
-type -> BOOL
-type -> { '[' ']' } type
+type -> 'CHAR'
+type -> 'STRING'
+type -> 'INT'
+type -> 'BOOL'
+type -> '[' ']' type
 
 declFunction -> 'FUN' 'ID' '(' params ')' [ ':' type ] 'NL'
 					block
@@ -50,7 +50,7 @@ commandWhile -> 'WHILE' expression'NL'
 				'LOOP'
 arrayAccess -> 	{ '['  expression']' }
 attr -> 	arrayAccess '=' expression
-call -> 	'(' expressionList ')'
+call -> 	'(' [expressionList] ')'
 commandAttrOrCall -> attr | call
 
 expressionList -> expression { ',' expression }
@@ -60,7 +60,7 @@ expression -> C 'OR'  expression
 expression -> C
 
 new -> 'new' '[' expression ']' type
-varOrCall -> 'ID' '(' expressionList ')'
+varOrCall -> 'ID' call 
 varOrCall -> 'ID' {[exp]}
 
 C -> E 
@@ -76,16 +76,17 @@ E -> T '+' E
 E -> T '-' E
 -- First(E) == First(U) u First(F)
 
-T -> F '*' E
-T -> F '/' E
+T -> U
+T -> U '*' E
+T -> U '/' E
 First(U) u First(F)
 
+U-> '-' U
+U-> 'not' U
+U-> F 
 
-U-> ['-'] U;
-U-> ['NOT'] U;
-U->F
 
-F -> '(' expression ')'
+F -> '(' expression ')' 
 F -> 'BOOL_VAL'
 F -> 'INT_VAL'
 F -> 'STRING_VAL'

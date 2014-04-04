@@ -29,7 +29,7 @@ ALNUM [a-zA-Z0-9]
 %%
 
 "/*"		{ BEGIN(comment); }
-<comment><<EOF>>	{return ERROR;}
+<comment><<EOF>>	{ printf("Unclosed comment block .\n"); return ERROR;}
 <comment>"*/"	   { BEGIN(INITIAL); }
 <comment>[^*\n]*
 <comment>[\n]	   { ++line_num; }

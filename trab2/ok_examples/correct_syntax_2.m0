@@ -14,33 +14,16 @@ fun c()
 	h = not a
 	h = -b
 	h = --------a
+	l = c(12 and 65 - 32 ,  not a+b, 27*2321/3+"Only the Love can save us"-true+false, (printf("aaaa%xaaa", 0x12)*(-12) ) )
 end
 
-fun x()
-	h:int
-	h = a + b
-end
-
-fun x()
-	h:int
-	return 1 = a + b
-end
-
-fun x()
-	h:int
-	return h = a + b
-end
-
-fun y()
-	a:char
-	b:int
-end
 
 /*addsfjdhsgdshjgfhsdi*/
 
 /*DDSAFVDNAKMDSFSAFASDA*/
 
-a:int
+a:int/*asasas*/
+
 
 
 
@@ -57,7 +40,7 @@ fun main(a:int, b:[]int):[][]int
 	b=1--2
 	a = -nota(a)-(( - ((((((((10)))))))) * (9 * (-8 )/ 7) + (6 *(5))+4/(3/2)/b ))
 	a = (-nota(a - 10 * 1- 2 * (-2 /2) + (2 *(12))+1/(20/12)/b and G) or (a < i) and B<4) - -2
-	if a < 2
+	if a < 2 --12 * 121234
 		print(a)
 	else if exp 
 		print(-1)
@@ -72,7 +55,8 @@ fun main(a:int, b:[]int):[][]int
 	/*return a
 	return
 	return c/a*/
-	while 1
+	while not is_the_semester_end(sem)
+		go_to_all_compilers_classes()
 	loop
 end
-/**/	
+/**/

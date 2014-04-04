@@ -8,7 +8,6 @@
 static error_flag = 0;
 
 //it's a bit graceless, but I think that is more efficient because it allow decrease the stack use;
-static int count_parenthesis = 0;
 
 
 static TokenList expression(TokenList tl);
@@ -40,7 +39,7 @@ static  TokenList processTerminal( TokenList tl, TokenKind tk ) {
 	Token t = tokenListGetCurrentToken(tl);
 	if(!error_flag && tl == NULL) {
 		error_flag++;
-		printf("Unexpected End of File. The expected was <%s>\n", tokenKindToString(tk) );
+		printf("Error: Unexpected End of File. The expected was <%s>\n", tokenKindToString(tk) );
 		
 	}
 	if(tl == NULL) {
@@ -156,7 +155,9 @@ static TokenList new(TokenList tl) {
 }
 
 /*
-F -> '(' expression ')'
+F -> '(' expression ')' -- it isn't very clear at code, because I didn't use recursion.
+F -> - F
+F -> NOT F
 F -> 'BOOL_VAL'
 F -> 'INT_VAL'
 F -> 'STRING_VAL'
@@ -165,27 +166,14 @@ F-> new
 */
 static  TokenList F(TokenList tl) {
 	Token t;
-	int exp_ret=1;
-
-	while( tl && exp_ret ) {
-		t = tokenListGetCurrentToken(tl);
-		switch ( tokenGetKind(t) ) {
-		case MINUS: case NOT:
-			tl = processTerminal( tl, tokenGetKind( t ) );
-			break;
-		case OP_PARENTHESIS:
-			tl = processTerminal( tl, OP_PARENTHESIS );
-			count_parenthesis ++;
-			break;
-		default:
-			exp_ret = 0;
-			break;
-		}
-	}
-
-	t = tokenListGetCurrentToken(tl);
+	t = tokenListGetCurrentToken( tl );
 
 	switch( tokenGetKind(t) ) {
+		case OP_PARENTHESIS:
+			tl = processTerminal( tl, OP_PARENTHESIS );
+			tl = expression(tl);
+			tl = processTerminal(tl, CL_PARENTHESIS);
+			break;
 		case BOOL_VAL:
 			tl = processTerminal(tl, BOOL_VAL);
 			break;
@@ -214,17 +202,40 @@ static  TokenList F(TokenList tl) {
 			break;
 	}
 		
-	while( tl!=NULL && count_parenthesis > 0 && verifyCurrentToken(tl, CL_PARENTHESIS) ) {
-		tl = processTerminal(tl, CL_PARENTHESIS);
-		count_parenthesis--;
-	}
-
 	return tl;
 }
 
+
+/*
+U-> '-' F
+U-> 'not' F
+U-> F 
+*/
+static TokenList U( TokenList tl ) {
+	Token t;
+	t = tokenListGetCurrentToken( tl );
+	switch ( tokenGetKind(t) ) {
+		case MINUS: case NOT:
+			tl = processTerminal( tl, tokenGetKind( t ) );
+			tl = U( tl );
+			break;
+		default:
+			tl = F(tl);
+			break;
+	}
+	return tl;
+}
+
+
+/*
+T -> U
+T -> U '*' E
+T -> U '/' E
+First(U) u First(F)
+*/
 static TokenList T(TokenList tl) {
 	Token t;
-	tl = F(tl);
+	tl = U(tl);
 	t = tokenListGetCurrentToken(tl);
 	switch( tokenGetKind(t) ) {
 		case MUL:case DIV:
@@ -238,6 +249,12 @@ static TokenList T(TokenList tl) {
 }
 
 
+/*
+E -> T
+E -> T '+' E
+E -> T '-' E
+-- First(E) == First(U) u First(F)
+*/
 static TokenList E( TokenList tl) {
 	Token t;
 	tl = T( tl );
@@ -251,6 +268,16 @@ static TokenList E( TokenList tl) {
 	}
 	return tl;
 }
+
+/*
+C -> E 
+C -> E '>' C
+C -> E '>=' C
+C -> E '<' C
+C -> E '<=' C
+C -> E '=' C
+C -> E '<>' C
+*/
 
 static TokenList C( TokenList tl) {
 	Token t;
@@ -272,7 +299,10 @@ static TokenList C( TokenList tl) {
 	return tl;
 }
 	
-
+/*
+expression -> C 'AND' expression
+expression -> C 'OR'  expression
+expression -> C*/
 
 static TokenList expression( TokenList tl ) {
 	Token t;
@@ -286,12 +316,6 @@ static TokenList expression( TokenList tl ) {
 			break;
 		default:
 			break;
-	}
-	if( count_parenthesis != 0 )
-	{	
-		error_flag++;
-		tl = NULL;
-		printf("Error: unbalanced parenthesis;");
 	}
 	return tl;
 }
@@ -309,11 +333,27 @@ static TokenList expressionList( TokenList tl ) {
 }
 
 /*
-call -> 	'(' expressionList ')'
+call -> 	'(' [expressionList] ')'
 */
 static TokenList call( TokenList tl ) {
+	Token t;
 	tl = processTerminal(tl, OP_PARENTHESIS );
-	tl = expressionList( tl );
+	t = tokenListGetCurrentToken( tl );
+	switch ( tokenGetKind( t )) {
+		case IDENTIFIER:
+		case INT_VAL:
+		case STRING_VAL:
+		case BOOL_VAL:
+		case NEW:
+		case OP_PARENTHESIS:
+		case NOT:
+		case MINUS:
+			tl = expressionList( tl );
+			break;
+		default: 
+			break;
+	}
+	
 	tl = processTerminal( tl, CL_PARENTHESIS );
 	return tl;
 }
@@ -344,6 +384,7 @@ static TokenList arrayAccess( TokenList tl) {
 commandAttrOrCall -> attr | call
 */
 static TokenList commandAttrOrCall( TokenList tl ) {
+	Token t;
 	if( verifyCurrentToken(tl, EQUAL) || verifyCurrentToken(tl, OP_BRACKET) ) {
 		tl = attr( tl );	
 	}
@@ -352,7 +393,8 @@ static TokenList commandAttrOrCall( TokenList tl ) {
 	}
 	else {
 		error_flag++;
-		printf("Expected a function call or attribution, but got %s\n", tokenToString(tokenListGetCurrentToken(tl)));
+		t = tokenListGetCurrentToken(tl);
+		printf("Error at Line %d. Expected a function call or attribution, but got %s\n", tokenGetLine( t ), tokenToString( t ));
 		tl = NULL;
 	}
 	return tl;
@@ -413,7 +455,7 @@ static TokenList commandIf( TokenList tl ) {
 	tl = expression( tl );
 	tl =  processTerminal( tl, NL );
 	tl = block( tl );
-	// PROBLEM
+
 	while( verifyCurrentToken( tl, ELSE ) ) {
 		tl = processTerminal( tl, ELSE);
 		if(verifyCurrentToken (tl, IF)) {
@@ -542,7 +584,6 @@ static TokenList decl( TokenList tl ) {
 			break;
 			
 	}
-	//}
 	return tl;
 }
 
@@ -554,7 +595,8 @@ program -> {NL} decl {decl};
 TokenList program( TokenList tl ) {
 	Token t;
 	if(tl == NULL) {
-		printf("Error Empty Program.");
+		printf("Error Empty Program.\n");
+		error_flag++;
 		return tl;
 	}
 

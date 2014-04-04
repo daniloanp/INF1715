@@ -48,7 +48,8 @@ TokenList generateTokens(FILE* f, int* status) {
 			case ERROR:
 				error_flag = 1;
 				t=NULL;
-				printf("    Error at line %d near to %s\n", line_num, yytext);
+				if(!strcmp("", yytext))
+					printf("Error at line %d.", line_num);
 				break;
 			default:
 				if( (b >=1 && b <= 37) )
