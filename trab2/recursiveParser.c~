@@ -48,7 +48,7 @@ static  TokenList processTerminal( TokenList tl, TokenKind tk ) {
 		return NULL;
 	}	
 	if( t!= NULL && tokenGetKind(t) == tk ) {
-		//printf("Token: %s, Line: %d\n", tokenToString(t), tokenGetLine(t));
+		printf("Token: %s, Line: %d\n", tokenToString(t), tokenGetLine(t));
 		return tokenListNext( tl );
 	}
 	else {
