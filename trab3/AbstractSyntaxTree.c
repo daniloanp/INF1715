@@ -67,10 +67,14 @@ AST AST_InsertSibling( AST sibling, AST newSibling ) {
 
 
 
-AST AST_InsertParentLowering( AST curr, AST newParent ) {
-	AST parent = curr->parent;
-	curr->parent = newParent;
-	return parent;
+AST AST_InsertNewChildParentOfChildren( AST curr, AST newParent ) {
+	AST node;
+	for( node = curr->firstChild; node; node = node->nextSibling) {
+		AST_InsertChild(newParent, node);
+	}
+	curr->firstChild = curr->lastChild = newParent;
+	newParent->parent = curr;
+	return newParent;
 }
 
 

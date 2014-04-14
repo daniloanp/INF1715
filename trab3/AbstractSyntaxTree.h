@@ -73,6 +73,8 @@ typedef enum {
 	AST_DeclVars = 153,
 	AST_DeclVar = 154,
 	AST_Commands = 155,
+	AST_Var = 156,
+	AST_UNARY_MINUS = 157,
 	//Begin TemporaryNodes, a complete AST shouldn't have any of them
 
 	AST_decl = 255,
@@ -90,7 +92,7 @@ typedef enum {
 AST AST_NewNode( ASTNodeType type , int line, ASTNodeValue value );	
 AST AST_InsertChild( AST parent, AST child );
 AST AST_InsertSibling( AST sibling, AST newSibling );
-AST AST_InsertParentLowering( AST curr, AST newParent );
+AST AST_InsertNewChildParentOfChildren( AST curr, AST newParent );
 ASTNodeType AST_getType(AST node);
 AST AST_GetParent(AST node);
 AST AST_GetFirstChild(AST node);

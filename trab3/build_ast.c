@@ -6,6 +6,13 @@
 #include "../trab2/recursiveParser.h"
 
 
+int isConstant(TokenKind tk) {
+	return (tk==INT_VAL || tk==STRING_VAL || tk==BOOL_VAL);
+}
+
+int isBinOp(TokenKind tk) {
+	return( tk==PLUS || tk == MINUS || tk==MUL || tk==DIV || tk == AND || tk == OR);
+}
 
 AST root = NULL;
 //this function assumes that the parser are ok;
@@ -149,7 +156,7 @@ int buildAst(int nodeType, int line, Token t) {
 				return 0;
 			}
 			if( AST_GetLastChild(currParent) == NULL ) {
-				currParent = AST_InsertChild( currParent, AST_NewNode(AST_Commands, line, ) );
+				currParent = AST_InsertChild( currParent, AST_NewNode(AST_Commands, line, NULL ) );
 			}
 			node = AST_NewNode( AST_Call, tokenGetLine(tempId), AST_NodeValueFromToken(tempId) );
 			currParent = AST_InsertChild( currParent, node ); 
@@ -162,23 +169,78 @@ int buildAst(int nodeType, int line, Token t) {
 			}
 			//ATTR
 			if( AST_GetLastChild(currParent) == NULL ) {
-				currParent = 	AST_InsertChild( currParent, AST_NewNode(AST_Commands, line, ) );
+				currParent = AST_InsertChild( currParent, AST_NewNode(AST_Commands, line, NULL) );
 			}
 
 			node = AST_NewNode(AST_Attr, line, NULL);
 			currParent = AST_InsertChild( currParent, node );
+			node = AST_NewNode(AST_Var, line, AST_NodeValueFromToken(tempId));
+			node = AST_InsertChild( currParent, node );
+			currParent = node;
 
+			if((TokenKind)nodeType == OP_BRACKET) {
+				
+				
+			}
 		}
-		
 
-		
-		//else if(AST_GetFirstChild(currParent)) {
+
+		if( parentType == AST_Var && (TokenKind)nodeType == OP_BRACKET) {
+			node = AST_NewNode(AST_Expression, line, NULL);
+			currParent = AST_InsertChild(currParent, node);
+		}
+		if( parentType == AST_Var && (TokenKind)nodeType == EQUAL ) {
+			currParent = AST_GetParent(currParent);
+		}
+		if( parentType == AST_Expression && (TokenKind)nodeType == CL_BRACKET) {
+			currParent = AST_GetParent(currParent);
+		}
+
+		//Constants & BinOp
+		if( parentType == AST_Expression || parentType == AST_UNARY_MINUS || parentType == AST_NOT|| isBinOp((TokenKind)nodeType )) {
+			if( (TokenKind)nodeType == NOT ) {
+				node = AST_NewNode(AST_NOT, line, NULL);
+				node = AST_InsertChild(currParent, node);	
+				currParent = node;
+			}
+			else if( (TokenKind)nodeType == NOT && AST_GetFirstChild(currParent) == NULL) {
+				node = AST_NewNode(AST_UNARY_MINUS, line, NULL);
+				node = AST_InsertChild(currParent, node);	
+				currParent = node;	
+			}
+			else if( isConstant((TokenKind)nodeType) ) {
+				node = AST_NewNode((ASTNodeType)nodeType, line, AST_NodeValueFromToken(t));
+				node = AST_InsertChild(currParent, node);
+				do {
+					currParent = AST_GetParent(currParent);
+				} while(AST_GetType(currParent) == AST_UNARY_MINUS || AST_GetType(currParent) == NOT);
+			}
+			else if( (TokenKind)nodeType == NEW ) {
+				node = AST_NewNode(AST_NEW, line, AST_NodeValueFromToken(t));
+				node = AST_InsertChild(currParent, node);
+			}
+			else if( (TokenKind)nodeType == IDENTIFIER ) { //VarORCall
+				tempId = t;
+			}
+			else if( (TokenKind)nodeType == OP_PARENTHESIS ) {
+				if(tempId!=NULL) {//CALL
+
+				} else { //Parenthesis
+
+				}
+
+			}
+			else if( isBinOp((TokenKind)nodeType) ) {
+				if(AST_GetFirstChild(currParent) == NULL) {
+					printf("Problema");
+					return 0;
+				}
+				node = AST_NewNode((ASTNodeType)nodeType, line, NULL);
+				currParent = AST_InsertNewChildParentOfChildren(currParent, node);
+			}
+		}
+
 	}
-
-	/*if( parentType == AST_DeclFunction) {
-
-	}*/
-
 
 	return 1;
 }
