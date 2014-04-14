@@ -12,15 +12,15 @@ struct struct_AST {
    int line;
    ASTNodeValue value;
 
-   AST* firstChild;
-   AST* lastChild;
-   AST* parent;
-   AST* nextSibling;
-   AST* prevSibling;
+   AST firstChild;
+   AST lastChild;
+   AST parent;
+   AST nextSibling;
+   AST prevSibling;
 };
 
 AST AST_NewNode( ASTNodeType type , int line, ASTNodeValue value ) {
-	AST node  = (AST)malloc(sizeof(struct_AST));
+	AST node  = (AST)malloc(sizeof(struct struct_AST));
 	node->type = type;
 	node->line = line;
 	node->value = value;
@@ -33,56 +33,107 @@ AST AST_NewNode( ASTNodeType type , int line, ASTNodeValue value ) {
 }
 
 
-int AST_NewNodeFromToken( Token t ) {
-	ASTNodeValue value = t->value;
-	if( t->kind >= 1 && t->kind <= 36)
-		ASTNodeType type = (ASTNodeType) t->kind;
-	else
-		assert(0);//problema
-	AST node  = AST_NewNode(type, t->line, value );
-	return node;;
-}
-
-AST AST_insertChild( AST parent, AST child ) {
+AST AST_InsertChild( AST parent, AST child ) {
 	AST sibling = parent->lastChild;
-	if(lastChild!=NULL) {
-		lastChild->nextSibling = child;
+	if(sibling!=NULL) {
+		sibling->nextSibling = child;
 	}
 	else {
 		parent->firstChild = child;
-		child->prevSibling = lastChild;
+		child->prevSibling = sibling;
 	}
 	child->parent = parent;
 	parent->lastChild = child;
-	return parent;
+	return child;
 
 
 }
 
-int AST_insertSibling( AST sibling, AST newSibling ) {
+AST AST_InsertSibling( AST sibling, AST newSibling ) {
+	AST parent = sibling->parent;
 	if(newSibling != NULL) {
+		sibling = sibling->parent->lastChild;
+		/*while(sibling->newSibling != NULL) {
+			sibling = sibling->nextSibling;
+		}*/
+
 		sibling->nextSibling = newSibling;
 		newSibling->prevSibling = sibling;
 		newSibling->parent = sibling->parent;
 		parent->lastChild = newSibling;
 	}
-	return sibling;
+	return newSibling;
 }
 
 
 
-int AST_insertParentLowering( AST curr, AST newParent ) {
+AST AST_InsertParentLowering( AST curr, AST newParent ) {
 	AST parent = curr->parent;
 	curr->parent = newParent;
+	return parent;
 }
 
 
-ASTNodeType AST_getType(AST node) {
+ASTNodeType AST_GetType(AST node) {
 	if(!node)
 		return (ASTNodeType)0;
 	return node->type;
 }
 
+
+AST AST_GetParent(AST node) {
+	return node->parent;
+}
+
+AST AST_GetFirstChild(AST node) {
+	return node->firstChild;
+}
+
+AST AST_GetLastChild(AST node) {
+	return node->lastChild;
+}
+
+AST AST_GetNextSibling(AST node) {
+	return node->nextSibling;
+}
+
+AST AST_GetPrevSibling(AST node) {
+	return node->prevSibling;
+}
+
+ASTNodeValue AST_NodeValueFromToken( Token t ) {
+	//TokenValue val = NULL;
+	ASTNodeValue nodeVal = NULL;
+	if (t!=NULL && tokenGetVal( t )!=NULL) {
+		nodeVal = (ASTNodeValue)malloc(sizeof(union ast_val));
+		if(nodeVal == NULL) {
+			printf("Malloc problem");
+			return NULL;
+		}
+		if( tokenGetKind( t ) == IDENTIFIER ||  tokenGetKind( t ) == STRING_VAL ) {
+			nodeVal->string = tokenGetStringValue(t);
+		}
+		else {
+			nodeVal->number = tokenGetNumberValue(t);
+		}
+		return nodeVal;
+	}
+	return NULL;
+}
+
+ASTNodeValue AST_NodeValueFromInt( unsigned int v ) {
+	ASTNodeValue nodeVal = NULL;
+	nodeVal = (ASTNodeValue)malloc(sizeof(union ast_val));
+	if(nodeVal == NULL) {
+		printf("Malloc problem");
+	} 
+	else {
+		nodeVal->number = v;
+		return nodeVal;
+	}
+
+	return NULL;
+}
 
 
 

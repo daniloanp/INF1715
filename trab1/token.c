@@ -8,7 +8,6 @@ union token_val
 {
 	unsigned long number;
 	char* string;
-	char character;
 };
 
 struct struct_token {
@@ -31,7 +30,7 @@ int cmpToken(void* e0, void* e1) {
 	if( t0->kind != t1->kind ) {
 		return 1;
 	}
-	if( t1->kind == INT_VAL ) {
+	if( t1->kind == INT_VAL || t1->kind == BOOL_VAL ) {
 		if( t1->value->number > t0->value->number ) {
 			return -1;
 		}
@@ -124,18 +123,6 @@ TokenValue createTokenNumberValue(long number) {
 	return pt;
 }
 
-TokenValue createTokenCharValue(char c) {
-	TokenValue pt = NULL;
-	pt = (TokenValue) malloc(sizeof(union token_val));
-	memset(pt,0,sizeof(union token_val));
-	if(pt != NULL) {
-		pt->character = c;
-	}
-	else {
-		return NULL;
-	}
-	return pt;
-}
 
 Token newToken(TokenKind kind, long line, TokenValue value ) {
 	Token pt = 0;
@@ -195,12 +182,7 @@ long tokenGetNumberValue(Token t) {
 	assert(t->value);
 	return t->value->number;
 }
-
-char tokenGetCharValue(Token t) {
-	assert(t);
-	assert(t->value);
-	return t->value->character;
-}			
+			
 
 static char* token_string[] = { 
 	"IDENTIFIER",
@@ -222,7 +204,6 @@ static char* token_string[] = {
 	"BOOL_VAL",
 	"INT_VAL",
 	"STRING",
-	"CHAR_VAL",
 	"PLUS",
 	"MINUS",
 	"MUL",

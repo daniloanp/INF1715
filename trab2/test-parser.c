@@ -16,7 +16,7 @@ int main( int argc, char **argv ) {
 	if(input) {
 		tl = generateTokens(input, &ret);
 		if(!ret)
-			ret = parser(tl);
+			ret = parser(tl, NULL);
 
 		if( input != stdin )
 			fclose(input);

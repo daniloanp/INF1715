@@ -25,24 +25,23 @@ typedef enum {
 	BOOL_VAL = 17,
 	INT_VAL = 18,
 	STRING = 19,
-	CHAR_VAL = 20,
-	PLUS = 21,
-	MINUS = 22,
-	MUL = 23,
-	DIV = 24,
-	OP_BRACKET = 25,
-	CL_BRACKET = 26,
-	OP_PARENTHESIS = 27,
-	CL_PARENTHESIS = 28,
-	COMMA = 29,
-	COLON = 30,
-	GREATER  = 31,
-	GREATER_EQUAL = 32,
-	LESS = 33,
-	LESS_EQUAL = 34,
-	EQUAL = 35,
-	DIFFERENT = 36,
-	STRING_VAL = 37,
+	PLUS = 20,
+	MINUS = 21,
+	MUL = 22,
+	DIV = 23,
+	OP_BRACKET = 24,
+	CL_BRACKET = 25,
+	OP_PARENTHESIS = 26,
+	CL_PARENTHESIS = 27,
+	COMMA = 28,
+	COLON = 29,
+	GREATER  = 30,
+	GREATER_EQUAL = 31,
+	LESS = 32,
+	LESS_EQUAL = 33,
+	EQUAL = 34,
+	DIFFERENT = 35,
+	STRING_VAL = 36,
 	ERROR = 999
 } TokenKind;
 
@@ -53,7 +52,6 @@ Token newToken(TokenKind t, long line, TokenValue value );
 int tokenGetLine(Token t);
 TokenKind tokenGetKind(Token t);
 TokenValue tokenGetVal(Token t);
-char tokenGetCharValue(Token t);
 char* tokenGetStringValue(Token t);
 long tokenGetNumberValue(Token t);
 int deleteToken(Token t);
