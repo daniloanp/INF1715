@@ -183,64 +183,79 @@ int buildAst(int nodeType, int line, Token t) {
 				
 			}
 		}
+	}
 
 
-		if( parentType == AST_Var && (TokenKind)nodeType == OP_BRACKET) {
-			node = AST_NewNode(AST_Expression, line, NULL);
-			currParent = AST_InsertChild(currParent, node);
-		}
-		if( parentType == AST_Var && (TokenKind)nodeType == EQUAL ) {
-			currParent = AST_GetParent(currParent);
-		}
-		if( parentType == AST_Expression && (TokenKind)nodeType == CL_BRACKET) {
-			currParent = AST_GetParent(currParent);
-		}
+	if( parentType == AST_Var && (TokenKind)nodeType == OP_BRACKET) {
+		node = AST_NewNode(AST_Expression, line, NULL);
+		currParent = AST_InsertChild(currParent, node);
+	}
+	if( parentType == AST_Var && (TokenKind)nodeType == EQUAL ) {
+		currParent = AST_GetParent(currParent);
+	}
+	if( parentType == AST_Expression && (TokenKind)nodeType == CL_BRACKET) {
+		currParent = AST_GetParent(currParent);
+		return 0;
+	}
 
-		//Constants & BinOp
-		if( parentType == AST_Expression || parentType == AST_UNARY_MINUS || parentType == AST_NOT|| isBinOp((TokenKind)nodeType )) {
-			if( (TokenKind)nodeType == NOT ) {
-				node = AST_NewNode(AST_NOT, line, NULL);
-				node = AST_InsertChild(currParent, node);	
-				currParent = node;
-			}
-			else if( (TokenKind)nodeType == NOT && AST_GetFirstChild(currParent) == NULL) {
-				node = AST_NewNode(AST_UNARY_MINUS, line, NULL);
-				node = AST_InsertChild(currParent, node);	
-				currParent = node;	
-			}
-			else if( isConstant((TokenKind)nodeType) ) {
-				node = AST_NewNode((ASTNodeType)nodeType, line, AST_NodeValueFromToken(t));
-				node = AST_InsertChild(currParent, node);
-				do {
-					currParent = AST_GetParent(currParent);
-				} while(AST_GetType(currParent) == AST_UNARY_MINUS || AST_GetType(currParent) == NOT);
-			}
-			else if( (TokenKind)nodeType == NEW ) {
-				node = AST_NewNode(AST_NEW, line, AST_NodeValueFromToken(t));
-				node = AST_InsertChild(currParent, node);
-			}
-			else if( (TokenKind)nodeType == IDENTIFIER ) { //VarORCall
-				tempId = t;
-			}
-			else if( (TokenKind)nodeType == OP_PARENTHESIS ) {
-				if(tempId!=NULL) {//CALL
-
-				} else { //Parenthesis
-
-				}
-
-			}
-			else if( isBinOp((TokenKind)nodeType) ) {
-				if(AST_GetFirstChild(currParent) == NULL) {
-					printf("Problema");
-					return 0;
-				}
-				node = AST_NewNode((ASTNodeType)nodeType, line, NULL);
-				currParent = AST_InsertNewChildParentOfChildren(currParent, node);
-			}
-		}
+	if( parentType == AST_NEW ) {
 
 	}
+
+	//Constants & BinOp
+	if( parentType == AST_Expression || parentType == AST_UNARY_MINUS || parentType == AST_NOT|| isBinOp((TokenKind)nodeType )) {
+
+		if( tempId !=NULL && (TokenKind)nodeType!=OP_PARENTHESIS ) {
+			node = AST_NewNode(AST_Var, line, AST_NodeValueFromToken(node));
+			node = AST_InsertChild(currParent, node);
+			currParent = AST_GetParent(currParent);
+			tempId = NULL;
+
+		}
+		if( (TokenKind)nodeType == NOT ) {
+			node = AST_NewNode(AST_NOT, line, NULL);
+			node = AST_InsertChild(currParent, node);	
+			currParent = node;
+		}
+		else if( (TokenKind)nodeType == NOT && AST_GetFirstChild(currParent) == NULL) {
+			node = AST_NewNode(AST_UNARY_MINUS, line, NULL);
+			node = AST_InsertChild(currParent, node);	
+			currParent = node;	
+		}
+		else if( isConstant((TokenKind)nodeType) ) {
+			node = AST_NewNode((ASTNodeType)nodeType, line, AST_NodeValueFromToken(t));
+			node = AST_InsertChild(currParent, node);
+			do {
+				currParent = AST_GetParent(currParent);
+			} while(AST_GetType(currParent) == AST_UNARY_MINUS || AST_GetType(currParent) == NOT);
+		}
+		else if( (TokenKind)nodeType == NEW ) {
+			node = AST_NewNode(AST_NEW, line, NULL);
+			currParent = AST_InsertChild(currParent, node);
+			node = AST_NewNode(AST_Expression, line, NULL);	
+			currParent = AST_InsertChild(currParent, node); //Now Parent is an Expression
+			//An Exp Is NECESSARY, then
+		}
+		else if( (TokenKind)nodeType == IDENTIFIER ) { //VarORCall
+			tempId = t;
+		}
+		else if( (TokenKind)nodeType == OP_PARENTHESIS && tempId!=NULL) {	
+			node = AST_NewNode(AST_Call, line, AST_NodeValueFromToken(tempId));
+			currParent = AST_InsertChild(currParent, node); //CALL
+			tempId = NULL;
+		
+		}
+		else if( isBinOp((TokenKind)nodeType) ) {
+			if(AST_GetFirstChild(currParent) == NULL) {
+				printf("Problema");
+				return 0;
+			}
+			node = AST_NewNode((ASTNodeType)nodeType, line, NULL);
+			currParent = AST_InsertNewChildParentOfChildren(currParent, node);
+		}
+	}
+
+	
 
 	return 1;
 }
