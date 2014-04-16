@@ -139,6 +139,20 @@ ASTNodeValue AST_NodeValueFromInt( unsigned int v ) {
 	return NULL;
 }
 
+AST AST_UpdateNodeValue( AST node, ASTNodeValue val ) {
+	if(node==NULL)
+		return node;
+	node->value = val;
+	return node;
+}
+
+
+ASTNodeValue AST_GetNodeValue(AST node) {
+	if(node == NULL)
+		return NULL;
+	return node->value;
+}
+
 
 
 

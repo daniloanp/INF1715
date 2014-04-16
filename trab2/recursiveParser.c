@@ -184,8 +184,7 @@ F-> new
 */
 static  TokenList F(TokenList tl) {
 	Token t;
-	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_F, tokenGetLine(t), NULL);
+	t = tokenListGetCurrentToken( tl );	
 	switch( tokenGetKind(t) ) {
 		case OP_PARENTHESIS:
 			tl = processTerminal( tl, OP_PARENTHESIS );
@@ -232,7 +231,6 @@ U-> F
 static TokenList U( TokenList tl ) {
 	Token t;
 	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_U, tokenGetLine(t), NULL);
 	switch ( tokenGetKind(t) ) {
 		case MINUS: case NOT:
 			callOnConsume(AST_DeclOrCommand, 1, NULL);
@@ -257,7 +255,6 @@ static TokenList T(TokenList tl) {
 	Token t;
 	tl = U(tl);
 	t = tokenListGetCurrentToken(tl);
-	callOnConsume(AST_T, tokenGetLine(t), NULL);
 	switch( tokenGetKind(t) ) {
 		case MUL:case DIV:
 			tl = processTerminal( tl, tokenGetKind( t ) );
@@ -279,8 +276,7 @@ E -> T '-' E
 static TokenList E( TokenList tl) {
 	Token t;
 	tl = T( tl );
-	t = tokenListGetCurrentToken(tl);
-	callOnConsume(AST_E, tokenGetLine(t), NULL);
+	t = tokenListGetCurrentToken(tl);	
 	switch( tokenGetKind(t) ) {
 		case PLUS: case MINUS:
 			tl = processTerminal( tl, tokenGetKind( t ) );
@@ -305,7 +301,6 @@ static TokenList C( TokenList tl) {
 	Token t;
 	tl = E( tl );
 	t = tokenListGetCurrentToken(tl);
-	callOnConsume(AST_C, tokenGetLine(t), NULL);
 	switch( tokenGetKind(t) ) {
 		case GREATER:
 		case GREATER_EQUAL:

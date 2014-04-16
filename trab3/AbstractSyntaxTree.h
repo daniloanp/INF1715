@@ -30,34 +30,25 @@ typedef enum {
 	AST_MUL = 22,
 	AST_DIV = 23,
 	
-	AST_OP_BRACKET = 24,//Temp
-	AST_CL_BRACKET = 25,//Temp
-	AST_OP_PARENTHESIS = 26,//Temp
-	AST_CL_PARENTHESIS = 27,//Temp
 	AST_COMMA = 28 ,//Temp,
-	AST_COLON = 29,
+	
 	AST_GREATER  = 30,
 	AST_GREATER_EQUAL = 31,
 	AST_LESS = 32,
 	AST_LESS_EQUAL = 33,
 	AST_EQUAL = 34,
 	AST_DIFFERENT = 35,
+	
 	AST_STRING_VAL = 36,
-
 	AST_DeclGlobalVar = 128,
 	AST_CommandWhile = 129,
 	AST_CommandIf = 130,
 	AST_DeclFunction = 131,
 	AST_Type = 132,
 	AST_Param = 133,
-	AST_Params = 134,
+	AST_ParamList = 134,
 	AST_DeclOrCommand = 135,
 	AST_New = 136, 
-	AST_F = 137,
-	AST_T = 138,	
-	AST_U = 139,
-	AST_E = 140,
-	AST_C = 141,
 	AST_Expression = 142,
 	AST_ExpressionList = 143,
 	AST_Call = 144,
@@ -99,8 +90,10 @@ AST AST_GetFirstChild(AST node);
 AST AST_GetLastChild(AST node);
 AST AST_GetNextSibling(AST node);
 AST AST_GetPrevSibling(AST node);
+ASTNodeValue AST_GetNodeValue(AST node);
 ASTNodeValue AST_NodeValueFromToken( Token t );
 ASTNodeValue AST_NodeValueFromInt( unsigned int v);
+AST AST_UpdateNodeValue( AST node, ASTNodeValue val );
 
 
 
