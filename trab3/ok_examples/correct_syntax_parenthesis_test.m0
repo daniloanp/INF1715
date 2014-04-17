@@ -1,0 +1,16 @@
+fun b(a:int, b:[]char):[][][]int
+	a:[][][]int
+	if a > 3
+		a()
+	else if new [10]int
+		d(3*5 and 1)
+		c(1)
+	else
+		a (1)
+	end
+
+	a(12*4, 14*4-12+4*4*4*4-1*2)
+	return (12 - 4) * 5
+	
+	return "zdsadsa"
+end

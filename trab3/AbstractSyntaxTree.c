@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 union ast_val {
 	unsigned long number;
@@ -218,8 +219,8 @@ char* AST_GetStringValue(AST node) {
 }
 
 unsigned long AST_GetNumberValue(AST node) {
-	if(node == NULL)  return NULL; //pUTS
-	if( node->value == NULL) return NULL; //PUTS
+	assert(node != NULL);
+	assert( node->value != NULL);
 	return node->value->number;
 }
 
@@ -308,7 +309,7 @@ static char* AST_nodeToString(AST node) {
 
 
 
-void AST_prettyPrint( AST t, int level ) {
+void AST_PrettyPrint( AST t, int level ) {
 	AST c; int i;
 	if(t == NULL)
 		return;
@@ -317,7 +318,7 @@ void AST_prettyPrint( AST t, int level ) {
 	printf("\n");
 	c = AST_GetFirstChild(t);
 	while( c != NULL ) {
-		AST_prettyPrint( c, level+1 );
+		AST_PrettyPrint( c, level+1 );
 		c = AST_GetNextSibling(c);
 	}
 	

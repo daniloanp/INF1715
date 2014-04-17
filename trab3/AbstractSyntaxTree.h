@@ -70,7 +70,7 @@ AST AST_RemoveChild( AST parent, AST child ) ;
 
 
 
-void AST_prettyPrint( AST t, int level );
+void AST_PrettyPrint( AST t, int level );
 
 
 

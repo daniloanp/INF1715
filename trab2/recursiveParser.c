@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "../trab1/token.h"
 #include "../trab1/tokenList.h"
-#include "../trab3/AbstractSyntaxTree.h"
+//#include "../trab3/AbstractSyntaxTree.h"
 #include "recursiveParser.h"
 
 //global_variable is more intuitive;

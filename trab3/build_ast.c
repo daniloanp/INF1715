@@ -79,6 +79,7 @@ int buildAst(int nodeType, int line, Token t) {
 				AST_UpdateNodeValue(currParent,  AST_NodeValueFromToken( t ) ); //Place Name of Function to Node.
 				return 0;//Não altera o Pai
 			}
+
 			else {
 				node = AST_NewNode( AST_ParamList, line, NULL );
 				currParent = AST_InsertChild( currParent, node ); //Agora o pai é a lista de parametros.
@@ -86,6 +87,15 @@ int buildAst(int nodeType, int line, Token t) {
 				currParent = AST_InsertChild( currParent, node ); //Agora o Pai é um parametro em especial
 				return 0;
 			}
+		}
+		else if( (TokenKind)nodeType == NL ) {
+				node = AST_NewNode(AST_Block, line, NULL);
+				currParent = AST_InsertChild(currParent, node);
+				return 0;
+		}
+		else if( (TokenKind)nodeType == END ) {
+			currParent = AST_GetParent(currParent);
+			return 0;
 		}
 	}
 	//Resolver Declaração
@@ -98,10 +108,7 @@ int buildAst(int nodeType, int line, Token t) {
 				// Tratamento diferenciado pra funções: 
 				if(parentType != AST_DeclFunction) {
 					currParent = AST_GetParent(currParent);
-				} else {
-					node = AST_NewNode(AST_Block, line, NULL);
-					currParent = AST_InsertChild(currParent, node);
-				}
+				} 
 				bracketCount = 0;
 				return 0;
 		} 
@@ -113,7 +120,7 @@ int buildAst(int nodeType, int line, Token t) {
 	
 
 	if( parentType == AST_ParamList ) {
-		if((TokenKind)nodeType == CL_PARENTHESIS) {//DEve funcionar, achei feio.
+		if((TokenKind)nodeType == CL_PARENTHESIS) {
 			currParent = AST_GetParent(currParent);
 			return 0;
 		}
@@ -404,19 +411,13 @@ int buildAst(int nodeType, int line, Token t) {
 			return 0;
 		}
 		else if( isBinOp((TokenKind)nodeType) ) {
-			//AST_prettyPrint(root,0);
 			if(isBinOp((TokenKind)parentType)) { //Pai também é bin Op
-
-				//Se não é. insere embaixo meesmo.
 				if( isbinOpPriorityGreater((TokenKind)parentType, (TokenKind)nodeType) ) {
-
-					
 					node = AST_GetLastChild(currParent);
 					node = AST_RemoveChild(currParent, node);
 					currParent = AST_InsertChild( currParent, AST_NewNode((ASTNodeType)nodeType, line, NULL) );
 					node = AST_InsertChild( currParent, node );
 					parentType = AST_GetType(currParent);
-				
 					return 0;
 				}
 				else {
@@ -433,14 +434,11 @@ int buildAst(int nodeType, int line, Token t) {
 			currParent = AST_InsertNewChildParentOfChildren(currParent, node); // Abaixa a rapaziada
 			return 0;
 		} else {
-			
 			if( (TokenKind)nodeType == NL || (TokenKind)nodeType == CL_BRACKET || (TokenKind)nodeType == COMMA ) {
 				do {
 					currParent = AST_GetParent(currParent);
 					parentType = AST_GetType(currParent);
 				} while( parentType == AST_Expression || parentType == AST_UnaryMinus || parentType == AST_Not|| isBinOp((TokenKind)parentType ));
-				
-				
 				return buildAst( nodeType, line, t );
 			}
 		}
@@ -465,9 +463,7 @@ int main( int argc, char **argv ) {
 		if(!ret) {
 			ret = parser(tl, buildAst);
 
-			
 		}
-
 		if( input != stdin )
 			fclose(input);
 	}
@@ -475,10 +471,9 @@ int main( int argc, char **argv ) {
 		"Cannot open file";
 		return 1;
 	}
-
 	if(ret == 0 ) {
 		printf("Correct Syntax!!!\n");
-		AST_prettyPrint(root, 1);
+		AST_PrettyPrint(root, 1);
 	}
 
 
