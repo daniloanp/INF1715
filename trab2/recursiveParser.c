@@ -55,6 +55,7 @@ static  TokenList processTerminal( TokenList tl, TokenKind tk ) {
 	}	
 	if( t!= NULL && tokenGetKind(t) == tk ) {
 		//printf("Token: %s, Line: %d\n", tokenToString(t), tokenGetLine(t));
+		callOnConsume(tokenGetKind(t), tokenGetLine(t), t);
 		return tokenListNext( tl );
 	}
 	else {
@@ -77,7 +78,7 @@ type -> '[' ']' type
 */
 static TokenList type( TokenList tl ) {
 	Token t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_Type, tokenGetLine(t), NULL);
+	
 	switch( tokenGetKind(t) ) {
 		case INT: case STRING: case CHAR: case BOOL:
 			tl = processTerminal(tl, tokenGetKind(t));
@@ -102,7 +103,6 @@ declGlobalVar -> 'ID' ':' type 'NL'
 */
 static TokenList declGlobalVar(TokenList tl) {	
 	Token t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_DeclGlobalVar, tokenGetLine(t), NULL);
 	tl = processTerminal( tl, IDENTIFIER );
 	tl = processTerminal( tl, COLON );
 	tl = type(tl);
@@ -113,7 +113,6 @@ param -> 'ID' ':' type
 */
 static TokenList param(TokenList tl) {
 	Token t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_Param, tokenGetLine(t), NULL);
 	tl = processTerminal(tl, IDENTIFIER);
 	tl = processTerminal(tl, COLON);
 	return type(tl);
@@ -123,7 +122,6 @@ params -> param { ','' param }
 */
 static TokenList params(TokenList tl) {
 	Token t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_Params, tokenGetLine(t), NULL);
 	tl = param(tl);
 	//pay attention, loop
 	while( verifyCurrentToken(tl, COMMA) ) {
@@ -140,7 +138,6 @@ declOrCommand ->  commandAttrOrCall 'NL'
 */
 static  TokenList declOrCommand( TokenList tl ) {
 	Token t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_DeclOrCommand, tokenGetLine(t), NULL);
 	if( verifyCurrentToken( tl, COLON ) )	{
 		tl = processTerminal( tl, COLON );
 		tl = type( tl );
@@ -163,7 +160,6 @@ new -> 'new' '[' expression ']' type
 */
 static TokenList new(TokenList tl) {
 	Token t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_New, tokenGetLine(t), NULL);
 	tl = processTerminal(tl, NEW);
 	tl = processTerminal(tl, OP_BRACKET);
 	tl = expression(tl);
@@ -233,7 +229,6 @@ static TokenList U( TokenList tl ) {
 	t = tokenListGetCurrentToken( tl );
 	switch ( tokenGetKind(t) ) {
 		case MINUS: case NOT:
-			callOnConsume(AST_DeclOrCommand, 1, NULL);
 			tl = processTerminal( tl, tokenGetKind( t ) );
 			tl = U( tl );
 			break;
@@ -326,7 +321,6 @@ static TokenList expression( TokenList tl ) {
 	Token t;
 	tl = C( tl );
 	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_Expression, tokenGetLine(t), NULL);
 	switch( tokenGetKind(t) ) {
 		case AND:
 		case OR:
@@ -344,7 +338,6 @@ expressionList -> expression { ',' expression }
 */
 static TokenList expressionList( TokenList tl ) {
 	Token t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_ExpressionList, tokenGetLine(t), NULL);
 	tl = expression( tl );
 	while(verifyCurrentToken(tl, COMMA)) {
 		tl = processTerminal(tl, COMMA);
@@ -359,7 +352,6 @@ call -> 	'(' [expressionList] ')'
 static TokenList call( TokenList tl ) {
 	Token t;
 	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_Call, tokenGetLine(t), NULL);
 	tl = processTerminal(tl, OP_PARENTHESIS );
 	t = tokenListGetCurrentToken( tl );
 	switch ( tokenGetKind( t )) {
@@ -387,7 +379,6 @@ attr -> 	arrayAccess '=' expression
 static TokenList attr( TokenList tl ) {
 	Token t;
 	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_Attr, tokenGetLine(t), NULL);
 	tl = arrayAccess(tl);
 	tl = processTerminal( tl, EQUAL );
 	tl = expression( tl );
@@ -400,7 +391,6 @@ arrayAccess -> 	{ '['  expression']' }
 static TokenList arrayAccess( TokenList tl) {
 	Token t;
 	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_ArrayAccess, tokenGetLine(t), NULL);
 	while( verifyCurrentToken( tl, OP_BRACKET ) ) {
 		tl = processTerminal( tl, OP_BRACKET );
 		tl = expression( tl );
@@ -415,7 +405,6 @@ commandAttrOrCall -> attr | call
 static TokenList commandAttrOrCall( TokenList tl ) {
 	Token t;
 	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_CommandAttrOrCall, tokenGetLine(t), NULL);
 	if( verifyCurrentToken(tl, EQUAL) || verifyCurrentToken(tl, OP_BRACKET) ) {
 		tl = attr( tl );	
 	}
@@ -438,7 +427,6 @@ commandWhile -> 'WHILE' expression'NL'
 static TokenList commandWhile( TokenList tl ) {
 	Token t;
 	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_CommandWhile, tokenGetLine(t), NULL);
 	tl = processTerminal(tl, WHILE);
 	tl = expression(tl);
 	tl = processTerminal(tl, NL);
@@ -453,7 +441,6 @@ commandReturn -> 'RETURN' [ 'expression' ]
 static  TokenList commandReturn( TokenList tl ) {
 	Token t;
 	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_CommandReturn, tokenGetLine(t), NULL);
 	tl = processTerminal( tl, RETURN );
 	t = tokenListGetCurrentToken(tl);		
 	switch( tokenGetKind( t ) ) {
@@ -489,7 +476,6 @@ commandIf->'IF' expression 'NL'
 static TokenList commandIf( TokenList tl ) {
 	Token t;
 	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_CommandIf, tokenGetLine(t), NULL);
 	tl = processTerminal( tl, IF );
 	tl = expression( tl );
 	tl =  processTerminal( tl, NL );
@@ -526,7 +512,6 @@ command -> commandReturn 'NL'
 */
 static  TokenList command( TokenList tl ) {
 	Token t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_Command, tokenGetLine(t), NULL);
 	switch( tokenGetKind( t ) ) {
 		case WHILE:
 			tl = commandWhile( tl );
@@ -559,7 +544,6 @@ static TokenList block( TokenList tl ) {
 	TokenList tlf;
 	Token t;
 	t = tokenListGetCurrentToken(tl);
-	callOnConsume(AST_Block, tokenGetLine(t), NULL);
 	if ( verifyCurrentToken( tl, IDENTIFIER ) ) {
 		tl = processTerminal( tl, IDENTIFIER );
 		tl = declOrCommand( tl );//Recursividade
@@ -586,7 +570,6 @@ declFunction -> 'FUN' 'ID' '(' params ')' [ ':' type ] 'NL'
 */
 static TokenList declFunction( TokenList tl ) {
 	Token t = tokenListGetCurrentToken(tl);
-	callOnConsume(AST_DeclFunction, tokenGetLine(t), NULL);
 	tl = processTerminal( tl, FUN );
 	tl = processTerminal( tl, IDENTIFIER );
 	tl = processTerminal( tl, OP_PARENTHESIS );
@@ -617,7 +600,6 @@ decl -> declFunction start
 static TokenList decl( TokenList tl ) {
 	Token t;
 	t = tokenListGetCurrentToken( tl );
-	callOnConsume(AST_Decl, tokenGetLine(t), NULL);
 	switch ( tokenGetKind(t) ) {
 		case IDENTIFIER:
 			tl = declGlobalVar( tl );
@@ -638,8 +620,7 @@ program -> {NL} decl {decl};
 
 */
 TokenList program( TokenList tl ) {
-	Token t;
-	callOnConsume(AST_Program, 1, NULL);
+	Token t;	
 
 	if(tl == NULL) {
 		printf("Error Empty Program.\n");

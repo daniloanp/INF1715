@@ -9,3 +9,4 @@ test: mini0-ast
 	@echo "Teste sem erros:"
 	@echo
 	@echo
+	bash test.sh

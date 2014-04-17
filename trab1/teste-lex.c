@@ -47,12 +47,13 @@ int printToken(Token t)
 int main( int argc, char **argv ) {	
 	TokenList tl;
 	FILE *input;
+	int ret;
 	++argv, --argc;
 	if ( argc > 0 )
 		input = fopen( argv[0], "r" );
 	else
 		input = stdin;
-	tl = generateTokens(input);
+	tl = generateTokens(input, &ret);
 	if ( tl != NULL ) {
 		printf("%s",header);
 		tokenListExecuteForEach(tl, printToken);

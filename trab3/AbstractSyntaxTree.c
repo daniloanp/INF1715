@@ -1,6 +1,7 @@
 #include "AbstractSyntaxTree.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 union ast_val {
 	unsigned long number;
@@ -34,16 +35,19 @@ AST AST_NewNode( ASTNodeType type , int line, ASTNodeValue value ) {
 
 
 AST AST_InsertChild( AST parent, AST child ) {
+
 	AST sibling = parent->lastChild;
+	child->parent = parent;
+	parent->lastChild = child;
 	if(sibling!=NULL) {
 		sibling->nextSibling = child;
 	}
 	else {
 		parent->firstChild = child;
-		child->prevSibling = sibling;
 	}
 	child->parent = parent;
-	parent->lastChild = child;
+	child->prevSibling = sibling;
+	
 	return child;
 
 
@@ -146,6 +150,13 @@ AST AST_UpdateNodeValue( AST node, ASTNodeValue val ) {
 	return node;
 }
 
+AST AST_UpdateNodeType( AST node, ASTNodeType tp ) {
+	if(node==NULL)
+		return node;
+	node->type = tp;
+	return node;
+}
+
 
 ASTNodeValue AST_GetNodeValue(AST node) {
 	if(node == NULL)
@@ -154,6 +165,155 @@ ASTNodeValue AST_GetNodeValue(AST node) {
 }
 
 
+AST AST_RemoveChild( AST parent, AST child ) {
+	AST c ;
+	
+	if(parent == NULL || child == NULL) {
+		return NULL;
+	}
+	
+	
+
+	if( child == parent->firstChild ) {
+		parent->firstChild = child->nextSibling; 
+		//Não dá pra achar mais.
+
+
+		if( child == parent->lastChild ) { //Tbm é ultimo.
+			parent->lastChild = NULL;
+		} else
+		{
+			child->prevSibling = NULL;
+		}
+	} 
+	else if( child == parent->lastChild ) {
+		child->prevSibling->nextSibling == NULL;
+		parent->lastChild = child->prevSibling;
+	}
+	else { //Busca
+		c = parent->firstChild;
+		do {
+			if( c == child) {
+				child->nextSibling->prevSibling = child->prevSibling;
+				child->prevSibling->nextSibling = child->nextSibling;
+				break;
+			}
+			c = c->nextSibling;
+		} while ( c != NULL);
+	}
+
+		
+
+	child->parent = NULL;
+	child->prevSibling = NULL;
+	child->nextSibling = NULL;
+
+	return child;
+}
+
+char* AST_GetStringValue(AST node) {
+	if(node == NULL)  return NULL;
+	if( node->value == NULL) return NULL;
+	return node->value->string;
+}
+
+unsigned long AST_GetNumberValue(AST node) {
+	if(node == NULL)  return NULL; //pUTS
+	if( node->value == NULL) return NULL; //PUTS
+	return node->value->number;
+}
+
+
+static char buff[1000];
+
+static char* AST_nodeToString(AST node) {
+	ASTNodeType tp = AST_GetType(node);
+	switch( tp ) {
+		case AST_If: return "If";break;
+		case AST_Else: return "Else";break;
+		case AST_While: return "While";break;
+		case AST_Return: return "Return";break;
+		case AST_New: return "New";break;
+		case AST_Int: 
+			sprintf(buff, "tp_int(%d)", AST_GetNumberValue(node));
+			return buff;
+		break;
+		case AST_Char: 
+			sprintf(buff, "tp_int(%d)", AST_GetNumberValue(node));
+			return buff;
+		break;
+		case AST_Bool: 
+			sprintf(buff, "tp_int(%d)", AST_GetNumberValue(node));
+			return buff;
+		break;
+		case AST_String: return "string";break;
+		case AST_And: return "And";break;
+		case AST_Or: return "Or";break;
+		case AST_Not: return "Not";break;
+		case AST_BoolVal: return "boolVal";break;
+		case AST_IntVal: 
+			sprintf(buff, "int: '(%d)'", AST_GetNumberValue(node));
+			return buff;
+		break;
+		case AST_StringVal: 
+			sprintf(buff, "strVal: '%s'", AST_GetStringValue(node));
+			return buff;
+		break;
+		case AST_Plus: return "+";break;
+		case AST_Minus: return "-";break;
+		case AST_Mul: return "*";break;
+		case AST_Div: return "/";break;
+		case AST_Greater: return ">";break;
+		case AST_GreaterEqual: return ">=";break;
+		case AST_Less: return "<";break;
+		case AST_LessEqual: return "<=";break;
+		case AST_Equal: return "=";break;
+		case AST_Different: return "<>";break;
+		case AST_DeclFunction: 
+			sprintf(buff, "fun '(%s)'", AST_GetStringValue(node));
+			return buff;
+		break;
+		case AST_Param: return "Param";break;
+		case AST_ParamList: return "ParamList";break;
+		case AST_Expression: return "Exp";break;
+		case AST_Call: 
+			sprintf(buff, "Call '(%s)'", AST_GetStringValue(node));
+			return buff;
+		break;
+		case AST_Attr: return "Attr";break;
+		case AST_Block: return "Block";break;
+		case AST_Program: return "Program";break;
+		case AST_DeclVar:
+			sprintf(buff, "DeclVar '(%s)'", AST_GetStringValue(node));
+			return buff;
+	 	break;
+		case AST_Var: 
+			sprintf(buff, "Var '(%s)'", AST_GetStringValue(node));
+			return buff;
+		break;
+		case AST_UnaryMinus: return "(-)";break;
+		case AST_ElseIf: return "ElseIf";break;
+		default: break;
+	}
+	return NULL;
+}
 
 
 
+void AST_prettyPrint( AST t, int level ) {
+	AST c; int i;
+	if(t == NULL)
+		return;
+	for( i=level;i;i-- ) printf("   ");
+	printf(AST_nodeToString(t));
+	printf("\n");
+	c = AST_GetFirstChild(t);
+	while( c != NULL ) {
+		AST_prettyPrint( c, level+1 );
+		c = AST_GetNextSibling(c);
+	}
+	
+	//Imprimir filhos
+	
+
+};
