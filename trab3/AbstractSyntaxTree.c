@@ -239,18 +239,26 @@ static char* AST_nodeToString(AST node) {
 			return buff;
 		break;
 		case AST_Char: 
-			sprintf(buff, "tp_int(%d)", AST_GetNumberValue(node));
+			sprintf(buff, "tp_char(%d)", AST_GetNumberValue(node));
 			return buff;
 		break;
 		case AST_Bool: 
-			sprintf(buff, "tp_int(%d)", AST_GetNumberValue(node));
+			sprintf(buff, "tp_bool(%d)", AST_GetNumberValue(node));
 			return buff;
 		break;
-		case AST_String: return "string";break;
+		case AST_String:
+			sprintf(buff, "tp_string(%d)", AST_GetNumberValue(node));
+			return buff;
+		break;
 		case AST_And: return "And";break;
 		case AST_Or: return "Or";break;
 		case AST_Not: return "Not";break;
-		case AST_BoolVal: return "boolVal";break;
+		case AST_BoolVal:
+			if(AST_GetNumberValue(node))
+				return "bool: True";
+			else
+				return "bool: False";
+		break;
 		case AST_IntVal: 
 			sprintf(buff, "int: '(%d)'", AST_GetNumberValue(node));
 			return buff;

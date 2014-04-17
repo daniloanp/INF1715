@@ -23,7 +23,7 @@ static int priorityNumber( TokenKind tk) {
 }
 
 int isbinOpPriorityGreater( TokenKind t1,  TokenKind t2 ) { // t1 é o pai
-	int a =0 , b = 0;
+	int a =0 , b = 0;	
 	a = priorityNumber(t1);
 	b = priorityNumber(t2);
 	return a < b;	
@@ -152,11 +152,8 @@ int buildAst(int nodeType, int line, Token t) {
 				AST_InsertChild( currParent, node );
 				if( (TokenKind)nodeType != EQUAL ) {
 					currParent =  node;//Muda pai pra var		
-					buildAst(nodeType, line, t );
-					return 0;
-
 				}
-				return 0;
+				return buildAst(nodeType, line, t );
 			}
 		} else {
 			if( (TokenKind)nodeType == WHILE ) {
@@ -178,28 +175,15 @@ int buildAst(int nodeType, int line, Token t) {
 				currParent = AST_InsertChild( currParent, node ); //Mas a Expressão é obrigatória. Então: 
 				return 0;
 			} else if((TokenKind)nodeType == LOOP ) {
-				currParent = AST_GetParent(AST_GetParent(currParent)); //Sai dois niveis.
-				return 0;
+				currParent = AST_GetParent(currParent); //Sai do Bloco.
+				return buildAst(nodeType, line, t);
 			}
 			else if ( (TokenKind)nodeType == END )  {
-				currParent = AST_GetParent(AST_GetParent(currParent)); //Sai dois niveis.
-				parentType = AST_GetType(currParent);
-				if( parentType == AST_ElseIf || parentType == AST_Else ) {
-					currParent = AST_GetParent(currParent); //Terceito
-				}
-				return 0;
+				currParent = AST_GetParent(currParent); //Sai do Bloco
+				return buildAst(nodeType, line, t);
 			} else if(( TokenKind)nodeType == ELSE ) {
-				//AST_prettyPrint(root, 0);
-				//exit(1);
-				currParent = AST_GetParent(currParent); //
-				parentType = AST_GetType(currParent);
-				if(parentType != AST_If) {
-					currParent = AST_GetParent(currParent); //
-					parentType = AST_GetType(currParent);
-				}
-				node = AST_NewNode(AST_Else, line, NULL);
-				currParent = AST_InsertChild( currParent, node );
-				return 0;
+				currParent = AST_GetParent(currParent); //Sai do Bloco
+				return buildAst(nodeType, line, t);
 			}
 		}
 	}
@@ -275,7 +259,6 @@ int buildAst(int nodeType, int line, Token t) {
 			
 			node = AST_NewNode(AST_Expression, line, NULL);	
 			currParent = AST_InsertChild(currParent, node); //Now Parent is an Expression
-			//printf("A: %d", nodeType);
 			buildAst(nodeType, line, t);
 			return  0;
 		}
@@ -286,7 +269,15 @@ int buildAst(int nodeType, int line, Token t) {
 			node = AST_NewNode(AST_Block, line, NULL);
 			currParent = AST_InsertChild(currParent, node);
 			return 0 ;
-		} else {}
+		} 
+		else if((TokenKind)nodeType == ELSE ) {
+			currParent = AST_GetParent(currParent);
+			return buildAst( nodeType, line, t );
+		} 
+		else if( (TokenKind)nodeType == END ) {
+			currParent = AST_GetParent(currParent);
+			return buildAst( nodeType, line, t );
+		}
 
 	}
 
@@ -301,6 +292,10 @@ int buildAst(int nodeType, int line, Token t) {
 			currParent = AST_InsertChild( currParent, node );
 			return 0;
 		}
+		else if((TokenKind) nodeType == END ) {
+			currParent = AST_GetParent(currParent);
+			return buildAst( nodeType, line, t );
+		}
 	}
 
 	if( parentType == AST_If ) {
@@ -310,6 +305,15 @@ int buildAst(int nodeType, int line, Token t) {
 			currParent = AST_InsertChild(currParent, node);
 			return 0 ;
 		} 
+		else if((TokenKind) nodeType == ELSE ) {
+			node = AST_NewNode(AST_Else, line, NULL);
+			currParent = AST_InsertChild( currParent, node );
+			return 0;
+		} 
+		else if((TokenKind) nodeType == END ) {
+			currParent = AST_GetParent(currParent);
+			return 0;
+		}
 
 	}
 
@@ -318,6 +322,10 @@ int buildAst(int nodeType, int line, Token t) {
 			node = AST_NewNode(AST_Block, line, NULL);
 			currParent = AST_InsertChild(currParent, node);
 			return 0 ;
+		} 
+		else if ( (TokenKind)nodeType == LOOP ) {
+			currParent = AST_GetParent(currParent);
+			return 0;
 		}
 	}
 
@@ -456,7 +464,8 @@ int main( int argc, char **argv ) {
 		tl = generateTokens(input, &ret);
 		if(!ret) {
 			ret = parser(tl, buildAst);
-			AST_prettyPrint(root, 1);
+
+			
 		}
 
 		if( input != stdin )
@@ -467,8 +476,10 @@ int main( int argc, char **argv ) {
 		return 1;
 	}
 
-	if(ret == 0 )
+	if(ret == 0 ) {
 		printf("Correct Syntax!!!\n");
+		AST_prettyPrint(root, 1);
+	}
 
 
 	return ret;

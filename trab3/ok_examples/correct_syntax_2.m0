@@ -1,9 +1,6 @@
 
-fun b():[][][]int
+fun b(a:int, b:[]char):[][][]int
 	a:[][][]int
-	
-
-
 	if a > 3
 		a()
 	else if 3
@@ -13,13 +10,30 @@ fun b():[][][]int
 		c = 3
 	else if new [10]int
 		d(3*5 and 1)
-	else if b*4*a(3,1)
 		c(1)
 	else
 		a (1)
 	end
 
-	//print(a[2][3][4 * not a - not--not 4/4/18-4])
+	while c[1]
+		a:int
+		g:string
+		if g=c
+			do(v)
+		else if a
+			do_a()
+		else
+			if a +b
+				a = 12
+			else if false
+				c = 13
+			else
+				b = 12/4
+			end
+		end
+
+	loop
 	return
-	return 3*4-2
+	
+	return "zdsadsa"
 end
