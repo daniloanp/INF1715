@@ -1,6 +1,7 @@
 ####Documentação do 3º Trabalho
 
-######Nós existentes na árvore, as sublistas são os possíveis filhos de cada nó.
+######Lista de tipos de no da AST. as sublistas são os possíveis filhos de cada nó.
+######As Sub-listas são os possíveis filhos de cada nó.
 
 * If  
 	- Expression  
