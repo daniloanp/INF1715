@@ -86,7 +86,12 @@
 * ElseIf  
 	- Block  
 
-####### ? Significam opcionais
-####### + Significa pelo menos 1
-####### * Significa pelo menos 0
-####### (n) | n é o número de itens exigidos
+
+
+####### "?" Significa que é  opcionaç
+####### + Significa que deve haver pelo menos 1
+####### * Significa que deve haver pelo menos 0
+####### (n) | Significa que deve "n" itens exigidos   
+
+  
+#######  Quando a ordem não importa eu utilizei chaves
