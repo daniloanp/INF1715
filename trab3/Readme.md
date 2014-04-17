@@ -23,34 +23,34 @@
 * Bool  
 * String  
 * And  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * Or  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * Not  
-	- ['Operador'|'Literal'|Var|Call|New
+	- 'Operador'|'Literal'|Var|Call|New
 * BoolVal  
 * IntVal  
 * StringVal  
 * Plus   
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * Minus  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * Mul  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * Div  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * Greater  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * GreaterEqual  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * Less  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * LessEqual  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * Equal  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * Different  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * DeclFunction  
 	- ParamList ?
 	- INT | STRING | CHAR | BOOL
@@ -60,7 +60,7 @@
 * ParamList  
 	- Param+
 * Expression  
-	- ['Operador'|'Literal'|Var|Call|New]
+	- 'Operador'|'Literal'|Var|Call|New
 * Call  
 	- Expressions*
 * Attr  
@@ -82,7 +82,7 @@
 * Var  
 	- Expressions*
 * UnaryMinus  
-	- ['Operador'|'Literal'|Var|Call|New] (2)
+	- 'Operador'|'Literal'|Var|Call|New (2)
 * ElseIf  
 	- Block  
 
