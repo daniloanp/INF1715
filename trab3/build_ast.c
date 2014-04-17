@@ -14,11 +14,21 @@ int isBinOp(TokenKind tk) {
 	return( tk==PLUS || tk == MINUS || tk == MUL || tk == DIV || tk == AND || tk == OR || tk == GREATER || tk == GREATER_EQUAL || tk == LESS || tk == LESS_EQUAL || tk == EQUAL || tk == DIFFERENT );
 }
 
-int isBaseType(Token tk) {
+int isBaseType(TokenKind tk) {
 	return (tk == CHAR || tk == STRING || tk == INT || tk == BOOL);
 }
 
 AST root = NULL;
+
+
+AST ast_adjustParent( AST cp ) {
+	ASTNodeType pt = AST_GetType(cp);
+	if( isBinOp((TokenKind)pt)  && ( AST_GetFirstChild(cp)!=AST_getLastChild(cp)  )) {
+		return
+	}
+
+}
+
 //this function assumes that the parser are ok;
 int buildAst(int nodeType, int line, Token t) {
 	static AST currParent = NULL;
@@ -30,13 +40,16 @@ int buildAst(int nodeType, int line, Token t) {
 	ASTNodeType parentType;
 	AST node = NULL;
 
+	parentType = AST_GetType(currParent); //First Use
+
+
 	if((ASTNodeType)nodeType == AST_Program) {
 		currParent = AST_NewNode(AST_Program, line, NULL);
 		root = currParent;
 		return 0 ;
 	}
 
-	parentType = AST_GetType(currParent); //First Use
+	
 	
 	
 	//Tô em Program
@@ -82,7 +95,7 @@ int buildAst(int nodeType, int line, Token t) {
 	//Declara Variavel e Sobe pro bloco(ou program, ou Params)
 	if( parentType == AST_DeclVar || parentType == AST_Param || parentType == AST_DeclFunction ) {
 		if( isBaseType((TokenKind)nodeType) ) {//BeginType
-				node = AST_NewNode((ASTNodeType)nodeType, line, bracketCount); //Type
+				node = AST_NewNode((ASTNodeType)nodeType, line, AST_NodeValueFromInt(bracketCount)); //Type
 				AST_InsertChild(currParent, node);
 				// Tratamento diferenciado pra funções: 
 				if(parentType!= AST_DeclFunction) {
@@ -91,7 +104,7 @@ int buildAst(int nodeType, int line, Token t) {
 				bracketCount = 0;
 				return 0;
 		} 
-		else if( (TokenKind)nodeType == CL_BRACKET) //unfortunately the "if" was necessary {
+		else if( (TokenKind)nodeType == CL_BRACKET) { //unfortunately the "if" was necessary {
 			bracketCount++;
 			return 0 ;
 		}
@@ -102,6 +115,7 @@ int buildAst(int nodeType, int line, Token t) {
 	if( parentType == AST_ParamList ) {
 		if((TokenKind)nodeType == CL_PARENTHESIS) {//DEve funcionar, achei feio.
 			currParent = AST_GetParent(currParent);
+			return 0;
 		}
 		else if ( (TokenKind)nodeType == IDENTIFIER ) {
 			node = AST_NewNode(AST_Param, line, AST_NodeValueFromToken( t ));
@@ -133,7 +147,7 @@ int buildAst(int nodeType, int line, Token t) {
 				node = AST_NewNode( AST_Var, tokenGetLine(tempId), AST_NodeValueFromToken(tempId) );
 				AST_InsertChild( currParent, node );
 				if( (TokenKind)nodeType != EQUAL ) {
-					currParent =  node//Muda pai pra var					
+					currParent =  node;//Muda pai pra var					
 				}
 				return 0;
 			}
@@ -160,7 +174,7 @@ int buildAst(int nodeType, int line, Token t) {
 		if((TokenKind)nodeType == EQUAL) {
 			currParent = AST_GetParent(currParent);
 			return 0;
-		} 
+		}
 		else {
 			node = AST_NewNode(AST_Expression, line, NULL);
 			currParent = AST_InsertChild(currParent, node);
@@ -168,23 +182,22 @@ int buildAst(int nodeType, int line, Token t) {
 	}
 
 
-/*	if( parentType == AST_Expression && (TokenKind)nodeType == CL_BRACKET) {
-		currParent = AST_GetParent(currParent);
-		return 0;
-	}*/
+	}
 
 	if( parentType == AST_NEW ) {
 		if( (TokenKind)nodeType == OP_BRACKET ) {
 			if( AST_GetFirstChild(currParent) == NULL ) {
 				node = AST_NewNode(AST_Expression, line, NULL);	
 				currParent = AST_InsertChild(currParent, node); //Now Parent is an Expression
-			} 
+			}
 			else {
 				node = AST_NewNode(AST_Type, line, NULL);	
 				currParent = AST_InsertChild(currParent, node); //Now Parent is an Type
 			}
 		}
 	}
+
+
 
 	//Constants & BinOp
 	if( parentType == AST_Expression || parentType == AST_UNARY_MINUS || parentType == AST_NOT|| isBinOp((TokenKind)parentType )) {
@@ -227,18 +240,10 @@ int buildAst(int nodeType, int line, Token t) {
 			currParent = AST_InsertChild(currParent, node);	
 		}
 		else if( isBinOp((TokenKind)nodeType) ) {
-			if(AST_GetFirstChild(currParent) == NULL) {
-				return 0;
-			}
 			node = AST_NewNode((ASTNodeType)nodeType, line, NULL);
 			currParent = AST_InsertNewChildParentOfChildren(currParent, node);
 		}
-
-
 	}
-
-	
-
 	return 1;
 }
 

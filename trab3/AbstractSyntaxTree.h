@@ -7,10 +7,10 @@ typedef union ast_val* ASTNodeValue;
 
 typedef enum {
 	AST_IDENTIFIER = 1,
-	AST_IF = 2,
+	AST_If = 2,
 	AST_ELSE = 3,
 	//AST_END = 4,
-	AST_WHILE = 5,
+	AST_While = 5,
 	AST_LOOP = 6,
 	AST_FUN = 7,
 	AST_RETURN = 8,
