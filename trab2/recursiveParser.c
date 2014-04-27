@@ -17,14 +17,14 @@ static int callOnConsume(int nodeType, int line, Token t) {
 		return -1;
 }
 
-static TokenList expression(TokenList tl);
-static TokenList expressionList(TokenList tl);
+static TokenList expression( TokenList tl );
+static TokenList expressionList( TokenList tl );
 static TokenList commandAttrOrCall( TokenList tl );
 static TokenList block( TokenList tl );
 static TokenList command( TokenList tl );
 static TokenList arrayAccess( TokenList tl );
 static TokenList call( TokenList tl );
-static TokenList U(TokenList tl);
+static TokenList U( TokenList tl );
 
 
 
@@ -38,7 +38,7 @@ static  int verifyCurrentToken(TokenList tl, TokenKind tk) {
 
 static void printError(int line, char *expected, char *got){
 	error_flag++;
-	printf("Error at Line %d: The expected was %s but got %s", line, expected, got);	
+	printf("Error at Line %d.\nThe expected was %s but got %s", line, expected, got);	
 
 }
 
@@ -91,9 +91,11 @@ static TokenList type( TokenList tl ) {
 			tl = type( tl ) ;
 			break;
 		default:
-			printError(tokenGetLine(t), "a type", tokenToString(t));
-			tl = NULL;
-			break;
+			if(tl != NULL) {
+				printError(tokenGetLine(t), "a type", tokenToString(t));
+				tl = NULL;
+			}
+		break;
 	}
 	return tl;
 }
@@ -209,10 +211,12 @@ static  TokenList F(TokenList tl) {
 			tl = new(tl);
 			break;
 		default:
-			error_flag++;
-			printf( "Line %d.\nAn expression was expected but got %s.\n", tokenGetLine(t),  tokenToString(t) );
-			tl = NULL;
-			break;
+			if(tl != NULL) {
+				error_flag++;
+				printf( "Line %d.\nAn expression was expected but got %s.\n", tokenGetLine(t),  tokenToString(t) );
+				tl = NULL;		
+			}
+		break;
 	}
 		
 	return tl;
@@ -414,7 +418,7 @@ static TokenList commandAttrOrCall( TokenList tl ) {
 	else {
 		error_flag++;
 		t = tokenListGetCurrentToken(tl);
-		printf("Error at Line %d. Expected a function call or attribution, but got %s\n", tokenGetLine( t ), tokenToString( t ));
+		printf("Error at Line %d.\nExpected a function call or attribution, but got %s\n", tokenGetLine( t ), tokenToString( t ));
 		tl = NULL;
 	}
 	return tl;
@@ -527,11 +531,13 @@ static  TokenList command( TokenList tl ) {
 			tl = commandAttrOrCall( tl );
 			break;
 		default:
-			error_flag++;
-			Token t = tokenListGetCurrentToken( tl );
-			printf( "\nToken: %s ", tokenToString(t));
-			printf( "Line %d.\nExpected identifier, if, return or while but got %s.\n", tokenGetLine(t),  tokenToString(t) );
-			return NULL;
+			if(tl != NULL) {
+				error_flag++;
+				Token t = tokenListGetCurrentToken( tl );
+				printf( "\nToken: %s ", tokenToString(t));
+				printf( "Line %d.\nExpected identifier, if, return or while but got %s.\n", tokenGetLine(t),  tokenToString(t) );
+				return NULL;
+			}
 			break;
 	}
 	return processTerminal( tl, NL );
@@ -641,9 +647,11 @@ TokenList program( TokenList tl ) {
 				tl = decl( tl );
 				break;
 			default:
-				error_flag++;
-				printf("Error at line %d. Expected 'fun' or identifier but got %s\n", tokenGetLine(t), tokenToString(t));
-				tl=NULL; // loop protection
+				if( tl != NULL ) {
+					error_flag++;
+					printf("Error at line %d.\nExpected 'fun' or identifier but got %s\n", tokenGetLine(t), tokenToString(t));
+					tl=NULL; // loop protection
+				}
 				break;
 			}
 	} while(tl);

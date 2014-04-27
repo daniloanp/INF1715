@@ -10,3 +10,8 @@ test: mini0-parser
 	@echo
 	@echo
 	bash test.sh	
+test-oficial: mini0-parser
+	@echo "Teste sem erros:"
+	@echo
+	@echo
+	bash test-oficial.sh	
