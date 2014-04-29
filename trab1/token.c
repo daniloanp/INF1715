@@ -4,8 +4,7 @@
 #include <assert.h>
 
 
-union token_val
-{
+union token_val {
 	unsigned long number;
 	char* string;
 };
@@ -53,7 +52,7 @@ static char* fixString(char *s) {
 	char* t = NULL;
 
 	if(s==NULL)
-		return;
+		return NULL;
 	t = malloc((strlen(s)+1)*sizeof(char));
 	assert(t);
 
@@ -75,8 +74,6 @@ static char* fixString(char *s) {
 					t[i] = '\\'; break;
 				case '\"':
 					t[i] = '\"'; break;
-				/*case '\'':
-					t[i] = '\''; break;*/
 				default: 
 					i--;break;
 			}
@@ -132,6 +129,7 @@ Token newToken(TokenKind kind, long line, TokenValue value ) {
 		pt->value = value;
 		pt->kind = kind;
 		pt->line = line;
+		return pt;
 	}
 	else 
 		return NULL;
@@ -169,6 +167,7 @@ int deleteToken(Token t) {
 	}
 
 	free(t);
+	return 1;
 }
 
 char* tokenGetStringValue(Token t) {

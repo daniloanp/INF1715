@@ -1,0 +1,970 @@
+cd ../trab1/ && rm -f lex.yy.c && make lex.yy.c
+make[1]: Entering directory '/home/danilo/puc-rio/INF1715/trab1'
+flex --header-file=lex.yy.h mini0-lex.l 
+make[1]: Leaving directory '/home/danilo/puc-rio/INF1715/trab1'
+cd ../trab2/
+colorgcc -Wall -o mini0-parser build_ast.c  AbstractSyntaxTree.h AbstractSyntaxTree.c ../trab2/recursiveParser.h ../trab2/recursiveParser.c ../trab1/token.h ../trab1/token.c ../trab1/tokenList.h ../trab1/tokenList.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/lex.h ../trab1/lex.c 
+bash test-oficial.sh
+
+==== --- |  Testing testes-oficiais//01-global.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      DeclVar '(i)'
+         tp_int(0)
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//02-fun.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(f)'
+         Block
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//03-nls.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(f)'
+         Block
+            Attr
+               Var '(i)'
+               Exp
+                  int: '(0)'
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//04-funglobal.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      DeclVar '(x)'
+         tp_int(0)
+      fun '(f)'
+         Block
+            Attr
+               Var '(x)'
+               Exp
+                  int: '(0)'
+      DeclVar '(y)'
+         tp_int(0)
+      fun '(g)'
+         Block
+            Attr
+               Var '(y)'
+               Exp
+                  int: '(0)'
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//05-params.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(foo)'
+         Block
+      fun '(foo)'
+         ParamList
+            Param '(x)'
+               tp_int(0)
+         Block
+      fun '(foo)'
+         ParamList
+            Param '(x)'
+               tp_int(0)
+            Param '(y)'
+               tp_int(0)
+         Block
+      fun '(foo)'
+         ParamList
+            Param '(x)'
+               tp_int(0)
+            Param '(y)'
+               tp_int(0)
+         Block
+      fun '(foo)'
+         tp_bool(0)
+         Block
+      fun '(foo)'
+         ParamList
+            Param '(x)'
+               tp_int(0)
+         tp_bool(0)
+         Block
+      fun '(foo)'
+         ParamList
+            Param '(x)'
+               tp_int(0)
+            Param '(y)'
+               tp_int(0)
+         tp_int(1)
+         Block
+      fun '(foo)'
+         ParamList
+            Param '(x)'
+               tp_int(0)
+            Param '(y)'
+               tp_int(1)
+         tp_int(2)
+         Block
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//06-declvar.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(foo)'
+         Block
+            DeclVar '(x)'
+               tp_int(1)
+            Attr
+               Var '(x)'
+               Exp
+                  New
+                     Exp
+                        int: '(10)'
+                     tp_int(0)
+      fun '(_)'
+         Block
+            DeclVar '(x)'
+               tp_int(1)
+            DeclVar '(y)'
+               tp_bool(0)
+            Attr
+               Var '(x)'
+               Exp
+                  New
+                     Exp
+                        int: '(10)'
+                     tp_int(0)
+            If
+               Exp
+                  =
+                     Var '(y)'
+                     bool: True
+               Block
+                  Call '(print)'
+                     Exp
+                        strVal: "ola"
+                     Exp
+                        strVal: "oi"
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//07-if.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(f)'
+         Block
+            If
+               Exp
+                  Var '(a)'
+               Block
+                  Attr
+                     Var '(x)'
+                     Exp
+                        int: '(3)'
+      fun '(g)'
+         Block
+            If
+               Exp
+                  Var '(a)'
+               Block
+                  Attr
+                     Var '(x)'
+                     Exp
+                        int: '(3)'
+               Else
+                  Block
+                     Attr
+                        Var '(x)'
+                        Exp
+                           int: '(4)'
+      fun '(h)'
+         Block
+            If
+               Exp
+                  >
+                     Var '(a)'
+                     int: '(3)'
+               Block
+                  Attr
+                     Var '(x)'
+                     Exp
+                        int: '(13)'
+               ElseIf
+                  Exp
+                     <
+                        Var '(a)'
+                        (-)
+                           int: '(3)'
+                  Block
+                     Attr
+                        Var '(x)'
+                        Exp
+                           int: '(14)'
+      fun '(i)'
+         Block
+            If
+               Exp
+                  <>
+                     Var '(a)'
+                     int: '(3)'
+               Block
+                  Attr
+                     Var '(x)'
+                     Exp
+                        int: '(13)'
+               Else
+                  Block
+                     Attr
+                        Var '(x)'
+                        Exp
+                           int: '(14)'
+      fun '(j)'
+         Block
+            If
+               Exp
+                  =
+                     Var '(a)'
+                     int: '(0)'
+               Block
+                  Attr
+                     Var '(x)'
+                     Exp
+                        int: '(13)'
+               ElseIf
+                  Exp
+                     =
+                        Var '(a)'
+                        int: '(1)'
+                  Block
+                     Attr
+                        Var '(x)'
+                        Exp
+                           int: '(14)'
+               ElseIf
+                  Exp
+                     =
+                        Var '(a)'
+                        int: '(2)'
+                  Block
+                     Attr
+                        Var '(x)'
+                        Exp
+                           int: '(14)'
+               ElseIf
+                  Exp
+                     =
+                        Var '(a)'
+                        int: '(3)'
+                  Block
+                     Attr
+                        Var '(x)'
+                        Exp
+                           int: '(14)'
+               ElseIf
+                  Exp
+                     =
+                        Var '(a)'
+                        bool: False
+                  Block
+                     Attr
+                        Var '(x)'
+                        Exp
+                           int: '(14)'
+               Else
+                  Block
+                     Attr
+                        Var '(x)'
+                        Exp
+                           int: '(14)'
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//11-ifdecl.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(i)'
+         tp_bool(0)
+         Block
+            If
+               Exp
+                  <>
+                     Var '(a)'
+                     int: '(3)'
+               Block
+                  DeclVar '(y)'
+                     tp_int(0)
+                  Attr
+                     Var '(y)'
+                     Exp
+                        int: '(13)'
+                  Return
+                     Exp
+                        <
+                           int: '(10)'
+               Else
+                  Block
+                     DeclVar '(y)'
+                        tp_bool(0)
+                     Attr
+                        Var '(y)'
+                        Exp
+                           bool: False
+                     Return
+                        Exp
+                           =
+                              bool: True
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//12-while.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(hehe)'
+         tp_bool(0)
+         Block
+            DeclVar '(i)'
+               tp_int(0)
+            Attr
+               Var '(i)'
+               Exp
+                  int: '(0)'
+            While
+               Exp
+                  <
+                     Var '(i)'
+                     int: '(10)'
+               Block
+                  Call '(printf)'
+                     Exp
+                        strVal: "%d
+"
+                     Exp
+                        Var '(i)'
+                  Attr
+                     Var '(i)'
+                     Exp
+                        +
+                           Var '(i)'
+                           int: '(1)'
+            Return
+               Exp
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//14-ifwhile.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      DeclVar '(gobo)'
+         tp_int(0)
+      fun '(hehe)'
+         ParamList
+            Param '(c)'
+               tp_char(0)
+         tp_bool(0)
+         Block
+            DeclVar '(i)'
+               tp_int(0)
+            Attr
+               Var '(i)'
+               Exp
+                  int: '(0)'
+            If
+               Exp
+                  =
+                     Var '(c)'
+                     int: '(64)'
+               Block
+                  While
+                     Exp
+                        <
+                           Var '(i)'
+                           int: '(10)'
+                     Block
+                        If
+                           Exp
+                              *
+                                 /
+                                    Var '(i)'
+                                    int: '(2)'
+                                 =
+                                    int: '(2)'
+                                    Var '(i)'
+                           Block
+                              Call '(printf)'
+                                 Exp
+                                    strVal: "%d
+"
+                                 Exp
+                                    Var '(i)'
+                           Else
+                              Block
+                                 Call '(printf)'
+                                    Exp
+                                       strVal: "******
+"
+                                    Exp
+                                       Var '(i)'
+                        Attr
+                           Var '(i)'
+                           Exp
+                              +
+                                 Var '(i)'
+                                 int: '(1)'
+                  Return
+                     Exp
+               Else
+                  Block
+                     Return
+                        Exp
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//16-atrib.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      DeclVar '(i)'
+         tp_int(0)
+      fun '(f)'
+         Block
+            Attr
+               Var '(i)'
+               Exp
+                  int: '(1)'
+      fun '(g)'
+         Block
+            DeclVar '(i)'
+               tp_int(0)
+            Attr
+               Var '(i)'
+               Exp
+                  int: '(2)'
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//17-call.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(fibo)'
+         ParamList
+            Param '(i)'
+               tp_int(0)
+         tp_int(0)
+         Block
+            If
+               Exp
+                  <=
+                     Var '(i)'
+                     int: '(1)'
+               Block
+                  Return
+                     Exp
+               Else
+                  Block
+                     Return
+                        Exp
+                           +
+                              -
+                                 Var '(i)'
+                                 int: '(1)'
+                              Call '(fibo)'
+                                 Exp
+                                    -
+                                       Var '(i)'
+                                       int: '(2)'
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//19-callargs.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(f)'
+         ParamList
+            Param '(i)'
+               tp_int(0)
+         tp_int(0)
+         Block
+            Call '(f)'
+      fun '(f)'
+         ParamList
+            Param '(i)'
+               tp_int(0)
+         tp_int(0)
+         Block
+            Call '(f)'
+               Exp
+                  Var '(i)'
+      fun '(f)'
+         ParamList
+            Param '(i)'
+               tp_int(0)
+         tp_int(0)
+         Block
+            Call '(f)'
+               Exp
+                  Var '(i)'
+               Exp
+                  int: '(12)'
+      fun '(f)'
+         ParamList
+            Param '(i)'
+               tp_int(0)
+         tp_int(0)
+         Block
+            Call '(f)'
+               Exp
+                  Var '(i)'
+               Exp
+                  int: '(12)'
+               Exp
+                  Var '(ovo)'
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//20-return.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(the_answer)'
+         tp_char(0)
+         Block
+            Return
+               Exp
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//21-arrays.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(make_matrix)'
+         ParamList
+            Param '(x)'
+               tp_int(0)
+            Param '(y)'
+               tp_int(0)
+         tp_int(2)
+         Block
+            DeclVar '(a)'
+               tp_int(2)
+            DeclVar '(i)'
+               tp_int(0)
+            DeclVar '(j)'
+               tp_int(0)
+            Attr
+               Var '(i)'
+               Exp
+                  int: '(0)'
+            Attr
+               Var '(a)'
+               Exp
+                  New
+                     Exp
+                        Var '(y)'
+                     tp_int(1)
+            While
+               Exp
+                  <
+                     Var '(i)'
+                     Var '(y)'
+               Block
+                  Attr
+                     Var '(a)'
+                        Exp
+                           Var '(i)'
+                     Exp
+                        New
+                           Exp
+                              Var '(x)'
+                           tp_int(0)
+                  Attr
+                     Var '(j)'
+                     Exp
+                        int: '(0)'
+                  While
+                     Exp
+                        <
+                           Var '(j)'
+                           Var '(x)'
+                     Block
+                        Attr
+                           Var '(a)'
+                              Exp
+                                 Var '(i)'
+                              Exp
+                                 Var '(j)'
+                           Exp
+                              *
+                                 Var '(i)'
+                                 Var '(j)'
+                        Attr
+                           Var '(j)'
+                           Exp
+                              +
+                                 Var '(j)'
+                                 int: '(1)'
+                  Attr
+                     Var '(i)'
+                     Exp
+                        +
+                           Var '(i)'
+                           int: '(1)'
+            Return
+               Exp
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//21-return-noargs.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(sim)'
+         Block
+            If
+               Exp
+                  >
+                     int: '(1)'
+                     int: '(2)'
+               Block
+                  Return
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//22-exp.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(exps)'
+         Block
+            Attr
+               Var '(i)'
+               Exp
+                  int: '(10)'
+            Attr
+               Var '(s)'
+               Exp
+                  strVal: "hello"
+            Attr
+               Var '(t)'
+               Exp
+                  bool: True
+            Attr
+               Var '(f)'
+               Exp
+                  bool: False
+            Attr
+               Var '(v)'
+               Exp
+                  Var '(i)'
+            Attr
+               Var '(k)'
+               Exp
+                  New
+                     Exp
+                        Var '(x)'
+                     tp_bool(0)
+            Attr
+               Var '(x)'
+               Exp
+                  New
+                     Exp
+                        Var '(x)'
+                     tp_int(1)
+            Attr
+               Var '(y)'
+               Exp
+                  Var '(x)'
+            Attr
+               Var '(y)'
+               Exp
+                  +
+                     =
+                        Call '(foo)'
+                        Var '(a)'
+                        int: '(1)'
+                     int: '(1)'
+            Attr
+               Var '(b)'
+               Exp
+                  -
+                     int: '(1)'
+                     int: '(1)'
+            Attr
+               Var '(c)'
+               Exp
+                  *
+                     int: '(4)'
+                     int: '(5)'
+            Attr
+               Var '(d)'
+               Exp
+                  /
+                     int: '(6)'
+                     int: '(7)'
+            Attr
+               Var '(e)'
+               Exp
+                  >
+                     Var '(a)'
+                     Var '(b)'
+            Attr
+               Var '(f)'
+               Exp
+                  <
+                     Var '(d)'
+                     Var '(c)'
+            Attr
+               Var '(g)'
+               Exp
+                  >=
+                     Var '(a)'
+                     int: '(12)'
+            Attr
+               Var '(a)'
+               Exp
+                  <=
+                     Var '(a)'
+                     Var '(a)'
+            Attr
+               Var '(a)'
+               Exp
+                  =
+                     =
+                        =
+                           Var '(a)'
+                           Var '(a)'
+                        Var '(a)'
+                     Var '(a)'
+            Attr
+               Var '(a)'
+               Exp
+                  =
+                     <>
+                        Var '(b)'
+                        Var '(c)'
+                     Var '(d)'
+            Attr
+               Var '(c)'
+               Exp
+                  >
+                     Var '(x)'
+                     <
+                        And
+                           int: '(5)'
+                           Var '(y)'
+                        int: '(2)'
+            Attr
+               Var '(d)'
+               Exp
+                  And
+                     Var '(a)'
+                     Or
+                        Var '(b)'
+                        Var '(c)'
+            Attr
+               Var '(e)'
+               Exp
+                  Not
+                     >
+                        Var '(a)'
+                        Var '(b)'
+            Attr
+               Var '(f)'
+               Exp
+                  -
+                     int: '(3)'
+                     (-)
+                        int: '(2)'
+            Attr
+               Var '(x)'
+               Exp
+                  *
+                     +
+                        int: '(1)'
+                        int: '(2)'
+                     +
+                        int: '(3)'
+                        int: '(4)'
+            If
+               Exp
+                  Call '(f)'
+                     Exp
+                        +
+                           Var '(x)'
+                           >
+                              int: '(3)'
+                              <=
+                                 Or
+                                    int: '(2)'
+                                    Var '(x)'
+                                 int: '(3)'
+                  Call '(print)'
+                     Exp
+                        strVal: "woof"
+               Block
+                  If
+                     Exp
+                        And
+                           Var '(x)'
+                           And
+                              Or
+                                 Var '(y)'
+                                 Var '(z)'
+                              Var '(w)'
+                     Block
+                        Call '(print)'
+                           Exp
+                              strVal: "woof"
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//35-expprio.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(exps)'
+         Block
+            Attr
+               Var '(a)'
+               Exp
+                  Not
+                     +
+                        Var '(a)'
+                        Not
+                           Var '(b)'
+            Attr
+               Var '(b)'
+               Exp
+                  (-)
+                     +
+                        Var '(a)'
+                        Not
+                           Var '(b)'
+            Attr
+               Var '(c)'
+               Exp
+                  *
+                     +
+                        Var '(a)'
+                        Var '(b)'
+                     Var '(c)'
+            Attr
+               Var '(d)'
+               Exp
+                  And
+                     Or
+                        Var '(a)'
+                        Var '(b)'
+                     Var '(c)'
+            Attr
+               Var '(e)'
+               Exp
+                  =
+                     And
+                        Var '(a)'
+                        Var '(b)'
+                     Var '(c)'
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//37-invprio.m0  | --- =====
+
+Correct Syntax!!!
+   Program
+      fun '(exps)'
+         Block
+            Attr
+               Var '(a)'
+               Exp
+                  Not
+                     +
+                        Var '(a)'
+                        Not
+                           Var '(b)'
+            Attr
+               Var '(a)'
+               Exp
+                  Not
+                     +
+                        Var '(a)'
+                        Not
+                           Var '(b)'
+            Attr
+               Var '(b)'
+               Exp
+                  (-)
+                     +
+                        Var '(a)'
+                        Not
+                           Var '(b)'
+            Attr
+               Var '(b)'
+               Exp
+                  (-)
+                     +
+                        Var '(a)'
+                        Not
+                           Var '(b)'
+            Attr
+               Var '(c)'
+               Exp
+                  *
+                     +
+                        Var '(a)'
+                        Var '(b)'
+                     Var '(c)'
+            Attr
+               Var '(c)'
+               Exp
+                  *
+                     +
+                        Var '(a)'
+                        Var '(b)'
+                     Var '(c)'
+            Attr
+               Var '(d)'
+               Exp
+                  And
+                     Or
+                        Var '(a)'
+                        Var '(b)'
+                     Var '(c)'
+            Attr
+               Var '(d)'
+               Exp
+                  And
+                     Or
+                        Var '(a)'
+                        Var '(b)'
+                     Var '(c)'
+            Attr
+               Var '(e)'
+               Exp
+                  =
+                     And
+                        Var '(a)'
+                        Var '(b)'
+                     Var '(c)'
+            Attr
+               Var '(e)'
+               Exp
+                  =
+                     And
+                        Var '(a)'
+                        Var '(b)'
+                     Var '(c)'
+
+------- x -------

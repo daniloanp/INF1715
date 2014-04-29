@@ -122,6 +122,7 @@ TokenList tokenListExecuteForEach(TokenList tl, tokenCallBack func)
 	for( ; tl != NULL; tl = tl->next ) {
 		func(tl->token);
 	}
+	return tl;
 }
 
 Token tokenListGetCurrentToken(TokenList tl) {

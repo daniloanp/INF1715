@@ -4,14 +4,7 @@
 int done = 0;
 int line_num = 1;
 
-//Auxiliar Function that count how many times a char exists into a string
-int countCharOccurences(char *s, char c) {
-	int i=0;
-	for( ; *s; s++ )
-		if( *s == c )
-			i++;
-	return i;
-}
+
 
 %}
 
@@ -99,7 +92,8 @@ not		{ return NOT;}
 
 %%4
 
-yywrap() {
+int yywrap() {
 	done = 1;
+	return 1;
 }
 

@@ -2,7 +2,7 @@
 #include "../trab1/tokenList.h"
 #include "../trab1/token.h"
 //TokenList program( TokenList tl );
-typedef int (*callbackOnDerivation) (int nodeType, int line, Token t);
+typedef int (*callbackOnDerivation) ( 	Token t, int line );
 int parser( TokenList tl, callbackOnDerivation f );
 
 

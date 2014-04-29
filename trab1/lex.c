@@ -10,14 +10,21 @@ extern int done;
 extern int line_num;
 extern int nline;
 extern  int countCharOccurences(char *s, char c);
-/* /* */
+
+int countCharOccurences(char *s, char c) {
+	int i=0;
+	for( ; *s; s++ )
+		if( *s == c )
+			i++;
+	return i;
+}
+
 
 TokenList generateTokens(FILE* f, int* status) {
 	Token t = NULL; 
 	TokenList tl = NULL	;
 	TokenKind b;
 	long aux;
-	char c;
 	short error_flag = 0;
 	yyin = f;
 	*status = 0; //no error;
@@ -46,12 +53,16 @@ TokenList generateTokens(FILE* f, int* status) {
 				t = newToken((TokenKind)b, line_num, createTokenNumberValue(aux));
 				break;
 			case ERROR:
+				//printf("Strange");
 				error_flag = 1;
 				t=NULL;
-				if(!strcmp("", yytext))
-					printf("Error at line %d.", line_num);
+				printf("Error at line %d.\n", line_num);
+				if( !strcmp("", yytext)) {
+					printf("(Unkown token '%s')", yytext);
+				}
 				break;
 			default:
+				//printf("oops\n");
 				if( (b >=1 && b <= 37) )
 					t = newToken((TokenKind)b, line_num, NULL);
 				break;
@@ -61,6 +72,9 @@ TokenList generateTokens(FILE* f, int* status) {
 				tokenListInsert(tl,t);
 			else
 				tl= tokenListCreate(t);
+		} 
+		else {
+			break;
 		}
 
 		t = NULL;

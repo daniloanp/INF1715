@@ -7,7 +7,7 @@
 int main( int argc, char **argv ) {	
 	int ret;
 	TokenList tl;
-	FILE *input;
+	FILE *input = NULL;
 	++argv, --argc;
 	if ( argc > 0 )
 		input = fopen( argv[0], "r" );
@@ -15,19 +15,23 @@ int main( int argc, char **argv ) {
 		input = stdin;
 	if(input) {
 		tl = generateTokens(input, &ret);
-		if(!ret)
+		if(!ret) {
 			ret = parser(tl, NULL);
+		}
 
-		if( input != stdin )
+		if( input != stdin ) {
 			fclose(input);
+		}
 	}
 	else {
-		"Cannot open file";
+		printf("\nError: Cannot open file.\n");
 		return 1;
 	}
 
-	if(ret == 0 )
+	if(ret == 0 ) {
 		printf("Correct Syntax!!!\n");
+		tokenListDestroy(tl);
+	}
 
 
 	return ret;

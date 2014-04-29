@@ -6,13 +6,13 @@
 #include "recursiveParser.h"
 
 //global_variable is more intuitive;
-static error_flag = 0;
+static int error_flag = 0;
 
 static callbackOnDerivation actinOnRules = NULL;
 
-static int callOnConsume(int nodeType, int line, Token t) {
+static int callOnConsume( Token t, int line ) {
 	if( actinOnRules != NULL && error_flag == 0) {
-		return actinOnRules(nodeType, line, t);
+		return actinOnRules( t, line );
 	} else
 		return -1;
 }
@@ -55,7 +55,7 @@ static  TokenList processTerminal( TokenList tl, TokenKind tk ) {
 	}	
 	if( t!= NULL && tokenGetKind(t) == tk ) {
 		//printf("Token: %s, Line: %d\n", tokenToString(t), tokenGetLine(t));
-		callOnConsume(tokenGetKind(t), tokenGetLine(t), t);
+		callOnConsume(t, tokenGetLine(t));
 		return tokenListNext( tl );
 	}
 	else {
@@ -104,7 +104,6 @@ static TokenList type( TokenList tl ) {
 declGlobalVar -> 'ID' ':' type 'NL'
 */
 static TokenList declGlobalVar(TokenList tl) {	
-	Token t = tokenListGetCurrentToken( tl );
 	tl = processTerminal( tl, IDENTIFIER );
 	tl = processTerminal( tl, COLON );
 	tl = type(tl);
@@ -114,7 +113,6 @@ static TokenList declGlobalVar(TokenList tl) {
 param -> 'ID' ':' type
 */
 static TokenList param(TokenList tl) {
-	Token t = tokenListGetCurrentToken( tl );
 	tl = processTerminal(tl, IDENTIFIER);
 	tl = processTerminal(tl, COLON);
 	return type(tl);
@@ -123,7 +121,6 @@ static TokenList param(TokenList tl) {
 params -> param { ','' param }
 */
 static TokenList params(TokenList tl) {
-	Token t = tokenListGetCurrentToken( tl );
 	tl = param(tl);
 	//pay attention, loop
 	while( verifyCurrentToken(tl, COMMA) ) {
@@ -139,7 +136,6 @@ declOrCommand -> ':' type 'NL' 'ID' declOrCommand
 declOrCommand ->  commandAttrOrCall 'NL'
 */
 static  TokenList declOrCommand( TokenList tl ) {
-	Token t = tokenListGetCurrentToken( tl );
 	if( verifyCurrentToken( tl, COLON ) )	{
 		tl = processTerminal( tl, COLON );
 		tl = type( tl );
@@ -160,8 +156,7 @@ static  TokenList declOrCommand( TokenList tl ) {
 /*
 new -> 'new' '[' expression ']' type
 */
-static TokenList new(TokenList tl) {
-	Token t = tokenListGetCurrentToken( tl );
+static TokenList new(TokenList tl) {	
 	tl = processTerminal(tl, NEW);
 	tl = processTerminal(tl, OP_BRACKET);
 	tl = expression(tl);
@@ -213,7 +208,7 @@ static  TokenList F(TokenList tl) {
 		default:
 			if(tl != NULL) {
 				error_flag++;
-				printf( "Line %d.\nAn expression was expected but got %s.\n", tokenGetLine(t),  tokenToString(t) );
+				printf( "Error at Line %d.\nAn expression was expected but got %s.\n", tokenGetLine(t),  tokenToString(t) );
 				tl = NULL;		
 			}
 		break;
@@ -315,18 +310,31 @@ static TokenList C( TokenList tl) {
 	}
 	return tl;
 }
-	
-/*
-expression -> C 'AND' expression
-expression -> C 'OR'  expression
-expression -> C*/
 
-static TokenList expression( TokenList tl ) {
+static TokenList A( TokenList tl ) {
 	Token t;
 	tl = C( tl );
 	t = tokenListGetCurrentToken( tl );
 	switch( tokenGetKind(t) ) {
 		case AND:
+			tl = processTerminal( tl, tokenGetKind(t) );
+			tl = A( tl );
+			break;
+		default:
+			break;
+	}
+	return tl;
+}
+	
+/*
+expression -> A 'AND' expression
+expression -> C*/
+
+static TokenList expression( TokenList tl ) {
+	Token t;
+	tl = A( tl );
+	t = tokenListGetCurrentToken( tl );
+	switch( tokenGetKind(t) ) {
 		case OR:
 			tl = processTerminal( tl, tokenGetKind(t) );
 			tl = expression( tl );
@@ -341,7 +349,6 @@ static TokenList expression( TokenList tl ) {
 expressionList -> expression { ',' expression }
 */
 static TokenList expressionList( TokenList tl ) {
-	Token t = tokenListGetCurrentToken( tl );
 	tl = expression( tl );
 	while(verifyCurrentToken(tl, COMMA)) {
 		tl = processTerminal(tl, COMMA);
@@ -354,8 +361,7 @@ static TokenList expressionList( TokenList tl ) {
 call -> 	'(' [expressionList] ')'
 */
 static TokenList call( TokenList tl ) {
-	Token t;
-	t = tokenListGetCurrentToken( tl );
+	Token t;	
 	tl = processTerminal(tl, OP_PARENTHESIS );
 	t = tokenListGetCurrentToken( tl );
 	switch ( tokenGetKind( t )) {
@@ -381,8 +387,6 @@ static TokenList call( TokenList tl ) {
 attr -> 	arrayAccess '=' expression
 */
 static TokenList attr( TokenList tl ) {
-	Token t;
-	t = tokenListGetCurrentToken( tl );
 	tl = arrayAccess(tl);
 	tl = processTerminal( tl, EQUAL );
 	tl = expression( tl );
@@ -393,8 +397,6 @@ static TokenList attr( TokenList tl ) {
 arrayAccess -> 	{ '['  expression']' }
 */
 static TokenList arrayAccess( TokenList tl) {
-	Token t;
-	t = tokenListGetCurrentToken( tl );
 	while( verifyCurrentToken( tl, OP_BRACKET ) ) {
 		tl = processTerminal( tl, OP_BRACKET );
 		tl = expression( tl );
@@ -408,7 +410,6 @@ commandAttrOrCall -> attr | call
 */
 static TokenList commandAttrOrCall( TokenList tl ) {
 	Token t;
-	t = tokenListGetCurrentToken( tl );
 	if( verifyCurrentToken(tl, EQUAL) || verifyCurrentToken(tl, OP_BRACKET) ) {
 		tl = attr( tl );	
 	}
@@ -429,8 +430,6 @@ commandWhile -> 'WHILE' expression'NL'
 				'LOOP'
 */
 static TokenList commandWhile( TokenList tl ) {
-	Token t;
-	t = tokenListGetCurrentToken( tl );
 	tl = processTerminal(tl, WHILE);
 	tl = expression(tl);
 	tl = processTerminal(tl, NL);
@@ -478,8 +477,6 @@ commandIf->'IF' expression 'NL'
 			'END'
 */
 static TokenList commandIf( TokenList tl ) {
-	Token t;
-	t = tokenListGetCurrentToken( tl );
 	tl = processTerminal( tl, IF );
 	tl = expression( tl );
 	tl =  processTerminal( tl, NL );
@@ -534,8 +531,8 @@ static  TokenList command( TokenList tl ) {
 			if(tl != NULL) {
 				error_flag++;
 				Token t = tokenListGetCurrentToken( tl );
-				printf( "\nToken: %s ", tokenToString(t));
-				printf( "Line %d.\nExpected identifier, if, return or while but got %s.\n", tokenGetLine(t),  tokenToString(t) );
+				//printf( "\nToken: %s ", tokenToString(t));
+				printf( "Error at Line %d.\nExpected identifier, if, return or while but got %s.\n", tokenGetLine(t),  tokenToString(t) );
 				return NULL;
 			}
 			break;
@@ -575,7 +572,6 @@ declFunction -> 'FUN' 'ID' '(' params ')' [ ':' type ] 'NL'
 
 */
 static TokenList declFunction( TokenList tl ) {
-	Token t = tokenListGetCurrentToken(tl);
 	tl = processTerminal( tl, FUN );
 	tl = processTerminal( tl, IDENTIFIER );
 	tl = processTerminal( tl, OP_PARENTHESIS );
@@ -662,7 +658,7 @@ TokenList program( TokenList tl ) {
 
 
 int parser( TokenList tl, callbackOnDerivation f )
-{	
+{
 	actinOnRules = f;
 	program(tl);
 	return error_flag;

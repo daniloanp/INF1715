@@ -63,7 +63,7 @@ AST AST_UpdateNodeValue( AST node, ASTNodeValue val );
 AST AST_UpdateNodeType( AST node, ASTNodeType tp );
 AST AST_RemoveChild( AST parent, AST child ) ;
 
-
+ASTNodeType AST_GetType(AST node);
 
 
 

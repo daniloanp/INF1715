@@ -55,13 +55,15 @@ commandAttrOrCall -> attr | call
 
 expressionList -> expression { ',' expression }
 
-expression -> C 'AND' expression
 expression -> C 'OR'  expression
 expression -> C
 
 new -> 'new' '[' expression ']' type
 varOrCall -> 'ID' call 
 varOrCall -> 'ID' {[exp]}
+
+A -> C
+A -> C 'AND' A
 
 C -> E 
 C -> E '>' C

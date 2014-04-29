@@ -22,7 +22,7 @@ int printToken(Token t)
 	
 	switch ( tokenGetKind(t) ) {	
 		case INT_VAL:
-			printf("%d", tokenGetNumberValue(t));
+			printf("%lu", tokenGetNumberValue(t));
 			break;
 		case STRING_VAL:
 			printf("\"%s\"", tokenGetStringValue(t));
@@ -41,7 +41,7 @@ int printToken(Token t)
 			break;
 	}
 	printf(" ");
-	
+	return 1;
 }
 
 int main( int argc, char **argv ) {	
@@ -63,5 +63,5 @@ int main( int argc, char **argv ) {
 	
 	if( input != stdin )
 		fclose(input);
-	return 0;
+	return ret;
 }

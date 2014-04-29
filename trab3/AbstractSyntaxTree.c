@@ -111,7 +111,6 @@ AST AST_GetPrevSibling(AST node) {
 }
 
 ASTNodeValue AST_NodeValueFromToken( Token t ) {
-	//TokenValue val = NULL;
 	ASTNodeValue nodeVal = NULL;
 	if (t!=NULL && tokenGetVal( t )!=NULL) {
 		nodeVal = (ASTNodeValue)malloc(sizeof(union ast_val));
@@ -172,9 +171,6 @@ AST AST_RemoveChild( AST parent, AST child ) {
 	if(parent == NULL || child == NULL) {
 		return NULL;
 	}
-	
-	
-
 	if( child == parent->firstChild ) {
 		parent->firstChild = child->nextSibling; 
 		//Não dá pra achar mais.
@@ -236,19 +232,19 @@ static char* AST_nodeToString(AST node) {
 		case AST_Return: return "Return";break;
 		case AST_New: return "New";break;
 		case AST_Int: 
-			sprintf(buff, "tp_int(%d)", AST_GetNumberValue(node));
+			sprintf(buff, "tp_int(%lu)", AST_GetNumberValue(node));
 			return buff;
 		break;
 		case AST_Char: 
-			sprintf(buff, "tp_char(%d)", AST_GetNumberValue(node));
+			sprintf(buff, "tp_char(%lu)", AST_GetNumberValue(node));
 			return buff;
 		break;
 		case AST_Bool: 
-			sprintf(buff, "tp_bool(%d)", AST_GetNumberValue(node));
+			sprintf(buff, "tp_bool(%lu)", AST_GetNumberValue(node));
 			return buff;
 		break;
 		case AST_String:
-			sprintf(buff, "tp_string(%d)", AST_GetNumberValue(node));
+			sprintf(buff, "tp_string(%s)", AST_GetStringValue(node));
 			return buff;
 		break;
 		case AST_And: return "And";break;
@@ -261,11 +257,11 @@ static char* AST_nodeToString(AST node) {
 				return "bool: False";
 		break;
 		case AST_IntVal: 
-			sprintf(buff, "int: '(%d)'", AST_GetNumberValue(node));
+			sprintf(buff, "int: '(%lu)'", AST_GetNumberValue(node));
 			return buff;
 		break;
 		case AST_StringVal: 
-			sprintf(buff, "strVal: '%s'", AST_GetStringValue(node));
+			sprintf(buff, "strVal: \"%s\"", AST_GetStringValue(node));
 			return buff;
 		break;
 		case AST_Plus: return "+";break;
@@ -282,7 +278,10 @@ static char* AST_nodeToString(AST node) {
 			sprintf(buff, "fun '(%s)'", AST_GetStringValue(node));
 			return buff;
 		break;
-		case AST_Param: return "Param";break;
+		case AST_Param: 
+			sprintf(buff, "Param '(%s)'", AST_GetStringValue(node));
+			return buff;
+		break;
 		case AST_ParamList: return "ParamList";break;
 		case AST_Expression: return "Exp";break;
 		case AST_Call: 
@@ -314,15 +313,11 @@ void AST_PrettyPrint( AST t, int level ) {
 	if(t == NULL)
 		return;
 	for( i=level;i;i-- ) printf("   ");
-	printf(AST_nodeToString(t));
+	printf("%s",AST_nodeToString(t));
 	printf("\n");
 	c = AST_GetFirstChild(t);
 	while( c != NULL ) {
 		AST_PrettyPrint( c, level+1 );
 		c = AST_GetNextSibling(c);
 	}
-	
-	//Imprimir filhos
-	
-
 };
