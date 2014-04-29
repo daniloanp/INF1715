@@ -120,7 +120,6 @@ TokenValue createTokenNumberValue(long number) {
 	return pt;
 }
 
-
 Token newToken(TokenKind kind, long line, TokenValue value ) {
 	Token pt = 0;
 	pt = (Token) malloc(sizeof(struct struct_token));
@@ -133,6 +132,7 @@ Token newToken(TokenKind kind, long line, TokenValue value ) {
 	}
 	else 
 		return NULL;
+	return pt;
 }
 
 int tokenGetLine(Token t) {
@@ -181,7 +181,6 @@ long tokenGetNumberValue(Token t) {
 	assert(t->value);
 	return t->value->number;
 }
-			
 
 static char* token_string[] = { 
 	"IDENTIFIER",

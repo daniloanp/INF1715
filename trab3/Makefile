@@ -1,6 +1,3 @@
-+CC=gcc
-
-+CFLAGS=-Wall
 mini0-ast:
 	cd ../trab1/ && rm -f lex.yy.c && $(MAKE) lex.yy.c
 	cd ../trab2/
