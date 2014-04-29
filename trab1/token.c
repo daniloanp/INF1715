@@ -53,7 +53,7 @@ static char* fixString(char *s) {
 	char* t = NULL;
 
 	if(s==NULL)
-		return;
+		return NULL;
 	t = malloc((strlen(s)+1)*sizeof(char));
 	assert(t);
 
@@ -123,7 +123,6 @@ TokenValue createTokenNumberValue(long number) {
 	return pt;
 }
 
-
 Token newToken(TokenKind kind, long line, TokenValue value ) {
 	Token pt = 0;
 	pt = (Token) malloc(sizeof(struct struct_token));
@@ -135,6 +134,7 @@ Token newToken(TokenKind kind, long line, TokenValue value ) {
 	}
 	else 
 		return NULL;
+	return pt;
 }
 
 int tokenGetLine(Token t) {
@@ -169,6 +169,7 @@ int deleteToken(Token t) {
 	}
 
 	free(t);
+	return 1;
 }
 
 char* tokenGetStringValue(Token t) {
@@ -182,7 +183,6 @@ long tokenGetNumberValue(Token t) {
 	assert(t->value);
 	return t->value->number;
 }
-			
 
 static char* token_string[] = { 
 	"IDENTIFIER",
