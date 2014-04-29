@@ -99,7 +99,8 @@ not		{ return NOT;}
 
 %%4
 
-yywrap() {
+int yywrap() {
 	done = 1;
+	return 1;
 }
 
