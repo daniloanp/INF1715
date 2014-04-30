@@ -3,7 +3,7 @@ make[1]: Entering directory '/home/danilo/puc-rio/INF1715/trab1'
 flex --header-file=lex.yy.h mini0-lex.l 
 make[1]: Leaving directory '/home/danilo/puc-rio/INF1715/trab1'
 cd ../trab2/
-colorgcc -Wall -o mini0-parser build_ast.c  AbstractSyntaxTree.h AbstractSyntaxTree.c ../trab2/recursiveParser.h ../trab2/recursiveParser.c ../trab1/token.h ../trab1/token.c ../trab1/tokenList.h ../trab1/tokenList.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/lex.h ../trab1/lex.c 
+cc  -o mini0-parser build_ast.c  AbstractSyntaxTree.h AbstractSyntaxTree.c ../trab2/recursiveParser.h ../trab2/recursiveParser.c ../trab1/token.h ../trab1/token.c ../trab1/tokenList.h ../trab1/tokenList.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/lex.h ../trab1/lex.c 
 bash test-oficial.sh
 
 ==== --- |  Testing testes-oficiais//01-global.m0  | --- =====
@@ -309,6 +309,7 @@ Correct Syntax!!!
                   Return
                      Exp
                         <
+                           Var '(y)'
                            int: '(10)'
                Else
                   Block
@@ -321,6 +322,7 @@ Correct Syntax!!!
                      Return
                         Exp
                            =
+                              Var '(y)'
                               bool: True
 
 ------- x -------
@@ -358,6 +360,7 @@ Correct Syntax!!!
                            int: '(1)'
             Return
                Exp
+                  bool: True
 
 ------- x -------
 
@@ -393,13 +396,13 @@ Correct Syntax!!!
                      Block
                         If
                            Exp
-                              *
-                                 /
-                                    Var '(i)'
+                              =
+                                 *
+                                    /
+                                       Var '(i)'
+                                       int: '(2)'
                                     int: '(2)'
-                                 =
-                                    int: '(2)'
-                                    Var '(i)'
+                                 Var '(i)'
                            Block
                               Call '(printf)'
                                  Exp
@@ -423,10 +426,12 @@ Correct Syntax!!!
                                  int: '(1)'
                   Return
                      Exp
+                        bool: True
                Else
                   Block
                      Return
                         Exp
+                           bool: False
 
 ------- x -------
 
@@ -471,19 +476,22 @@ Correct Syntax!!!
                Block
                   Return
                      Exp
+                        int: '(1)'
                Else
                   Block
                      Return
                         Exp
-                           +
-                              -
-                                 Var '(i)'
-                                 int: '(1)'
-                              Call '(fibo)'
-                                 Exp
+                           Call '(fibo)'
+                              Exp
+                                 +
                                     -
                                        Var '(i)'
-                                       int: '(2)'
+                                       int: '(1)'
+                                    Call '(fibo)'
+                                       Exp
+                                          -
+                                             Var '(i)'
+                                             int: '(2)'
 
 ------- x -------
 
@@ -543,6 +551,7 @@ Correct Syntax!!!
          Block
             Return
                Exp
+                  int: '(42)'
 
 ------- x -------
 
@@ -624,6 +633,7 @@ Correct Syntax!!!
                            int: '(1)'
             Return
                Exp
+                  Var '(a)'
 
 ------- x -------
 
@@ -690,12 +700,12 @@ Correct Syntax!!!
             Attr
                Var '(y)'
                Exp
-                  +
-                     =
-                        Call '(foo)'
-                        Var '(a)'
+                  =
+                     Call '(foo)'
+                     Var '(a)'
+                     +
                         int: '(1)'
-                     int: '(1)'
+                        int: '(1)'
             Attr
                Var '(b)'
                Exp
@@ -759,21 +769,21 @@ Correct Syntax!!!
             Attr
                Var '(c)'
                Exp
-                  >
-                     Var '(x)'
+                  And
+                     >
+                        Var '(x)'
+                        int: '(5)'
                      <
-                        And
-                           int: '(5)'
-                           Var '(y)'
+                        Var '(y)'
                         int: '(2)'
             Attr
                Var '(d)'
                Exp
-                  And
-                     Var '(a)'
-                     Or
+                  Or
+                     And
+                        Var '(a)'
                         Var '(b)'
-                        Var '(c)'
+                     Var '(c)'
             Attr
                Var '(e)'
                Exp
@@ -791,38 +801,38 @@ Correct Syntax!!!
             Attr
                Var '(x)'
                Exp
-                  *
+                  +
+                     int: '(1)'
                      +
-                        int: '(1)'
-                        int: '(2)'
-                     +
-                        int: '(3)'
+                        *
+                           int: '(2)'
+                           int: '(3)'
                         int: '(4)'
             If
                Exp
                   Call '(f)'
                      Exp
-                        +
-                           Var '(x)'
+                        Or
                            >
-                              int: '(3)'
-                              <=
-                                 Or
-                                    int: '(2)'
-                                    Var '(x)'
+                              +
+                                 Var '(x)'
                                  int: '(3)'
+                              int: '(2)'
+                           <=
+                              Var '(x)'
+                              int: '(3)'
                   Call '(print)'
                      Exp
                         strVal: "woof"
                Block
                   If
                      Exp
-                        And
-                           Var '(x)'
+                        Or
                            And
-                              Or
-                                 Var '(y)'
-                                 Var '(z)'
+                              Var '(x)'
+                              Var '(y)'
+                           And
+                              Var '(z)'
                               Var '(w)'
                      Block
                         Call '(print)'
@@ -856,27 +866,27 @@ Correct Syntax!!!
             Attr
                Var '(c)'
                Exp
-                  *
-                     +
-                        Var '(a)'
+                  +
+                     Var '(a)'
+                     *
                         Var '(b)'
-                     Var '(c)'
+                        Var '(c)'
             Attr
                Var '(d)'
                Exp
-                  And
-                     Or
-                        Var '(a)'
+                  Or
+                     Var '(a)'
+                     And
                         Var '(b)'
-                     Var '(c)'
+                        Var '(c)'
             Attr
                Var '(e)'
                Exp
-                  =
-                     And
-                        Var '(a)'
+                  And
+                     Var '(a)'
+                     =
                         Var '(b)'
-                     Var '(c)'
+                        Var '(c)'
 
 ------- x -------
 
@@ -921,50 +931,50 @@ Correct Syntax!!!
             Attr
                Var '(c)'
                Exp
-                  *
-                     +
-                        Var '(a)'
+                  +
+                     Var '(a)'
+                     *
                         Var '(b)'
-                     Var '(c)'
+                        Var '(c)'
             Attr
                Var '(c)'
                Exp
-                  *
-                     +
-                        Var '(a)'
+                  +
+                     Var '(a)'
+                     *
                         Var '(b)'
-                     Var '(c)'
+                        Var '(c)'
             Attr
                Var '(d)'
                Exp
-                  And
-                     Or
-                        Var '(a)'
+                  Or
+                     Var '(a)'
+                     And
                         Var '(b)'
-                     Var '(c)'
+                        Var '(c)'
             Attr
                Var '(d)'
                Exp
+                  Or
+                     Var '(a)'
+                     And
+                        Var '(b)'
+                        Var '(c)'
+            Attr
+               Var '(e)'
+               Exp
                   And
-                     Or
-                        Var '(a)'
+                     Var '(a)'
+                     =
                         Var '(b)'
-                     Var '(c)'
+                        Var '(c)'
             Attr
                Var '(e)'
                Exp
-                  =
-                     And
-                        Var '(a)'
+                  And
+                     Var '(a)'
+                     =
                         Var '(b)'
-                     Var '(c)'
-            Attr
-               Var '(e)'
-               Exp
-                  =
-                     And
-                        Var '(a)'
-                        Var '(b)'
-                     Var '(c)'
+                        Var '(c)'
 
 ------- x -------

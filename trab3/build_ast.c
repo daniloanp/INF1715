@@ -30,7 +30,7 @@ int isbinOpPriorityGreater( TokenKind t1,  TokenKind t2 ) { // t1 é o pai
 	int a =0 , b = 0;	
 	a = priorityNumber(t1);
 	b = priorityNumber(t2);
-	return a <= b;	
+	return a < b;	
 }
 
 int isConstant(TokenKind tk) {
@@ -214,10 +214,10 @@ int buildAst( Token t, int line ) {
 		if( tk == NL ) {
 			currParent = AST_GetParent(currParent);
 			return 0;
-		} else {
+		} else if( AST_GetFirstChild(currParent) == NULL ){
 			node = AST_NewNode( AST_Expression, line, NULL);
 			currParent = AST_InsertChild( currParent, node );
-			return 0;
+			return buildAst( t, line );
 		}
 	}
 
@@ -391,7 +391,7 @@ int buildAst( Token t, int line ) {
 			currParent = AST_InsertChild(currParent, node);
 			return 0;
 		}
-		else if( isConstant(tk) ) { //Constant
+		else if( isConstant( tk ) ) { //Constant
 			node = AST_NewNode((ASTNodeType)tk, line, AST_NodeValueFromToken(t));
 			node = AST_InsertChild(currParent, node);
 			while(parentType == AST_Not || parentType == AST_UnaryMinus) {
@@ -412,7 +412,7 @@ int buildAst( Token t, int line ) {
 		}
 		else if( isBinOp(tk) ) {
 			if(isBinOp((TokenKind)parentType)) { //Pai também é bin Op
-				if( ! isbinOpPriorityGreater((TokenKind)parentType, tk) ) {
+				if( isbinOpPriorityGreater((TokenKind)parentType, tk) ) {
 					node = AST_GetLastChild(currParent);
 					node = AST_RemoveChild(currParent, node);
 					currParent = AST_InsertChild( currParent, AST_NewNode((ASTNodeType)tk, line, NULL) );

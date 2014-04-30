@@ -251,10 +251,12 @@ static char* AST_nodeToString(AST node) {
 		case AST_Or: return "Or";break;
 		case AST_Not: return "Not";break;
 		case AST_BoolVal:
-			if(AST_GetNumberValue(node))
+			if( AST_GetNumberValue(node) ) {
 				return "bool: True";
-			else
+			}
+			else {
 				return "bool: False";
+			}	
 		break;
 		case AST_IntVal: 
 			sprintf(buff, "int: '(%lu)'", AST_GetNumberValue(node));
