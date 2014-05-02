@@ -1,22 +1,12 @@
-
 #ifndef SYMBOLTABLE_H
 #define SYMBOLTABLE_H
 
 #include <stdbool.h>
+#include "../trab3/AbstractSyntaxTree.h"
+#include "symboltype.h"
 
 
-#define HASH_SIZE 256;
-
-typedef enum {
-   SYM_INT,
-   SYM_CHAR,
-   SYM_BOOL
-} SymbolBaseType;
-
-typedef enum {
-	SymbolBaseType type;
-	unsigned int dimension;
-} SymbolType;
+#define HASH_SIZE 256
 
 typedef struct Symbol_ Symbol;
 
@@ -24,6 +14,7 @@ struct Symbol_ {
    char* name;
    SymbolType type;
    int line;
+   AST node;
    Symbol* next;
 };
 
@@ -35,13 +26,14 @@ struct SymbolTable_ {
 	Symbol* symbols[HASH_SIZE];
 };
 
+
 SymbolTable* SymbolTable_new( SymbolTable* parent );
 
 void SymbolTable_delete(SymbolTable* st);
-void SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line);
+bool SymbolTable_add( SymbolTable* st, const char* name, SymbolType type, AST node );
 
+Symbol* SymbolTable_getInScope(SymbolTable* st, const char* name);
 Symbol* SymbolTable_get(SymbolTable* st, const char* name);
-
 
 
 

@@ -6,7 +6,7 @@ end
 
 y:int
 
-fun g()
+fun f()
    y = 0
 end
 

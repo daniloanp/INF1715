@@ -49,8 +49,8 @@ commandWhile -> 'WHILE' expression'NL'
 					block
 				'LOOP'
 arrayAccess -> 	{ '['  expression']' }
-attr -> 	arrayAccess '=' expression
-call -> 	'(' [expressionList] ')'
+attr -> arrayAccess '=' expression
+call -> '(' [expressionList] ')'
 commandAttrOrCall -> attr | call
 
 expressionList -> expression { ',' expression }

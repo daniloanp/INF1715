@@ -1,9 +1,11 @@
 #ifndef SYMBOLTABLE_C
 #define SYMBOLTABLE_C
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "symboltable.h"
-
-
+#include <assert.h>
+#include "../trab3/AbstractSyntaxTree.h"
 static unsigned long hash(unsigned char *str)
 {
     unsigned long hash = 5381;
@@ -22,20 +24,20 @@ SymbolTable* SymbolTable_new( SymbolTable* parent ) {
 		return NULL;
 	}
 	st->parent = parent;
-	memset ( st->symbols, NULL, sizeof(Symbol) * HASH_SIZE );
+	memset ( st->symbols, 0, sizeof(Symbol*) * HASH_SIZE );
 	return st;
 }
 
-bool SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int line) {
-	Symbol* sym; 
-	Symbol* prevSym; 
+bool SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, AST node) {
+	Symbol* sym = NULL; 
+	Symbol* prevSym = NULL; 
 	unsigned long i;
 
 	assert(st);
-
-	i = hash(name);
-
+	i = hash((unsigned char*)name);
+	
 	for( sym = st->symbols[i]; sym ; sym = sym->next ) {
+		
 		if( !strcmp(sym->name, name)) {
 			printf ("Error: Symbol already declared for his scope");
 			return false; 
@@ -43,24 +45,32 @@ bool SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, int lin
 
 		prevSym = sym;
 	}
-	sym = prevSym->next = ( Symbol* )malloc( sizeof(Symbol) );
+	sym  = ( Symbol* )malloc( sizeof(Symbol) );
 	if( !sym ) {
 		printf("Malloc has failed at SymbolTable_new!");
 		return NULL;
 	}
+	
+	if( prevSym != NULL ) {
+		prevSym->next = sym;
+	} else {
+		 st->symbols[i] = sym;
+	}
+	
 
 
-	sym->name = name; //dangerous;
+	sym->name =(char*) name; //dangerous;
 	sym->type = type; //dangerous;
-	sym->line = line;	
+	sym->node = node;
+	sym->line = AST_GetLine(node);	
 	return true;
 }
 
-Symbol* SymbolTable_get(SymbolTable* st, const char* name) {
+ Symbol* SymbolTable_get(SymbolTable* st, const char* name) {
 	unsigned long i;
 	Symbol* sym; 
 	assert(st);
-	i = hash(name);
+	i = hash((unsigned char*)name);
 	
 	for( sym = st->symbols[i]; sym ; sym = sym->next ) {
 		if( !strcmp(sym->name, name)) {
@@ -75,13 +85,28 @@ Symbol* SymbolTable_get(SymbolTable* st, const char* name) {
 	return NULL;
 }
 
+Symbol* SymbolTable_getInScope ( SymbolTable* st, const char* name ) {
+	unsigned long i;
+	Symbol* sym;
+	i = hash((unsigned char*)name);
 
-void SymbolTable_delete(SymbolTable* st) {
+	for( sym = st->symbols[i]; sym ; sym = sym->next ) {
+		if( !strcmp(sym->name, name)) {
+			return sym;
+		}
+	}
+
+	return NULL;
+}
+
+
+void SymbolTable_delete( SymbolTable* st ) {
 	Symbol* sym; 
 	Symbol* prevSym;
-	for( int i = 0; i < HASH_SIZE; i++ ) {
+	int i;
+	for( i = 0; i < HASH_SIZE; i++ ) {
 		sym = st->symbols[i];
-		while(  sym ; ) { 
+		while(  sym  ) { 
 			prevSym = sym;
 			sym = sym->next;
 			free(prevSym);
@@ -89,6 +114,7 @@ void SymbolTable_delete(SymbolTable* st) {
 	}
 	free(st);
 }
+
 
 
 

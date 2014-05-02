@@ -11,16 +11,19 @@ union ast_val {
 
 struct struct_AST {
    ASTNodeType type;
-   int line;
+   unsigned int line;
    ASTNodeValue value;
-
+   SymbolType symbolType;
    AST firstChild;
    AST lastChild;
    AST parent;
    AST nextSibling;
    AST prevSibling;
 };
-
+unsigned int AST_GetLine( AST node ) {
+	assert(node);
+	return node->line;
+}
 AST AST_NewNode( ASTNodeType type , int line, ASTNodeValue value ) {
 	AST node  = (AST)malloc(sizeof(struct struct_AST));
 	node->type = type;
@@ -308,18 +311,51 @@ static char* AST_nodeToString(AST node) {
 	return NULL;
 }
 
+bool AST_IsNodeAConstant( AST node ) {
+	ASTNodeType tk = node->type;
+	return (tk == AST_IntVal || tk == AST_StringVal || tk == AST_BoolVal );
+}
+
+bool AST_IsNodeABinOp( AST node ) {
+	ASTNodeType tk = node->type;
+	return( tk==PLUS || tk == MINUS || tk == MUL || tk == DIV || tk == AND || tk == OR || tk == GREATER || tk == GREATER_EQUAL || tk == LESS || tk == LESS_EQUAL || tk == EQUAL || tk == DIFFERENT );
+}
+
+bool AST_IsBaseNodeType( AST node ) {
+	ASTNodeType tk = node->type;
+	return (tk == AST_Char || tk == AST_Int || tk == AST_Bool);
+}
 
 
 void AST_PrettyPrint( AST t, int level ) {
 	AST c; int i;
-	if(t == NULL)
+	if(t == NULL) {
 		return;
-	for( i=level;i;i-- ) printf("   ");
+	}
+
+	for( i=level; i; i-- ) {
+		printf("   ");
+	}
+
 	printf("%s",AST_nodeToString(t));
 	printf("\n");
 	c = AST_GetFirstChild(t);
+
 	while( c != NULL ) {
 		AST_PrettyPrint( c, level+1 );
 		c = AST_GetNextSibling(c);
 	}
 };
+
+
+SymbolType AST_GetSymType( AST node ) {
+	return node->symbolType;
+}
+
+void AST_SetSymType( AST node, SymbolType tp ) {
+	node->symbolType = tp;
+}
+
+bool AST_IsOperatorNode( AST node ) {
+	return AST_Plus || AST_Minus || AST_Mul || AST_Div || AST_Greater || AST_GreaterEqual || AST_Less || AST_LessEqual || AST_Equal || AST_Different || AST_UnaryMinus;
+}

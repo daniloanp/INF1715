@@ -1,11 +1,16 @@
+#ifndef  BUILD_AST_C
+#define  BUILD_AST_C
 #include <stdlib.h>
 #include <stdio.h>
 #include "AbstractSyntaxTree.h"
 #include "../trab1/lex.h"
 #include "../trab1/tokenList.h"
 #include "../trab2/recursiveParser.h"
+#include "build_ast.h"
+#include "assert.h"
 
 
+static AST AST_ROOT = NULL;
 
 static int priorityNumber( TokenKind tk) {
 	if (tk == OR) {
@@ -45,7 +50,6 @@ int isBaseType(TokenKind tk) {
 	return (tk == CHAR || tk == STRING || tk == INT || tk == BOOL);
 }
 
-static AST root = NULL;
 
 //this function assumes that the parser are ok;
 int buildAst( Token t, int line ) {
@@ -61,7 +65,7 @@ int buildAst( Token t, int line ) {
 	if( currParent == NULL ) { //Pode gerar ruido, perigoso
 		currParent = AST_NewNode(AST_Program, line, NULL);
 		parentType = AST_GetType(currParent);
-		root = currParent;
+		AST_ROOT = currParent;
 	}
 	
 	if( parentType == AST_Program ) {
@@ -352,7 +356,7 @@ int buildAst( Token t, int line ) {
 		}
 	}
 
-	//Constants & BinOp
+	//Constants 
 	if( parentType == AST_Expression || parentType == AST_UnaryMinus || parentType == AST_Not|| isBinOp((TokenKind)parentType )) {
 		if( tk == IDENTIFIER ) { //VarORCall
 			tempId = t;
@@ -363,7 +367,6 @@ int buildAst( Token t, int line ) {
 				node = AST_NewNode( AST_Call, line, AST_NodeValueFromToken( tempId ) );
 				tempId = NULL;
 				currParent = AST_InsertChild(currParent, node);
-				
 			}
 			else {
 
@@ -446,36 +449,19 @@ int buildAst( Token t, int line ) {
 	return 1;
 }
 
-
-
-
-int main( int argc, char **argv ) {	
-	int ret;
+AST BuildAst(FILE* input, int* ret) {
 	TokenList tl;
-	FILE *input;
-	++argv, --argc;
-	if ( argc > 0 )
-		input = fopen( argv[0], "r" );
-	else
-		input = stdin;
-	if(input) {
-		tl = generateTokens(input, &ret);
-		if(!ret) {
-			ret = parser(tl, buildAst);
-
-		}
-		if( input != stdin )
-			fclose(input);
+	assert(input);
+	tl = generateTokens(input, ret);
+	if ( !(*ret) ) {
+		*ret = parser(tl, buildAst);
 	}
-	else {
-		printf("\nError: Cannot open file.\n");
-		return 1;
-	}
-	if(ret == 0 ) {
-		printf("Correct Syntax!!!\n");
-		AST_PrettyPrint(root, 1);
-	}
-
-
-	return ret;
+	return AST_ROOT;
 }
+
+
+
+
+
+
+#endif //AST_H

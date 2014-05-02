@@ -16,9 +16,9 @@
 * Return  
 	- Expression?  
 * New  
-	- Expression  
+	- Expression 
 	- INT | STRING | CHAR | BOOL
-* Int  
+* Int 
 * Char  
 * Bool  
 * String  
@@ -82,7 +82,7 @@
 * Var  
 	- Expressions*
 * UnaryMinus  
-	- 'Operador'|'Literal'|Var|Call|New (2)
+	- 'Operador'|'Literal'|Var|Call|New
 * ElseIf  
 	- Block  
 
