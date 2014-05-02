@@ -76,7 +76,7 @@ unsigned int AST_GetLine( AST node );
 SymbolType AST_GetSymType( AST node );
 void AST_SetSymType( AST node, SymbolType tp );
 bool AST_IsOperatorNode( AST node );
-
+void AST_Free(AST t);
 
 
 

@@ -170,6 +170,17 @@ int deleteToken(Token t) {
 	return 1;
 }
 
+int deleteKeepingStringToken(Token t) {
+	if(t==NULL)
+		return 1;
+	if(t->value != NULL) {	
+		free(t->value);
+	}
+
+	free(t);
+	return 1;
+}
+
 char* tokenGetStringValue(Token t) {
 	assert(t);
 	assert(t->value);

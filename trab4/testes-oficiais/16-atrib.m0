@@ -1,11 +1,11 @@
 
 i:int
 
-fun f ()
-   i = 1
+fun f (i:int)
+   i = i + 3
 end
 
 fun g()
    i:int
-   i = 2
+   i = f(1)
 end

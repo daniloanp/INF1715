@@ -1,0 +1,114 @@
+cd ../trab1/ && rm -f lex.yy.c && make lex.yy.c
+make[1]: Entering directory '/home/danilo/puc-rio/INF1715/trab1'
+flex --header-file=lex.yy.h mini0-lex.l 
+make[1]: Leaving directory '/home/danilo/puc-rio/INF1715/trab1'
+cd ../trab2/
+colorgcc  -o mini0-parser main.c  symboltype.h symboltype.c ../trab3/build_ast.h    ../trab3/build_ast.c symbols.h symbols.c  symboltable.h symboltable.c ../trab3/AbstractSyntaxTree.h ../trab3/AbstractSyntaxTree.c ../trab2/recursiveParser.h ../trab2/recursiveParser.c ../trab1/token.h ../trab1/token.c ../trab1/tokenList.h ../trab1/tokenList.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/lex.h ../trab1/lex.c 
+bash test.sh
+
+==== --- |  Testing testes-oficiais//01-global.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//02-fun.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//03-nls.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//04-funglobal.m0  | --- =====
+
+12
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//05-params.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//06-declvar.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//07-if.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//11-ifdecl.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//12-while.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//14-ifwhile.m0  | --- =====
+
+12
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//16-atrib.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//17-call.m0  | --- =====
+
+11
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//19-callargs.m0  | --- =====
+
+11
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//20-return.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//21-arrays.m0  | --- =====
+
+11
+
+11
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//21-return-noargs.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//22-exp.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//35-expprio.m0  | --- =====
+
+
+------- x -------
+
+==== --- |  Testing testes-oficiais//37-invprio.m0  | --- =====
+
+
+------- x -------

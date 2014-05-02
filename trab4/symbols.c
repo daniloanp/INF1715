@@ -21,26 +21,40 @@ static SymbolTable* globals = NULL;
 
 
 static bool fail(const char* msg, const char* name, AST node) {
-   fprintf(stderr, "%s - %s at line %d", msg, name, AST_GetLine(node));
+   fprintf(stderr, "%s - %s at line %d\n", msg, name, AST_GetLine(node));
    return false;
 }
 
 static bool op_fail(const char* msg, AST node) {
-   fprintf(stderr, "%s - at line %d", msg, name, AST_GetLine(node));
+   fprintf(stderr, "%s - at line %d\n", msg,  AST_GetLine(node));
    return false;
 }
+
+   
 
 bool Symbols_Param( SymbolTable* st, AST declVar ) {
    char* name;
    int dimension;
    AST type;
-
+   Symbol* sym;
    name = AST_GetStringValue( declVar );
-   type = AST_GetFirstChild( declVar );
-   
-   dimension = AST_GetNumberValue( type );
+   sym = SymbolTable_getInScope( st, name );
 
-   return SymbolTable_add( st, name, AST_GetSymType( declVar ) , declVar ) ;
+   if( ! sym ) {
+      
+      type = AST_GetFirstChild( declVar );
+      
+      dimension = AST_GetNumberValue( type );
+      return SymbolTable_add( st, name, AST_GetSymType( declVar ) , declVar ) ;
+   }
+   else {
+      if( SYM_IsFunctionType( sym->type ) ) {
+          fprintf(stderr,  "Redeclared variable, previous declared at line %d! - error at line %d\n", sym->line, AST_GetLine(declVar) );
+          return false;
+      }
+      fprintf(stderr,  "Redeclared variable, previous declared at line %d! - error at line %d\n", sym->line, AST_GetLine(declVar) );
+      return false;
+   }  
 }
 
 
@@ -48,14 +62,27 @@ bool Symbols_DeclVar( SymbolTable* st, AST declVar ) {
    char* name;
    int dimension;
    AST type;
-   
+   Symbol* sym;
    name = AST_GetStringValue( declVar );
-   type = AST_GetFirstChild( declVar );
-   
-   dimension = AST_GetNumberValue( type );
-   AST_SetSymType ( declVar,  SYM_NewSymbolType(AST_GetType( type ),dimension) );
+   sym = SymbolTable_getInScope( st, name );
 
-   return SymbolTable_add( st, name, AST_GetSymType( declVar ) , declVar ) ;
+   if( ! sym ) {
+      
+      type = AST_GetFirstChild( declVar );
+      
+      dimension = AST_GetNumberValue( type );
+      AST_SetSymType ( declVar,  SYM_NewSymbolType(AST_GetType( type ),dimension) );
+
+      return SymbolTable_add( st, name, AST_GetSymType( declVar ) , declVar ) ;
+   }
+   else {
+      if( SYM_IsFunctionType( sym->type ) ) {
+          fprintf(stderr,  "Redeclared variable, previous declared at line %d! - error at line %d\n", sym->line, AST_GetLine(declVar) );
+          return false;
+      }
+      fprintf(stderr,  "Redeclared variable, previous declared at line %d! - error at line %d\n", sym->line, AST_GetLine(declVar) );
+      return false;
+   }  
 }
 
 bool Symbols_If(  SymbolTable* st, AST cmdif  ) {
@@ -135,7 +162,7 @@ bool Symbols_Return ( SymbolTable* st, AST cmdReturn) {
       return false;
    }
    if( ! SYM_CompatibleTypes( AST_GetSymType(expr) , currReturnType ) ) {
-      fprintf(stderr, "incompatible types when returning - at line %d" , AST_GetLine(cmdReturn) );
+      fprintf(stderr, "incompatible types when returning - at line %d\n" , AST_GetLine(cmdReturn) );
       return false;
    }
    
@@ -143,7 +170,7 @@ bool Symbols_Return ( SymbolTable* st, AST cmdReturn) {
 }
 
 
-// ATENÇÂO: Falta verificar os tipos dos argumentos passados com o dos parametros formais.
+
 bool Symbols_Call ( SymbolTable* st, AST call) {
    Symbol* sym;
    SymbolType stp;
@@ -163,7 +190,7 @@ bool Symbols_Call ( SymbolTable* st, AST call) {
             expr = AST_GetFirstChild( call );
             for( param = AST_GetFirstChild(param); param; param = AST_GetNextSibling( param ), i++ ) {
                if( !expr ) {
-                  fprintf(stderr, "At Call of '%s', the param %d is missing - at line %d" , name, i,  AST_GetLine(call) );
+                  fprintf(stderr, "At Call of '%s', the param %d is missing - at line %d\n" , name, i,  AST_GetLine(call) );
                   return false;
                }
                if( ! Symbols_Expression( st, expr ) ) {
@@ -171,17 +198,17 @@ bool Symbols_Call ( SymbolTable* st, AST call) {
                }
 
                if( ! SYM_CompatibleTypes( AST_GetSymType(expr), AST_GetSymType(param) ) ) {
-                  fprintf(stderr, "At Call of '%s', the argument %d has wrong type - at line %d" , name, i,  AST_GetLine(call) );
+                  fprintf(stderr, "At Call of '%s', the argument %d has wrong type - at line %d\n" , name, i,  AST_GetLine(call) );
                   return false;
                }
                expr = AST_GetNextSibling(expr);
             }
          }else if( AST_GetFirstChild(call) != NULL ) { //Argumento inútil
-            fprintf(stderr, "At Call of '%s', the function doesn't has any parameter- at line %d" , name,  AST_GetLine(call) );
+            fprintf(stderr, "At Call of '%s', the function doesn't has any parameter- at line %d\n" , name,  AST_GetLine(call) );
             return false;
          }
          if( expr != NULL ) {
-            fprintf(stderr, "At Call of '%s', extra arguments. The function require only %d - at line %d" , name, i,  AST_GetLine(call) );
+            fprintf(stderr, "At Call of '%s', extra arguments. The function require only %d - at line %d\n" , name, i,  AST_GetLine(call) );
          }
          AST_SetSymType( call , stp  );
          return true;
@@ -221,13 +248,13 @@ bool Symbols_BoolBinOp( SymbolTable* st, AST op ) {
    node = AST_GetFirstChild( op );
    //Só vai ter dois mesmo...
    while( node != NULL) {
-      ret = Symbols_ExpressionDescendants( st, op );
+      ret = Symbols_ExpressionDescendants( st, node );
       if( !ret ) {
          return false;
       } 
       else {
          tp = AST_GetSymType( node );
-         if( tp.type == SYM_BOOL && tp.dimension == 0 ) {
+         if( !( tp.type == SYM_BOOL && tp.dimension == 0 ) ) {
             op_fail("Non-boolean expression used with bool operator", node);
             return false;
          }
@@ -246,7 +273,7 @@ bool Symbols_UnaryMinusOp( SymbolTable* st, AST op ) {
    AST node;
    //Primeiro Filho
    node = AST_GetFirstChild( op );
-   ret = Symbols_ExpressionDescendants( st, op );
+   ret = Symbols_ExpressionDescendants( st, node );
    if( !ret ) {
       return false;
    } 
@@ -269,7 +296,7 @@ bool Symbols_NotOp( SymbolTable* st, AST op ) {
    AST node;
    //Primeiro Filho
    node = AST_GetFirstChild( op );
-   ret = Symbols_ExpressionDescendants( st,  op );
+   ret = Symbols_ExpressionDescendants( st,  node );
    if( !ret ) {
       return false;
    } 
@@ -293,13 +320,13 @@ bool Symbols_IntBinOp( SymbolTable* st, AST op ) {
    node = AST_GetFirstChild( op );
    //Só vai ter dois mesmo...
    while( node != NULL) {
-      ret = Symbols_ExpressionDescendants( st, op );
+      ret = Symbols_ExpressionDescendants( st, node );
       if( !ret ) {
          return false;
       } 
       else {
          tp = AST_GetSymType( node );
-         if( (tp.type == SYM_INT || tp.type == SYM_CHAR )&& tp.dimension == 0 ) {
+         if( ! ((tp.type == SYM_INT || tp.type == SYM_CHAR )&& tp.dimension == 0 )) {
             op_fail("Non-numerical expression used with numerical operator", node);
             return false;
          }
@@ -346,6 +373,8 @@ Symbols_New( SymbolTable* st, AST newArr ) {
       return false;
    }
 
+
+
    node = AST_GetLastChild( newArr );
    tp = SYM_NewSymbolType( AST_GetType(node), AST_GetNumberValue( node ) + 1 );
    AST_SetSymType(newArr, tp);
@@ -353,6 +382,7 @@ Symbols_New( SymbolTable* st, AST newArr ) {
 }
 
 Symbols_Literal( SymbolTable* st, AST lit ) {
+
    SymbolBaseType bt = 0;
    unsigned int dimension = 0;
    switch( AST_GetType( lit )) {
@@ -367,7 +397,7 @@ Symbols_Literal( SymbolTable* st, AST lit ) {
          dimension = 1;
       break;
       default: 
-         printf("Oops;;;");
+         printf("Oops;;; %d\n\n", AST_GetType(lit));
          return false; //Não vai acontecer;;;
          break;
    }
@@ -396,6 +426,7 @@ bool Symbols_Constants( SymbolTable* st, AST node ) {
 
 bool Symbols_ExpressionDescendants ( SymbolTable* st, AST node ) {
    if( AST_IsOperatorNode( node )) {
+
       return Symbols_Operators( st, node );
    } 
    else {
@@ -406,9 +437,11 @@ bool Symbols_ExpressionDescendants ( SymbolTable* st, AST node ) {
 bool Symbols_Expression(  SymbolTable* st, AST expr  ) {
    AST node;
    node = AST_GetFirstChild( expr );
+
    if(! Symbols_ExpressionDescendants( st, node) ) {
       return false;
    }
+
    AST_SetSymType(expr, AST_GetSymType( node ));
    return true;
 }
@@ -427,8 +460,10 @@ bool Symbols_Attr ( SymbolTable* st, AST attr ) {
       return false;
    }
 
+
    if( ! SYM_CompatibleTypes( AST_GetSymType(var) , AST_GetSymType(expr)) ) {
-      fprintf(stderr, "incompatible types when assigning - at line %d" , AST_GetLine(var) );
+      printf("\n\n%d --- %d\n\n", AST_GetSymType(var) , AST_GetSymType(expr) );
+      fprintf(stderr, "incompatible types when assigning - at line %d\n" , AST_GetLine(var) );
       return false;
    }
 
@@ -455,16 +490,19 @@ bool Symbols_Command( SymbolTable* st, AST command) {
       break;
       default: break;
    }
+   return true;
 }
 
 bool Symbols_Block( SymbolTable* st, AST block ) { 
    bool ret = true;
    AST node;
+
    node = AST_GetFirstChild( block );
    while( ret && AST_GetType( node ) == AST_DeclVar ) {
       ret =  Symbols_DeclVar( st, node ) ;
       node = AST_GetNextSibling( node );
    }
+
    for( node; node && ret; node = AST_GetNextSibling(node) ) {
       ret = Symbols_Command( st , node );
    }
@@ -491,15 +529,15 @@ bool Symbols_DeclFunction ( SymbolTable* st, AST declFunc ) {
          type = NULL;
       }
       params = AST_GetFirstChild( declFunc );
-      if ( ! AST_GetType( params ) == AST_ParamList ) {
+      if ( AST_GetType( params ) != AST_ParamList ) {
          params = NULL;
       } else {
 
-         for( node = AST_GetFirstChild( params ) ; node && ret; node = AST_GetNextSibling( node ) ) {
+         for( node = AST_GetFirstChild( params ) ; node; node = AST_GetNextSibling( node ) ) {
                node_ = AST_GetFirstChild( node );
                tp = AST_GetType( node_ );
                dimension = AST_GetNumberValue( node_ );
-               AST_SetSymType(node, SYM_NewSymbolType( tp ,dimension ) ); //Apenas anota na arvore.
+               AST_SetSymType( node, SYM_NewSymbolType( tp ,dimension ) ); //Apenas anota na arvore.
 
                if( !ret ) {
                         return false;
@@ -508,7 +546,7 @@ bool Symbols_DeclFunction ( SymbolTable* st, AST declFunc ) {
       }
 
       if (  type !=  NULL ) {
-         tp = AST_GetType( type );
+         tp = AST_GetType( type )*10;
          dimension = AST_GetNumberValue( type );
       }
 
@@ -537,6 +575,10 @@ bool Symbols_Function( SymbolTable* st , AST declFunc ) {
    name = AST_GetStringValue( declFunc );
    sym = SymbolTable_get ( st, name );
 
+   if( !sym ) {
+      "Something are Strange, hre";
+      return false;
+   }
    currReturnType = sym->type;
    currReturnType.type = currReturnType.type/10;
 
@@ -554,16 +596,21 @@ bool Symbols_Function( SymbolTable* st , AST declFunc ) {
 
    //Cria Escopo
    lst = SymbolTable_new( st );
+
    //Registra os parametros na tabela
-   if( params != NULL) {
+   if( params != NULL && params != block ) {
+
       for( node = AST_GetFirstChild( params ) ; node; node = AST_GetNextSibling( node ) ) {
             if( ! Symbols_Param( lst, node ) ) { //Adiciona parametros ao escopo.
-               ret = false;
+               
                break;
             }
       }
    }
+
    ret = Symbols_Block( lst, block );
+
+
    SymbolTable_delete( lst ); //Deleta Escopo;
    return ret;
 }
@@ -588,15 +635,12 @@ bool Symbols_annotate(AST program) {
          ret = Symbols_DeclVar( st, child );
       }
       else if( AST_GetType(child) == AST_DeclFunction ) {
-
          ret = Symbols_DeclFunction( st, child );
       }
       else {
          fprintf(stderr, "There're something wrong with your AST");
          return false;
       }
-
-      
    }
    
 
@@ -604,12 +648,11 @@ bool Symbols_annotate(AST program) {
    for( child = AST_GetFirstChild(program);
          child && ret;
          child = AST_GetNextSibling(child) ) {
-
          if( AST_GetType(child) == AST_DeclFunction ) {
            ret =  Symbols_Function( st, child );
          }
    }
-
+   SymbolTable_delete( st );
    return ret;
 }
 

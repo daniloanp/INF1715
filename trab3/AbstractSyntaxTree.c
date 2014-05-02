@@ -247,7 +247,7 @@ static char* AST_nodeToString(AST node) {
 			return buff;
 		break;
 		case AST_String:
-			sprintf(buff, "tp_string(%s)", AST_GetStringValue(node));
+			sprintf(buff, "tp_string(%s)", AST_GetNumberValue(node));
 			return buff;
 		break;
 		case AST_And: return "And";break;
@@ -357,5 +357,36 @@ void AST_SetSymType( AST node, SymbolType tp ) {
 }
 
 bool AST_IsOperatorNode( AST node ) {
-	return AST_Plus || AST_Minus || AST_Mul || AST_Div || AST_Greater || AST_GreaterEqual || AST_Less || AST_LessEqual || AST_Equal || AST_Different || AST_UnaryMinus;
+	switch( AST_GetType(node) ) {
+		case AST_Plus: case  AST_Minus : case  AST_Mul : case  AST_Div : case  AST_Greater : case  AST_GreaterEqual : case  AST_Less: case  AST_LessEqual: case  	AST_Equal : case  AST_Different : case  AST_UnaryMinus: case AST_And: case AST_Or:
+		return true;
+	default:
+		return false;
+	break;
+	}
+}
+
+void AST_Free( AST t ) {
+	AST node, next;
+	if( t == NULL)  {
+		return;
+	}
+	node = t->firstChild;
+	while( node ) {
+		next = node->nextSibling;
+		AST_Free( node );
+		node = next;
+	}
+
+	if( t->value != NULL ) {
+		if( t->type  == AST_Var || t->type ==  AST_StringVal || t->type == AST_Call || t->type == AST_DeclFunction || t->type == AST_DeclVar || t->type == AST_Param ) {
+			if(t->value->string != NULL) {
+				free(t->value->string);
+			}
+		}
+		free(t->value);
+	}
+	free(t);
+	
+	//free(t);
 }

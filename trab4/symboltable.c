@@ -39,30 +39,22 @@ bool SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, AST nod
 	for( sym = st->symbols[i]; sym ; sym = sym->next ) {
 		
 		if( !strcmp(sym->name, name)) {
-			printf ("Error: Symbol already declared for his scope");
 			return false; 
 		}
-
 		prevSym = sym;
 	}
 	sym  = ( Symbol* )malloc( sizeof(Symbol) );
-	if( !sym ) {
-		printf("Malloc has failed at SymbolTable_new!");
-		return NULL;
-	}
+	sym->name =(char*) name; //dangerous;
+	sym->type = type; //dangerous;
+	sym->node = node;
+	sym->line = AST_GetLine(node);	
+	sym->next = NULL;
 	
 	if( prevSym != NULL ) {
 		prevSym->next = sym;
 	} else {
 		 st->symbols[i] = sym;
 	}
-	
-
-
-	sym->name =(char*) name; //dangerous;
-	sym->type = type; //dangerous;
-	sym->node = node;
-	sym->line = AST_GetLine(node);	
 	return true;
 }
 
@@ -87,11 +79,11 @@ bool SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, AST nod
 
 Symbol* SymbolTable_getInScope ( SymbolTable* st, const char* name ) {
 	unsigned long i;
-	Symbol* sym;
-	i = hash((unsigned char*)name);
-
+	Symbol* sym = NULL;
+	i = hash( (unsigned char*) name);
+	
 	for( sym = st->symbols[i]; sym ; sym = sym->next ) {
-		if( !strcmp(sym->name, name)) {
+		if( !strcmp(sym->name, name) ) {
 			return sym;
 		}
 	}

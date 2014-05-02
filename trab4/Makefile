@@ -10,5 +10,6 @@ clean:
 
 test: mini0-ast
 	bash test.sh
-test-oficial: mini0-ast
-	bash test-oficial.sh
+
+test-valgrind: mini0-ast
+	bash test-valgrind.sh

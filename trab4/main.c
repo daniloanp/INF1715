@@ -32,6 +32,7 @@ int main( int argc, char **argv ) {
 			printf("Correct Syntax!!!\n");
 			AST_PrettyPrint(tree, 1);
 		}
+		AST_Free(tree);
 	}
 	else {
 		printf("\nError: Cannot open file.\n");

@@ -59,6 +59,8 @@ int cmpToken(void* e0, void* e1);
 char* tokenToString(Token t);
 char* tokenKindToString(TokenKind tk);
 
+int deleteKeepingStringToken(Token t);
+
 
 #endif // TOKEN_H
 

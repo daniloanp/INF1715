@@ -1,13 +1,19 @@
 
 x:int
-fun f()
-   x = 0
+fun f(k:char)
+	x:[][]bool
+	l:int
+    x = new[20][]bool
+    k = 1//"aasdsad"
 end
 
 y:int
 
-fun f()
+g:int
+
+fun k()
    y = 0
+   y  = true and 1
 end
 
    

@@ -12,5 +12,4 @@ function iterate_directory()
 		echo '------- x -------'
 	done
 }
-iterate_directory error_examples/
-iterate_directory ok_examples/
+iterate_directory testes-oficiais/

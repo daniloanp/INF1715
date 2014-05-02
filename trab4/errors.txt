@@ -1,7 +1,0 @@
-cd ../trab1/ && rm -f lex.yy.c && make lex.yy.c
-make[1]: Entering directory '/home/danilo/puc-rio/INF1715/trab1'
-flex --header-file=lex.yy.h mini0-lex.l 
-make[1]: Leaving directory '/home/danilo/puc-rio/INF1715/trab1'
-cd ../trab2/
-colorgcc  -o mini0-parser ../trab3/build_ast.c symbols.h symbols.c symboltable.h symboltable.c ../trab3/AbstractSyntaxTree.h ../trab3/AbstractSyntaxTree.c ../trab2/recursiveParser.h ../trab2/recursiveParser.c ../trab1/token.h ../trab1/token.c ../trab1/tokenList.h ../trab1/tokenList.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/lex.h ../trab1/lex.c 
-Makefile:5: recipe for target 'mini0-ast' failed

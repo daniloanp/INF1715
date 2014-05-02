@@ -1,15 +1,16 @@
 #ifndef SYM_C
 #define SYM_C
 #include "symboltype.h"
+#include <stdio.h>
 SymbolType SYM_NewSymbolType( SymbolBaseType base, unsigned int dimension ) {
 	SymbolType tp;
-	tp.type;
-	tp.dimension;
+	tp.type = base;
+	tp.dimension = dimension;
 	return (tp);
 }
 
 bool SYM_IsFunctionType( SymbolType tp ) {
-	return !(tp.type ==SYM_INT || tp.type ==SYM_BOOL || SYM_CHAR|| SYM_VOID ) ;
+	return !(tp.type ==SYM_INT || tp.type ==SYM_BOOL || SYM_CHAR || SYM_VOID ) ;
 }
 
 bool SYM_CompatibleTypes( SymbolType t1, SymbolType t2) {

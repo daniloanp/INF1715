@@ -456,6 +456,7 @@ AST BuildAst(FILE* input, int* ret) {
 	if ( !(*ret) ) {
 		*ret = parser(tl, buildAst);
 	}
+	tokenListDestroyKeepingStrings(tl);
 	return AST_ROOT;
 }
 

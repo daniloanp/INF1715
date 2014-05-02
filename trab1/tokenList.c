@@ -25,13 +25,31 @@ int tokenListDestroy(TokenList tl) {
 	if(tl == NULL)
 		return 1;
 	tl = tokenListGetFirst(tl);
+
+	while(  tl )
+	{
+		next = tl->next;
+		free(tl);
+		tl=next; 
+		deleteToken(tl->token);
+		
+	}
+	
+	return 1;
+}
+
+int tokenListDestroyKeepingStrings(TokenList tl) {
+	TokenList next;
+	if(tl == NULL)
+		return 1;
+	tl = tokenListGetFirst(tl);
 	next = tl->next;
 
 	while(  next != NULL )
 	{
 		tl=next; 
 		next=tl->next;
-		deleteToken(tl->token);
+		deleteKeepingStringToken(tl->token);
 		free(tl);
 	}
 	
@@ -39,15 +57,14 @@ int tokenListDestroy(TokenList tl) {
 }
 
 TokenList tokenListInsert(TokenList tl, Token t) {
-	TokenList newNode;
+	TokenList newNode = tokenListCreate(t);
 	if(tl==NULL) {
-		return tokenListCreate(t);
+		return newNode;
 	}
 	else {
 		while(tl->next != NULL) {
 			tl=tl->next;
 		}
-		newNode = tokenListCreate(t);
 		newNode->previous = tl;
 		tl->next = newNode;
 

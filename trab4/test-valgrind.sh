@@ -7,7 +7,7 @@ function iterate_directory()
 		echo
 		echo "==== --- |  Testing $f  | --- ====="
 		echo
-		./mini0-parser $f
+		valgrind --leak-check=full --show-leak-kinds=all ./mini0-parser $f
 		echo
 		echo '------- x -------'
 	done
