@@ -177,6 +177,11 @@ long Token_GetNumberValue(Token t) {
 	return t->value.number;
 }
 
+bool Token_GetBoolValue(Token t) {
+	assert( t );	
+	return t->value.boolean;
+}
+
 static char* token_string[] = {
 	"ID",
 	"if",

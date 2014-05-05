@@ -56,7 +56,7 @@ Token Token_NewAsBool ( TokenKind t, unsigned long line, bool val );
 int Token_GetLine( Token t );
 char* Token_GetStringValue( Token t ); //Only aplicable to INDETIFIER and STRING_VAL, otherwise it will through an exception
 long Token_GetNumberValue( Token t ); //Only aplicable to INT_VAL, otherwise it will through an exception
-long Token_GetNumberValue( Token t ); //Only aplicable to INT_VAL, otherwise it will through an exception
+long Token_GetBoolValue( Token t ); //Only aplicable to INT_VAL, otherwise it will through an exception
 
 
 int Token_IsEqual( void* e0, void* e1 );

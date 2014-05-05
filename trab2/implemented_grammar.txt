@@ -24,7 +24,7 @@ block -> ['ID' declOrCommand]
 		 { command }
 
 
-declOrCommand -> ':' type 'NL' [ 'ID declOrCommand ]
+declOrCommand -> ':' type 'NL' [ 'ID' declOrCommand ]
 				| commandAttrOrCall 'NL'
 
 
@@ -36,10 +36,10 @@ command -> 'ID' commandAttrOrCall 'NL'
 commandIf->'IF' expression 'NL'
 				block	
 			{ 
-			'ELSE' 'IF' expression
+			'ELSE' 'IF' expression 'NL'
 				block }
 			[
-			'ELSE'
+			'ELSE' 'NL'
 				block
 			]
 			'END'
@@ -60,7 +60,7 @@ expression -> C
 
 new -> 'new' '[' expression ']' type
 varOrCall -> 'ID' call 
-varOrCall -> 'ID' {[exp]}
+varOrCall -> 'ID' arrayAccess
 
 A -> C
 A -> C 'AND' A

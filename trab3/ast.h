@@ -3,9 +3,9 @@
 #include "../trab1/token.h"
 #include <stdbool.h>
 #include "../trab4/symboltype.h"
-#include <stdbool.h>
+
 typedef struct struct_AST* AST;
-typedef union ast_val* ASTNodeValue;
+typedef union ast_val ASTNodeValue;
 
 typedef enum {
 	AST_If = 2,
@@ -48,7 +48,11 @@ typedef enum {
 
 } ASTNodeType;
 
-AST AST_NewNode( ASTNodeType type , int line, ASTNodeValue value );	
+AST AST_New( ASTNodeType type , int line );	
+AST AST_NewAsBool( ASTNodeType type , int line, bool val );	
+AST AST_NewAsString( ASTNodeType type , int line, char* val );	
+AST AST_NewAsInt( ASTNodeType type , int line, unsigned long val );	
+
 AST AST_InsertChild( AST parent, AST child );
 AST AST_InsertSibling( AST sibling, AST newSibling );
 AST AST_InsertNewChildParentOfChildren( AST curr, AST newParent );

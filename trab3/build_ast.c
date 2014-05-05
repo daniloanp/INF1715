@@ -10,413 +10,265 @@
 #include "assert.h"
 
 
-static AST AST_ROOT = NULL;
-
-
+static AST _root = NULL;
+static AST _currParent = NULL;
+static char* str = NULL;
+static unsigned long dimension = 0;
 //this function assumes that the parser are ok;
 int buildAst( NonTerminal rule, Token t, int line ) {
-	static AST currParent = NULL;
-	static Token tempId = NULL;
-	static int bracketCount = 0; //work around
-	TokenKind tk = tokenGetKind( t );
-	ASTNodeType parentType;
 	AST node = NULL;
+	TokenKind tk = Token_GetKind( t );
 
-	parentType = AST_GetType(currParent); //First Use
 
-	if( currParent == NULL ) { //Pode gerar ruido, perigoso
-		currParent = AST_NewNode(AST_Program, line, NULL);
-		parentType = AST_GetType(currParent);
-		AST_ROOT = currParent;
-	}
-	
-	if( parentType == AST_Program ) {
-		if( tk == FUN ) {
-			node = AST_NewNode(AST_DeclFunction, line, NULL);
-			currParent = AST_InsertChild(currParent, node);
-			return 0 ;
-		} 
-		else if ( tk == IDENTIFIER ) {
-			node = AST_NewNode(AST_DeclVar, line, AST_NodeValueFromToken(t));//Already Get Id
-			currParent = AST_InsertChild(currParent, node);
-			return 0;
-		}
+	if ( _root == NULL ) {
+		root = AST_New( AST_Program, line );
+		currParent = root;
 	}
 
-	if( parentType == AST_DeclFunction ) {
-		if( tk == IDENTIFIER ) {
-			if( AST_GetNodeValue( currParent ) == NULL) {
-				AST_UpdateNodeValue(currParent,  AST_NodeValueFromToken( t ) ); //Place Name of Function to Node.
-				return 0;//Não altera o Pai
-			}
-
-			else {
-				node = AST_NewNode( AST_ParamList, line, NULL );
-				currParent = AST_InsertChild( currParent, node ); //Agora o pai é a lista de parametros.
-				node = AST_NewNode( AST_Param, line, AST_NodeValueFromToken( t ) );
-				currParent = AST_InsertChild( currParent, node ); //Agora o Pai é um parametro em especial
-				return 0;
-			}
-		}
-		else if( tk == NL ) {
-				node = AST_NewNode(AST_Block, line, NULL);
-				currParent = AST_InsertChild(currParent, node);
-				return 0;
-		}
-		else if( tk == END ) {
-			currParent = AST_GetParent(currParent);
-			return 0;
-		}
-	}
-
-	//Declara Variavel e Sobe pro bloco(ou program, ou Params)
-	if( parentType == AST_DeclVar || parentType == AST_Param || parentType == AST_DeclFunction ) {
-		if( isBaseType(tk) ) {//BeginType
-				node = AST_NewNode((ASTNodeType)tk, line, AST_NodeValueFromInt(bracketCount)); //Type
-				AST_InsertChild(currParent, node);
-				// Tratamento diferenciado pra funções: 
-				if(parentType != AST_DeclFunction) {
-					currParent = AST_GetParent(currParent);
-				} 
-				bracketCount = 0;
-				return 0;
-		} 
-		else if( tk == CL_BRACKET) { 
-			bracketCount++;
-			return 0 ;
-		}
-	}	
-	
-
-	if( parentType == AST_ParamList ) {
-		if(tk == CL_PARENTHESIS) {
-			currParent = AST_GetParent(currParent);
-			return 0;
-		}
-		else if ( tk == IDENTIFIER ) {
-			node = AST_NewNode( AST_Param, line, AST_NodeValueFromToken( t ) );
-			currParent =  AST_InsertChild(currParent, node);
-			return 0;
-		}
-	}
-
-	if( parentType == AST_Block ) { // agora o - caótico - bloco.
-		if( tk == IDENTIFIER ) { //Ao ver um Id, não dá pra saber se é Call, attr ou declvar
-			tempId = t;// Armazena o Token na Memória pra informações a posteriori.
-			return 0 ;
-		}
-		if(tempId != NULL) {
-			if( tk == OP_PARENTHESIS ) { // Ih, o 'ID' era de uma função. Filho é 'CALL'(Chamada);
-				
-				node = AST_NewNode(AST_Call, tokenGetLine(tempId), AST_NodeValueFromToken(tempId));
-				currParent = AST_InsertChild(currParent, node );  			
-				tempId = NULL; //Pai Call
-				return 0;
-
-			}
-			else if( tk == COLON ) { 
-				node = AST_NewNode( AST_DeclVar, tokenGetLine(tempId), AST_NodeValueFromToken(tempId) );
-				currParent = AST_InsertChild( currParent, node ); //Pai DeclVar
-				tempId = NULL;
-				return 0;
-			}
-			else /*if(tk == EQUAL || tk == OP_BRACKET)*/ {
-				node = AST_NewNode( AST_Attr, line, NULL );
-				currParent = AST_InsertChild( currParent, node ); 
-				node = AST_NewNode( AST_Var, tokenGetLine(tempId), AST_NodeValueFromToken(tempId) );
-				tempId = NULL;
-				AST_InsertChild( currParent, node );
-				if( tk != EQUAL ) {
-					currParent =  node;//Muda pai pra var		
-				}
-				return buildAst( t, line );
-			}
-		} else {
-			if( tk == WHILE ) {
-				node = AST_NewNode(AST_While, line, NULL);
-				currParent = AST_InsertChild( currParent, node ); //Mas a Expressão é obrigatória. Então: 
-				node = AST_NewNode( AST_Expression, line, NULL);
-				currParent = AST_InsertChild( currParent, node );
-				return 0;
-			}
-			else if (tk == IF) {
-				node = AST_NewNode(AST_If, line, NULL);
-				currParent = AST_InsertChild( currParent, node ); //Mas a Expressão é obrigatória. Então: 
-				node = AST_NewNode( AST_Expression, line, NULL);
-				currParent = AST_InsertChild( currParent, node );
-				return 0;
-			}
-			else if (tk == RETURN) {
-				node = AST_NewNode(AST_Return, line, NULL);
-				currParent = AST_InsertChild( currParent, node ); //Mas a Expressão é obrigatória. Então: 
-				return 0;
-			} else if(tk == LOOP ) {
-				currParent = AST_GetParent(currParent); //Sai do Bloco.
-				return buildAst( t, line );
-			}
-			else if ( tk == END )  {
-				currParent = AST_GetParent(currParent); //Sai do Bloco
-				return buildAst( t, line );
-			} else if( tk == ELSE ) {
-				currParent = AST_GetParent(currParent); //Sai do Bloco
-				return buildAst( t, line );
-			}
-		}
-	}
-
-	if( parentType == AST_Attr ) {
-		if( tk == NL ) {
-			currParent = AST_GetParent(currParent);
-			return 0;
-		} 
-		else if( tk == EQUAL ) {
-			node = AST_NewNode( AST_Expression, line, NULL );
-			currParent = AST_InsertChild(currParent, node);
-			return 0;
-		}
-	}
-
-	if( parentType == AST_Return) {
-		if( tk == NL ) {
-			currParent = AST_GetParent(currParent);
-			return 0;
-		} else if( AST_GetFirstChild(currParent) == NULL ){
-			node = AST_NewNode( AST_Expression, line, NULL);
-			currParent = AST_InsertChild( currParent, node );
-			return buildAst( t, line );
-		}
-	}
-
-	if( parentType == AST_Var ) {
-		if( tk == CL_PARENTHESIS || tk == NL || tk == COMMA  || tk == EQUAL) {
-			currParent = AST_GetParent(currParent);
-			//parentType == AST_GetType(currParent);//Warning, but still important
-			return buildAst( t, line );
-		}
-		else if( tk != CL_BRACKET ){
-			node = AST_NewNode( AST_Expression, line, NULL );
-			currParent = AST_InsertChild(currParent, node);
-			return buildAst( t, line );
-		}
-	}
-
-	if( parentType == AST_New ) {
-		if( AST_GetFirstChild( currParent ) == NULL ) {
-			if( AST_GetFirstChild(currParent) == NULL ) {
-				node = AST_NewNode(AST_Expression, line, NULL);	
-				currParent = AST_InsertChild(currParent, node); //Now Parent is an Expression
-				return 0;
-			}
-		} else {
-			if( tk == OP_BRACKET ) {
-				bracketCount++;
-				return 0;
-			}
-			else if( isBaseType(tk) ) {
-				node = AST_NewNode(tk, line, AST_NodeValueFromInt(bracketCount));	
-				AST_InsertChild(currParent, node); //Now Parent is an Type
-				currParent = AST_GetParent(currParent);
-				bracketCount = 0;
-				return 0;
-			} 
-		}
-	}
-
-
-	if( parentType == AST_Call ) {
-		if( tk == NL ) { 
-			currParent = AST_GetParent(currParent);
-			return 0;
-		}
-		else if( tk != COMMA && tk != CL_PARENTHESIS && tk != CL_BRACKET) {
-			
-			node = AST_NewNode(AST_Expression, line, NULL);
-			currParent = AST_InsertChild(currParent, node); //Now Parent is an Expression
-			buildAst( t, line );
-			return  0;
-		}
-	}
-
-	if( parentType == AST_ElseIf) {
-		if(tk == NL) { //COmeça o Bloco
-			node = AST_NewNode(AST_Block, line, NULL);
-			currParent = AST_InsertChild(currParent, node);
-			return 0 ;
-		} 
-		else if(tk == ELSE ) {
-			currParent = AST_GetParent(currParent);
-			return buildAst( t, line );
-		} 
-		else if( tk == END ) {
-			currParent = AST_GetParent(currParent);
-			return buildAst( t, line );
-		}
-
-	}
-
-	if( parentType == AST_Else ) {
-		if(tk == NL) { //COmeça o Bloco
-			node = AST_NewNode(AST_Block, line, NULL);
-			currParent = AST_InsertChild(currParent, node);
-			return 0 ;
-		} else 	if( tk == IF ) {
-			AST_UpdateNodeType(currParent, AST_ElseIf);
-			node = AST_NewNode( AST_Expression, line, NULL);
-			currParent = AST_InsertChild( currParent, node );
-			return 0;
-		}
-		else if(tk == END ) {
-			currParent = AST_GetParent(currParent);
-			return buildAst( t, line );
-		}
-	}
-
-	if( parentType == AST_If ) {
-
-		if(tk == NL) { //COmeça o Bloco
-			node = AST_NewNode(AST_Block, line, NULL);
-			currParent = AST_InsertChild(currParent, node);
-			return 0 ;
-		} 
-		else if(tk == ELSE ) {
-			node = AST_NewNode(AST_Else, line, NULL);
-			currParent = AST_InsertChild( currParent, node );
-			return 0;
-		} 
-		else if(tk == END ) {
-			currParent = AST_GetParent(currParent);
-			return 0;
-		}
-
-	}
-
-	if( parentType == AST_While ) {
-		if(tk == NL) { //COmeça o Bloco
-			node = AST_NewNode(AST_Block, line, NULL);
-			currParent = AST_InsertChild(currParent, node);
-			return 0 ;
-		} 
-		else if ( tk == LOOP ) {
-			currParent = AST_GetParent(currParent);
-			return 0;
-		}
-	}
-
-	if( parentType == AST_ElseIf ) {
-		if(tk == NL) { //COmeça o Bloco
-			node = AST_NewNode(AST_Block, line, NULL);
-			currParent = AST_InsertChild(currParent, node);
-			return 0 ;
-		}
-	}
-
-	if( parentType == AST_Else ) {
-		if(tk == NL) { //COmeça o Bloco
-			node = AST_NewNode(AST_Block, line, NULL);
-			currParent = AST_InsertChild(currParent, node);
-			return 0;
-		}
-	}
-
-	//Constants 
-	if( parentType == AST_Expression || parentType == AST_UnaryMinus || parentType == AST_Not|| isBinOp((TokenKind)parentType )) {
-		if( tk == IDENTIFIER ) { //VarORCall
-			tempId = t;
-			return 0;
-		}
-		else if( tempId !=NULL ) {
-			if( tk == OP_PARENTHESIS ) { //É chamada
-				node = AST_NewNode( AST_Call, line, AST_NodeValueFromToken( tempId ) );
-				tempId = NULL;
-				currParent = AST_InsertChild(currParent, node);
-			}
-			else {
-
-				node = AST_NewNode( AST_Var, line, AST_NodeValueFromToken( tempId ) );
-				tempId = NULL;
-				AST_InsertChild(currParent, node);
-				
-				if( tk == OP_BRACKET ) {
+	switch ( rule ) {
+		case NT_DECL_FUNCTION:
+			switch( tk ) {
+				case TK_IDENTIFIER:
+					node = AST_New( AST_DeclFunction, line, AST_NodeValueFromToken( t ) );
+					AST_InsertChild( currParent, node);
 					currParent = node;
-					return buildAst( t, line );
-				} else {
-					return buildAst( t, line );
-				}
-
-				while(parentType == AST_Not || parentType == AST_UnaryMinus) {
+				break;
+				case TK_CL_PARENTHESIS:
 					currParent = AST_GetParent( currParent );
-					parentType = AST_GetType( currParent );
-				}
-				
+					if( AST_GetType( currParent ) == AST_DeclFunction ) {
+						currParent = AST_GetParent( currParent );
+					}
+				case TK_END:
+					currParent = AST_GetParent( currParent );
+				break;
+				default: break;
 			}
-			return 0;
-		}
-		else if( tk == NEW ) {
-			node = AST_NewNode(AST_New, line, NULL);
-			currParent = AST_InsertChild(currParent, node);
-			return 0;
-		}
-		else if( isConstant( tk ) ) { //Constant
-			node = AST_NewNode((ASTNodeType)tk, line, AST_NodeValueFromToken(t));
-			node = AST_InsertChild(currParent, node);
-			while(parentType == AST_Not || parentType == AST_UnaryMinus) {
+		break;
+		case NT_PARAM:
+			if( AST_GetType( currParent ) != AST_ParamList ) {
+				node = AST_New( AST_ParamList, line );
+				currParent = AST_InsertChild( currParent, node);
+			}
+			switch( tk ) {
+				case TK_IDENTIFIER:
+					node = AST_New( AST_Param, line, AST_NodeValueFromToken( t ) );
+					AST_InsertChild( currParent, node );
+				break;
+
+				default: break;
+			}
+		break;
+		case NT_TYPE:
+			switch ( tk ) {
+				case TK_CL_BRACKET:
+					dimension++;
+				break;
+				case TK_INT: case TK_STRING: case TK_CHAR: case TK_BOOL:
+					node = AST_New( TkToASTType( tk ) , line, AST_NodeValueFromInt( dimension ) );
+					AST_InsertChild( currParent, node );
+				break;
+			}
+		break;
+
+		case NT_BLOCK:
+			if( tk == TK_IDENTIFIER ) {
+				str = Token_GetStringValue( t );
+			}
+		break;
+
+		case NT_DECL_OR_COMMAND:
+			switch ( tk ) {
+				case TK_NL:
+					currParent = AST_GetParent( currParent );
+				break;
+
+				case TK_IDENTIFIER:
+					str = Token_GetStringValue( t );
+				break;
+				default: break;
+			}
+		break;
+
+		case NT_COMMAND:
+			if( tk == TK_IDENTIFIER) {
+				str = Token_GetStringValue( t ); //Just store it for future usage.
+			}
+			else if( tk == NL) {
 				currParent = AST_GetParent( currParent );
-				parentType = AST_GetType( currParent );
 			}
-			return 0;
-		}
-		else if( tk == NOT ) {
-			node = AST_NewNode(AST_Not, line, NULL);
-			currParent = AST_InsertChild(currParent, node);	
-			return 0;
-		}
-		else if( tk == MINUS && ( AST_GetFirstChild(currParent) == NULL || (isBinOp((TokenKind)parentType) && AST_GetFirstChild(currParent) == AST_GetLastChild(currParent) )  ) ) { //É unário ou binário??? Resolvendo.
-			node = AST_NewNode(AST_UnaryMinus, line, NULL);
-			currParent = AST_InsertChild(currParent, node);	
-			return 0;
-		}
-		else if( isBinOp(tk) ) {
-			if(isBinOp((TokenKind)parentType)) { //Pai também é bin Op
-				if( isbinOpPriorityGreater((TokenKind)parentType, tk) ) {
-					node = AST_GetLastChild(currParent);
-					node = AST_RemoveChild(currParent, node);
-					currParent = AST_InsertChild( currParent, AST_NewNode((ASTNodeType)tk, line, NULL) );
-					node = AST_InsertChild( currParent, node );
-					parentType = AST_GetType(currParent);
-					return 0;
+		break;
+
+		case NT_COMMAND_IF:
+			switch ( tk ) {
+
+				case TK_IF:
+					node = AST_New( AST_If , line );
+					currParent = AST_InsertChild( currParent, node );
+				break;
+
+				case TK_END:
+					currParent = AST_GetParent( currParent );
+					if( AST_GetType( currParent ) == AST_Else || AST_GetType( currParent ) == AST_ElseIf ) {
+						currParent = AST_GetParent( currParent );
+					}
+					currParent = AST_GetParent( currParent );
+				break;
+
+				case TK_NL: 
+					currParent = AST_GetParent( currParent );
+				break;
+
+				default: break;
+			}
+			//IF QUESTIONS
+		break;
+
+		case NT_COMMAND_RETURN:
+			node = AST_New( AST_Return , line );
+			currParent = AST_InsertChild( currParent, node );
+		break;
+
+		case NT_COMMAND_WHILE:
+			switch ( tk ) 
+				case TK_WHILE:
+					node = AST_New( AST_While , line );
+					currParent = AST_InsertChild( currParent, node );
+				break;
+				
+				case TK_LOOP:
+					currParent = AST_GetParent( currParent );
+					currParent = AST_GetParent( currParent );
+				break;
+
+				case NL:
+					currParent = AST_GetParent( currParent );
+				break;
+
+				default: break;
+		break;
+
+		case NT_ATTR:
+			if( t == NULL ) { //Começo da Regra
+				node = AST_New( AST_Attr , line );
+				currParent = AST_InsertChild( currParent, node );
+				node = AST_NewAsString( AST_Var , line, str ); 
+				currParent = AST_InsertChild( currParent, node );
+			}
+		break;
+
+		case NT_EXPRESSION:
+			node = AST_New( AST_Expression , line );
+			currParent = AST_InsertChild( currParent, node );
+		break;
+
+
+		case NT_ARRAY_ACCESS:
+			if( tk == TK_CL_BRACKET ) {
+				if( AST_GetType( currParent ) == AST_Expression ) {
+					currParent = AST_GetParent( currParent );	
 				}
-				else {
-					node = AST_GetParent(currParent); //vovo
-					currParent = AST_RemoveChild(node, currParent);
-					node = AST_InsertChild( node, AST_NewNode((ASTNodeType)tk, line, NULL) );
-					AST_InsertChild( node, currParent );
-					currParent = node;
-					return 0;
+				currParent = AST_GetParent( currParent );
+			}
+		break;
+
+		case NT_EXPRESSION_LIST:
+			switch ( tk ) {
+				case TK_COMMA:
+					currParent = AST_GetParent( currParent );
+				break;
+
+				default: break;
+			}
+		break:
+
+		case NT_NEW:
+			switch ( tk ) {
+				case TK_CL_BRACKET:
+					currParent = AST_GetParent( currParent );
+				break;
+
+				case TK_NEW:
+					node = AST_New( AST_New , line );
+					currParent = AST_InsertChild( currParent, node );
+				break;
+
+				default: break;
+			}
+			
+		break;
+
+		case NT_CALL:
+			switch ( tk ) {
+				case TK_CL_PARENTHESIS:
+					if ( AST_GetType(currParent) == AST_Expression ) {
+						currParent = AST_GetParent( currParent );	
+					}
+					currParent = AST_GetParent( currParent );
+				break;
+
+				default: break;
+			}
+		break;
+
+		case NT_VAL:
+			switch ( tk ) {
+				case TK_BOOL_VAL:
+					node = AST_NewAsBool( AST_BoolVal, line, Token_GetBoolValue( t ) );
+					AST_InsertChild( currParent, node );
+				break;
+				case TK_INT_VAL:
+					node = AST_NewAsInt( AST_BoolVal, line, Token_GetIntValue( t ) );
+					AST_InsertChild( currParent, node );
+
+				break;
+				case TK_STRING_VAL:
+					node = AST_NewAsString( AST_BoolVal, line, Token_GetStringValue( t ) );
+					AST_InsertChild( currParent, node );
+				break;
+
+				case TK_IDENTIFIER:
+					str = Token_GetStringValue( t );
+				break;
+
+				default: break;
+			}
+		break;
+
+		case NT_UNARY_OP:
+			if ( t != NULL ) {
+				if( tk == TK_MINUS ) {
+					node  = AST_New( AST_UnaryMinus, line );
+				} else {
+					node  = AST_New( AST_Not, line );
 				}
-				return 0;
+				currParent = AST_InsertChild( currParent, node );
 			}
-			node = AST_NewNode((ASTNodeType)tk, line, NULL);
-			currParent = AST_InsertNewChildParentOfChildren(currParent, node); // Abaixa a rapaziada
-			return 0;
-		} else {
-			if( tk == NL || tk == CL_BRACKET || tk == COMMA ) {
-				do {
-					currParent = AST_GetParent(currParent);
-					parentType = AST_GetType(currParent);
-				} while( parentType == AST_Expression || parentType == AST_UnaryMinus || parentType == AST_Not|| isBinOp((TokenKind)parentType ));
-				return buildAst( t, line );
-			}
-		}
+		break;
+
+		case NT_MUL_DIV_OP:
+		case NT_MIN_ADD_OP:
+		case NT_COMPARISON_OP:
+		case NT_AND:
+			node = AST_New( TkToASTType( tk ), line );
+			currParent = AST_InsertNewChildParentOfChildren( currParent, node );
+		break;
+
+
+		default: break;
+
 	}
+
 	return 1;
 }
 
-AST BuildAst(FILE* input, int* ret) {
+AST BuildAst( FILE* input, int* ret ) {
+	_root = NULL; //Previous I'm be leek
+	_currParent = NULL; //Previous I'm be leek
 	TokenList tl;
 	assert(input);
-	tl = generateTokens(input, ret);
+	tl = generateTokens( input, ret );
 	if ( !(*ret) ) {
-		*ret = parser(tl, buildAst);
+		*ret = parser( tl, buildAst );
 	}
 	tokenListDestroyKeepingStrings(tl);
 	return AST_ROOT;

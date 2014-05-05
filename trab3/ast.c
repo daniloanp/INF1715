@@ -5,6 +5,7 @@
 #include <assert.h>
 
 union ast_val {
+	bool boolean;
 	unsigned long number;
 	char* string;
 };
@@ -20,16 +21,18 @@ struct struct_AST {
    AST nextSibling;
    AST prevSibling;
 };
+
 unsigned int AST_GetLine( AST node ) {
 	assert(node);
 	return node->line;
 }
-AST AST_NewNode( ASTNodeType type , int line, ASTNodeValue value ) {
+
+
+AST AST_New( ASTNodeType type , int line ) {
 	AST node  = (AST)malloc(sizeof(struct struct_AST));
-	//work around --
 	node->type = type;
 	node->line = line;
-	node->value = value;
+	node->value.string = NULL;
 	node->parent = NULL;
 	node->lastChild = NULL;
 	node->firstChild = NULL;
@@ -37,7 +40,21 @@ AST AST_NewNode( ASTNodeType type , int line, ASTNodeValue value ) {
 	node->prevSibling = NULL;
 	return node;
 }
-
+AST AST_NewAsBool( ASTNodeType type , int line, bool val ) {
+	AST node = AST_New( type, line );
+	node->value.boolean = val;
+	return node;
+}
+AST AST_NewAsString( ASTNodeType type , int line, char* val ) {
+	AST node = AST_New( type, line );
+	node->value.string = val;
+	return node;
+}
+AST AST_NewAsInt( ASTNodeType type , int line, unsigned long val ) { 
+	AST node = AST_New( type, line );
+	node->value.number = val;
+	return node;
+}
 
 AST AST_InsertChild( AST parent, AST child ) {
 
@@ -214,14 +231,12 @@ AST AST_RemoveChild( AST parent, AST child ) {
 
 char* AST_GetStringValue(AST node) {
 	if(node == NULL)  return NULL;
-	if( node->value == NULL) return NULL;
-	return node->value->string;
+	return node->value.string;
 }
 
 unsigned long AST_GetNumberValue(AST node) {
 	assert(node != NULL);
-	assert( node->value != NULL);
-	return node->value->number;
+	return node->value.number;
 }
 
 
@@ -344,7 +359,7 @@ void AST_PrettyPrint( AST t, int level ) {
 		printf( "  TYPE: ");
 		if( j == SYM_INT)
 			printf("INT");
-		else if( j == SYM_BOOL) {
+		else if( j == SYM_BOOL) {->
 			printf("BOOL");
 		}
 		else if( j == SYM_CHAR) {
@@ -408,13 +423,12 @@ void AST_Free( AST t ) {
 		node = next;
 	}
 
-	if( t->value != NULL ) {
-		if( t->type  == AST_Var || t->type ==  AST_StringVal || t->type == AST_Call || t->type == AST_DeclFunction || t->type == AST_DeclVar || t->type == AST_Param ) {
-			if(t->value->string != NULL) {
+	
+	if( t->type  == AST_Var || t->type ==  AST_StringVal || t->type == AST_Call || t->type == AST_DeclFunction || t->type == AST_DeclVar || t->type == AST_Param ) {
+		if(t->value.string != NULL) {
 				free(t->value->string);
 			}
-		}
-		free(t->value);
+	}
 	}
 	free(t);
 }
