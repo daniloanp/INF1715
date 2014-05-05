@@ -1,9 +1,0 @@
-a:[][]int
-b:[][][]string
-
-fun k(i:int, c:int, m:[][]char):string
-	i = c + m[12/9][12-c and 1]
-	a = 12
-	return "ok"
-end
-

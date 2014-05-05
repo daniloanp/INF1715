@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "../trab1/token.h"
-#include "../trab1/tokenList.h"
+#include "../trab1/token_list.h"
 #include "../trab1/lex.h"
-#include "AbstractSyntaxTree.h"
+#include "ast.h"
 #include "build_ast.h"
 
 

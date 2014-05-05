@@ -1,11 +1,4 @@
 #!/bin/bash
-FILES=testes/*
-for f in $FILES
-do
-	echo
-	echo "============ --- |  Testing $f  | --- =====>>>>>>>>"
-	echo ''
-	./mini0-lex $f
-	echo
-	echo
-done
+source ../iterate_directory.sh
+
+iterate_directory mini0-lex testes/ 

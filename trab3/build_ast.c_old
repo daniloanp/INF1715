@@ -12,9 +12,47 @@
 
 static AST AST_ROOT = NULL;
 
+static int priorityNumber( TokenKind tk) {
+	if (tk == OR) {
+		return 1;
+	}
+	if (tk == AND) {
+		return 2;
+	}
+	if (tk == PLUS || tk == MINUS) {
+		return 4;
+	}
+	if (tk == MUL || tk == DIV) {
+		return 5;
+	}
+	if( tk == GREATER || tk == GREATER_EQUAL || tk == LESS || tk == LESS_EQUAL || tk == EQUAL || tk == DIFFERENT ) {
+		return 3;
+	}
+	return -1;//Problem
+}
+
+int isbinOpPriorityGreater( TokenKind t1,  TokenKind t2 ) { // t1 é o pai
+	int a =0 , b = 0;	
+	a = priorityNumber(t1);
+	b = priorityNumber(t2);
+	return a < b;	
+}
+
+int isConstant(TokenKind tk) {
+	return (tk==INT_VAL || tk==STRING_VAL || tk==BOOL_VAL);
+}
+
+int isBinOp(TokenKind tk) {
+	return( tk==PLUS || tk == MINUS || tk == MUL || tk == DIV || tk == AND || tk == OR || tk == GREATER || tk == GREATER_EQUAL || tk == LESS || tk == LESS_EQUAL || tk == EQUAL || tk == DIFFERENT );
+}
+
+int isBaseType(TokenKind tk) {
+	return (tk == CHAR || tk == STRING || tk == INT || tk == BOOL);
+}
+
 
 //this function assumes that the parser are ok;
-int buildAst( NonTerminal rule, Token t, int line ) {
+int buildAst( Token t, int line ) {
 	static AST currParent = NULL;
 	static Token tempId = NULL;
 	static int bracketCount = 0; //work around

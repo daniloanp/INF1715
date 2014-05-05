@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../trab1/lex.h"
-#include "../trab1/tokenList.h"
-#include "recursiveParser.h"
+#include <stdbool.h>
+#include "../trab1/mini0-lex.h"
+#include "../trab1/token_list.h"
+#include "recursive_parser.h"
 
 int main( int argc, char **argv ) {	
-	int ret;
+	bool hasErrors = false;
 	TokenList tl;
 	FILE *input = NULL;
 	++argv, --argc;
@@ -14,9 +15,9 @@ int main( int argc, char **argv ) {
 	else
 		input = stdin;
 	if(input) {
-		tl = generateTokens(input, &ret);
-		if(!ret) {
-			ret = parser(tl, NULL);
+		tl = generateTokens( input, &hasErrors );
+		if ( !hasErrors ) {
+			hasErrors = parser(tl, NULL);
 		}
 
 		if( input != stdin ) {
@@ -28,11 +29,11 @@ int main( int argc, char **argv ) {
 		return 1;
 	}
 
-	if(ret == 0 ) {
+	if( !hasErrors ) {
 		printf("Correct Syntax!!!\n");
-		tokenListDestroy(tl);
+		TokenList_Destroy( tl );
+		return 0;
+	} else {
+		return 1;
 	}
-
-
-	return ret;
 }

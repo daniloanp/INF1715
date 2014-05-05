@@ -3,7 +3,7 @@ make[1]: Entering directory '/home/danilo/puc-rio/INF1715/trab1'
 flex --header-file=lex.yy.h mini0-lex.l 
 make[1]: Leaving directory '/home/danilo/puc-rio/INF1715/trab1'
 cd ../trab2/
-cc  -o mini0-parser main.c build_ast.h build_ast.c  AbstractSyntaxTree.h AbstractSyntaxTree.c ../trab2/recursiveParser.h ../trab2/recursiveParser.c ../trab1/token.h ../trab1/token.c ../trab1/tokenList.h ../trab1/tokenList.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/lex.h ../trab1/lex.c 
+cc  -o mini0-parser main.c build_ast.h build_ast.c  ast.h ast.c ../trab2/recursive_parser.h ../trab2/recursive_parser.c ../trab1/token.h ../trab1/token.c ../trab1/token_list.h ../trab1/token_list.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/lex.h ../trab1/lex.c 
 bash test-oficial.sh
 
 ==== --- |  Testing testes-oficiais//01-global.m0  | --- =====

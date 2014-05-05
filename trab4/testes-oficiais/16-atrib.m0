@@ -1,11 +1,13 @@
 
 i:int
 
-fun f (i:int)
+fun f (i:int):int
+	b:[]char
+	b="10"
    i = i + 3
 end
 
-fun g()
+fun g():bool
    i:int
    i = f(1)
 end

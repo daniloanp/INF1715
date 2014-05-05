@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "symboltable.h"
 #include <assert.h>
-#include "../trab3/AbstractSyntaxTree.h"
+#include "../trab3/ast.h"
 static unsigned long hash(unsigned char *str)
 {
     unsigned long hash = 5381;
@@ -32,7 +32,6 @@ bool SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, AST nod
 	Symbol* sym = NULL; 
 	Symbol* prevSym = NULL; 
 	unsigned long i;
-
 	assert(st);
 	i = hash((unsigned char*)name);
 	
@@ -41,6 +40,7 @@ bool SymbolTable_add(SymbolTable* st, const char* name, SymbolType type, AST nod
 		if( !strcmp(sym->name, name)) {
 			return false; 
 		}
+		
 		prevSym = sym;
 	}
 	sym  = ( Symbol* )malloc( sizeof(Symbol) );

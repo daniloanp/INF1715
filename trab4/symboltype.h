@@ -6,7 +6,7 @@ typedef enum {
    SYM_INT = 11,
    SYM_CHAR = 12,
    SYM_BOOL = 13,
-   SYM_FUNVOID = 1,
+   SYM_FUN_VOID = 1,
    SYM_FUN_INT = 110,
    SYM_FUN_CHAR = 120,
    SYM_FUN_BOOL = 130

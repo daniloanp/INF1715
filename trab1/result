@@ -1,5 +1,5 @@
 flex --header-file=lex.yy.h mini0-lex.l 
-gcc -o mini0-lex lex.yy.c teste-lex.c lex.h lex.c token.h token.c tokenList.h tokenList.c
+gcc -o mini0-lex lex.yy.c teste-lex.c lex.h lex.c token.h token.c tokenList.h token_list.c
 Teste sem erros:
 
 

@@ -1,4 +1,4 @@
-#include "AbstractSyntaxTree.h"
+#include "ast.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -26,6 +26,7 @@ unsigned int AST_GetLine( AST node ) {
 }
 AST AST_NewNode( ASTNodeType type , int line, ASTNodeValue value ) {
 	AST node  = (AST)malloc(sizeof(struct struct_AST));
+	//work around --
 	node->type = type;
 	node->line = line;
 	node->value = value;
@@ -328,7 +329,7 @@ bool AST_IsBaseNodeType( AST node ) {
 
 
 void AST_PrettyPrint( AST t, int level ) {
-	AST c; int i;
+	AST c; int i,j;
 	if(t == NULL) {
 		return;
 	}
@@ -338,6 +339,35 @@ void AST_PrettyPrint( AST t, int level ) {
 	}
 
 	printf("%s",AST_nodeToString(t));
+	//if( t->symbolType.type ) {
+		j = t->symbolType.type;
+		printf( "  TYPE: ");
+		if( j == SYM_INT)
+			printf("INT");
+		else if( j == SYM_BOOL) {
+			printf("BOOL");
+		}
+		else if( j == SYM_CHAR) {
+			printf("CHAR");
+		}
+		else if( j == SYM_FUN_BOOL) {
+			printf("FUN BOOL");
+		}
+		else if( j == SYM_FUN_CHAR) {
+			printf("FUN CHAR");
+		}
+		else if( j == SYM_FUN_INT) {
+			printf("FUN INT");
+		}
+		else if( j == SYM_FUN_VOID) {
+			printf("FUN VOID");
+		}
+		else 
+			printf("VOID");
+		i = t->symbolType.dimension;
+		for(i;i;i--) printf("[]");
+	//}
+	
 	printf("\n");
 	c = AST_GetFirstChild(t);
 
@@ -387,6 +417,4 @@ void AST_Free( AST t ) {
 		free(t->value);
 	}
 	free(t);
-	
-	//free(t);
 }

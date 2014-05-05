@@ -2,7 +2,7 @@
 #ifndef SYMBOLS_H
 #define SYMBOLS_H
 
-#include "../trab3/AbstractSyntaxTree.h"
+#include "../trab3/ast.h"
 #include <stdbool.h>
 
 bool Symbols_annotate(AST program);

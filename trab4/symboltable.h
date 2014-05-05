@@ -2,7 +2,7 @@
 #define SYMBOLTABLE_H
 
 #include <stdbool.h>
-#include "../trab3/AbstractSyntaxTree.h"
+#include "../trab3/ast.h"
 #include "symboltype.h"
 
 

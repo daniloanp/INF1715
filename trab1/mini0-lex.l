@@ -1,11 +1,9 @@
+%option nounput
+%option noinput
 %{
 #include "token.h"
-
 int done = 0;
 int line_num = 1;
-
-
-
 %}
 
 STR_CHAR [^\n"\\]
@@ -22,58 +20,58 @@ ALNUM [a-zA-Z0-9]
 %%
 
 "/*"		{ BEGIN(comment); }
-<comment><<EOF>>	{ printf("Unclosed comment block .\n"); return ERROR;}
+<comment><<EOF>>	{ printf("Unclosed comment block .\n"); return TK_ERROR;}
 <comment>"*/"	   { BEGIN(INITIAL); }
 <comment>[^*\n]*
 <comment>[\n]	   { ++line_num; }
 <comment>"*"
 
-[+] 	{ return PLUS;}
-[-] 	{ return MINUS;}
-[/] 	{ return DIV;}
-[*] 	{ return MUL;}
-[(] 	{ return OP_PARENTHESIS;}
-[)] 	{ return CL_PARENTHESIS;}
-[,] 	{ return COMMA;}
-[:] 	{ return COLON;}
-[>] 	{ return GREATER;}
-[<]		{ return LESS;}
-[>][=] 	{ return GREATER_EQUAL;}
-[<][=] 	{ return LESS_EQUAL;}
-[=] 	{ return EQUAL;}
-[<][>] 	{ return DIFFERENT;}
-[[] 	{ return OP_BRACKET;}
-[]] 	{ return CL_BRACKET;}
-if		{ return IF;}
-else	{ return ELSE;}
-end		{ return END;}
-while	{ return WHILE;}
-loop	{ return LOOP;}
-fun		{ return FUN;}
-return	{ return RETURN;}
-new		{ return NEW;}
-string	{ return STRING;}
-int		{ return INT;}
-char	{ return CHAR;}
-bool	{ return BOOL;}
-and		{ return AND;}
-or		{ return OR;}
-not		{ return NOT;}
-(true|false) { return BOOL_VAL;}
+[+] 	{ return TK_PLUS;}
+[-] 	{ return TK_MINUS;}
+[/] 	{ return TK_DIV;}
+[*] 	{ return TK_MUL;}
+[(] 	{ return TK_OP_PARENTHESIS;}
+[)] 	{ return TK_CL_PARENTHESIS;}
+[,] 	{ return TK_COMMA;}
+[:] 	{ return TK_COLON;}
+[>] 	{ return TK_GREATER;}
+[<]		{ return TK_LESS;}
+[>][=] 	{ return TK_GREATER_EQUAL;}
+[<][=] 	{ return TK_LESS_EQUAL;}
+[=] 	{ return TK_EQUAL;}
+[<][>] 	{ return TK_DIFFERENT;}
+[[] 	{ return TK_OP_BRACKET;}
+[]] 	{ return TK_CL_BRACKET;}
+if		{ return TK_IF;}
+else	{ return TK_ELSE;}
+end		{ return TK_END;}
+while	{ return TK_WHILE;}
+loop	{ return TK_LOOP;}
+fun		{ return TK_FUN;}
+return	{ return TK_RETURN;}
+new		{ return TK_NEW;}
+string	{ return TK_STRING;}
+int		{ return TK_INT;}
+char	{ return TK_CHAR;}
+bool	{ return TK_BOOL;}
+and		{ return TK_AND;}
+or		{ return TK_OR;}
+not		{ return TK_NOT;}
+(true|false) { return TK_BOOL_VAL;}
 
 ({DEC_NUM}|{HEX_NUM}) { 
-	return INT_VAL; 
+	return TK_INT_VAL; 
 }
 
 ({ALPHA}|[_])({ALNUM}|[_])* {
-	return IDENTIFIER; 
+	return TK_IDENTIFIER; 
 }
 
 
 
 
 ["]({STR_CHAR}|{ESCAPED_CHAR})*["] { 
-	return STRING_VAL; 
+	return TK_STRING_VAL; 
 }
 
 {COMMENT_LINE} { }
@@ -81,18 +79,18 @@ not		{ return NOT;}
 [[:blank:]]* { }
 
 
-\n([[:blank:]\n]*|{COMMENT_BLOCK}|{COMMENT_LINE})* {
-	return NL;
+[\n]([[:blank:]\n]*|{COMMENT_BLOCK}|{COMMENT_LINE})* {
+	return TK_NL;
 }
 
 
 . {
- return ERROR; 
+ return TK_ERROR; 
 }
 
 %%4
 
-int yywrap() {
+int yywrap(void) {
 	done = 1;
 	return 1;
 }

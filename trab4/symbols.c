@@ -5,9 +5,9 @@
 
 #include "symboltable.h"
 #include <stdio.h>
-#include "../trab3/AbstractSyntaxTree.h"
+#include "../trab3/ast.h"
 #include <assert.h>
-//#include "../trab3/AbstractSyntaxTree.h"
+//#include "../trab3/ast.h"
 static int dimension = 0;
 static char *name;
 static int type;
@@ -549,7 +549,7 @@ bool Symbols_DeclFunction ( SymbolTable* st, AST declFunc ) {
          tp = AST_GetType( type )*10;
          dimension = AST_GetNumberValue( type );
       }
-
+      AST_SetSymType( declFunc, SYM_NewSymbolType( tp  ,dimension ) );
       ret = SymbolTable_add( st, name, SYM_NewSymbolType( tp  ,dimension ) , declFunc );
 
       return ret;
