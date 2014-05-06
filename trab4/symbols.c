@@ -44,7 +44,7 @@ bool Symbols_Param( SymbolTable* st, AST declVar ) {
       
       type = AST_GetFirstChild( declVar );
       
-      dimension = AST_GetNumberValue( type );
+      dimension = AST_GetIntValue( type );
       return SymbolTable_add( st, name, AST_GetSymType( declVar ) , declVar ) ;
    }
    else {
@@ -70,7 +70,7 @@ bool Symbols_DeclVar( SymbolTable* st, AST declVar ) {
       
       type = AST_GetFirstChild( declVar );
       
-      dimension = AST_GetNumberValue( type );
+      dimension = AST_GetIntValue( type );
       AST_SetSymType ( declVar,  SYM_NewSymbolType(AST_GetType( type ),dimension) );
 
       return SymbolTable_add( st, name, AST_GetSymType( declVar ) , declVar ) ;
@@ -101,7 +101,7 @@ bool Symbols_If(  SymbolTable* st, AST cmdif  ) {
 
       //Elseifs
       for ( elseifs = AST_GetNextSibling( block ); elseifs && ret; elseifs = AST_GetNextSibling( elseifs )) {
-         if( AST_GetType ( elseifs ) == AST_ElseIf ) {
+         if( AST_GetType ( elseifs ) == AST_ELSE_IF ) {
             expr = AST_GetFirstChild( elseifs );
             ret = Symbols_Expression( st, expr );
             if( ret ) {
@@ -186,7 +186,7 @@ bool Symbols_Call ( SymbolTable* st, AST call) {
          stp.type = stp.type/10;
 
          param = AST_GetFirstChild( sym->node );
-         if( AST_GetType(param) == AST_ParamList ) { // Se tem parametros; 
+         if( AST_GetType(param) == AST_PARAM_LIST ) { // Se tem parametros; 
             expr = AST_GetFirstChild( call );
             for( param = AST_GetFirstChild(param); param; param = AST_GetNextSibling( param ), i++ ) {
                if( !expr ) {
@@ -376,7 +376,7 @@ Symbols_New( SymbolTable* st, AST newArr ) {
 
 
    node = AST_GetLastChild( newArr );
-   tp = SYM_NewSymbolType( AST_GetType(node), AST_GetNumberValue( node ) + 1 );
+   tp = SYM_NewSymbolType( AST_GetType(node), AST_GetIntValue( node ) + 1 );
    AST_SetSymType(newArr, tp);
    return true;
 }
@@ -386,13 +386,13 @@ Symbols_Literal( SymbolTable* st, AST lit ) {
    SymbolBaseType bt = 0;
    unsigned int dimension = 0;
    switch( AST_GetType( lit )) {
-      case AST_IntVal:
+      case AST_INT_VAL:
          bt = SYM_INT;
       break;
-      case AST_BoolVal:
+      case AST_BOOL_VAL:
          bt = SYM_BOOL;
       break;
-      case AST_StringVal:
+      case AST_STRING_VAL:
          bt = SYM_CHAR;
          dimension = 1;
       break;
@@ -498,7 +498,7 @@ bool Symbols_Block( SymbolTable* st, AST block ) {
    AST node;
 
    node = AST_GetFirstChild( block );
-   while( ret && AST_GetType( node ) == AST_DeclVar ) {
+   while( ret && AST_GetType( node ) == AST_DECL_VAR ) {
       ret =  Symbols_DeclVar( st, node ) ;
       node = AST_GetNextSibling( node );
    }
@@ -529,14 +529,14 @@ bool Symbols_DeclFunction ( SymbolTable* st, AST declFunc ) {
          type = NULL;
       }
       params = AST_GetFirstChild( declFunc );
-      if ( AST_GetType( params ) != AST_ParamList ) {
+      if ( AST_GetType( params ) != AST_PARAM_LIST ) {
          params = NULL;
       } else {
 
          for( node = AST_GetFirstChild( params ) ; node; node = AST_GetNextSibling( node ) ) {
                node_ = AST_GetFirstChild( node );
                tp = AST_GetType( node_ );
-               dimension = AST_GetNumberValue( node_ );
+               dimension = AST_GetIntValue( node_ );
                AST_SetSymType( node, SYM_NewSymbolType( tp ,dimension ) ); //Apenas anota na arvore.
 
                if( !ret ) {
@@ -547,7 +547,7 @@ bool Symbols_DeclFunction ( SymbolTable* st, AST declFunc ) {
 
       if (  type !=  NULL ) {
          tp = AST_GetType( type )*10;
-         dimension = AST_GetNumberValue( type );
+         dimension = AST_GetIntValue( type );
       }
       AST_SetSymType( declFunc, SYM_NewSymbolType( tp  ,dimension ) );
       ret = SymbolTable_add( st, name, SYM_NewSymbolType( tp  ,dimension ) , declFunc );
@@ -590,7 +590,7 @@ bool Symbols_Function( SymbolTable* st , AST declFunc ) {
       type = NULL;
    }
    params = AST_GetFirstChild( declFunc );
-   if ( ! AST_GetType( params ) == AST_ParamList ) {
+   if ( ! AST_GetType( params ) == AST_PARAM_LIST ) {
       params = NULL;
    }
 
@@ -630,11 +630,11 @@ bool Symbols_annotate(AST program) {
          child && ret;
          child = AST_GetNextSibling(child) ) {
 
-      if( AST_GetType(child) == AST_DeclVar ) {
+      if( AST_GetType(child) == AST_DECL_VAR ) {
 
          ret = Symbols_DeclVar( st, child );
       }
-      else if( AST_GetType(child) == AST_DeclFunction ) {
+      else if( AST_GetType(child) == AST_DECL_FUNCTION ) {
          ret = Symbols_DeclFunction( st, child );
       }
       else {
@@ -648,7 +648,7 @@ bool Symbols_annotate(AST program) {
    for( child = AST_GetFirstChild(program);
          child && ret;
          child = AST_GetNextSibling(child) ) {
-         if( AST_GetType(child) == AST_DeclFunction ) {
+         if( AST_GetType(child) == AST_DECL_FUNCTION ) {
            ret =  Symbols_Function( st, child );
          }
    }

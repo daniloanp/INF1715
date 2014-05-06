@@ -106,16 +106,21 @@ static TokenList type( TokenList tl ) {
 	t = TokenList_GetCurrentToken( tl );
 	
 	switch( Token_GetKind(t) ) {
-		
+		case TK_INT:
+		case TK_BOOL:
+		case TK_CHAR:
+		case TK_STRING:
 			tl = processTerminal(NT_TYPE, tl, Token_GetKind(t) );
-			break;
+		break;
+
 		case TK_OP_BRACKET:
 			while( verifyCurrentToken( tl, TK_OP_BRACKET ) ) {
 				tl = processTerminal(NT_TYPE, tl, TK_OP_BRACKET );
 				tl = processTerminal(NT_TYPE, tl, TK_CL_BRACKET );	
 			}
 			tl = type( tl ) ;
-			break;
+		break;
+
 		default:
 			if(tl != NULL) {
 				printError( Token_GetLine( t ) , "a type", Token_GetStringForKind( t ) );

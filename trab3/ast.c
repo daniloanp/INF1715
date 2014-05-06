@@ -79,10 +79,6 @@ AST AST_InsertSibling( AST sibling, AST newSibling ) {
 	AST parent = sibling->parent;
 	if(newSibling != NULL) {
 		sibling = sibling->parent->lastChild;
-		/*while(sibling->newSibling != NULL) {
-			sibling = sibling->nextSibling;
-		}*/
-
 		sibling->nextSibling = newSibling;
 		newSibling->prevSibling = sibling;
 		newSibling->parent = sibling->parent;
@@ -131,38 +127,6 @@ AST AST_GetPrevSibling(AST node) {
 	return node->prevSibling;
 }
 
-ASTNodeValue AST_NodeValueFromToken( Token t ) {
-	ASTNodeValue nodeVal = NULL;
-	if (t!=NULL && tokenGetVal( t )!=NULL) {
-		nodeVal = (ASTNodeValue)malloc(sizeof(union ast_val));
-		if(nodeVal == NULL) {
-			printf("Malloc problem");
-			return NULL;
-		}
-		if( tokenGetKind( t ) == IDENTIFIER ||  tokenGetKind( t ) == STRING_VAL ) {
-			nodeVal->string = tokenGetStringValue(t);
-		}
-		else {
-			nodeVal->number = tokenGetNumberValue(t);
-		}
-		return nodeVal;
-	}
-	return NULL;
-}
-
-ASTNodeValue AST_NodeValueFromInt( unsigned int v ) {
-	ASTNodeValue nodeVal = NULL;
-	nodeVal = (ASTNodeValue)malloc(sizeof(union ast_val));
-	if(nodeVal == NULL) {
-		printf("Malloc problem");
-	} 
-	else {
-		nodeVal->number = v;
-		return nodeVal;
-	}
-
-	return NULL;
-}
 
 AST AST_UpdateNodeValue( AST node, ASTNodeValue val ) {
 	if(node==NULL)
@@ -172,16 +136,15 @@ AST AST_UpdateNodeValue( AST node, ASTNodeValue val ) {
 }
 
 AST AST_UpdateNodeType( AST node, ASTNodeType tp ) {
-	if(node==NULL)
-		return node;
+	assert( node );
 	node->type = tp;
 	return node;
 }
 
 
 ASTNodeValue AST_GetNodeValue(AST node) {
-	if(node == NULL)
-		return NULL;
+	assert( node );
+		
 	return node->value;
 }
 
@@ -234,7 +197,7 @@ char* AST_GetStringValue(AST node) {
 	return node->value.string;
 }
 
-unsigned long AST_GetNumberValue(AST node) {
+unsigned long AST_GetIntValue(AST node) {
 	assert(node != NULL);
 	return node->value.number;
 }
@@ -245,83 +208,83 @@ static char buff[1000];
 static char* AST_nodeToString(AST node) {
 	ASTNodeType tp = AST_GetType(node);
 	switch( tp ) {
-		case AST_If: return "If";break;
-		case AST_Else: return "Else";break;
-		case AST_While: return "While";break;
-		case AST_Return: return "Return";break;
-		case AST_New: return "New";break;
-		case AST_Int: 
-			sprintf(buff, "tp_int(%lu)", AST_GetNumberValue(node));
+		case AST_IF: return "If";break;
+		case AST_ELSE: return "Else";break;
+		case AST_WHILE: return "While";break;
+		case AST_RETURN: return "Return";break;
+		case AST_NEW: return "New";break;
+		case AST_INT: 
+			sprintf(buff, "tp_int(%lu)", AST_GetIntValue(node));
 			return buff;
 		break;
-		case AST_Char: 
-			sprintf(buff, "tp_char(%lu)", AST_GetNumberValue(node));
+		case AST_CHAR: 
+			sprintf(buff, "tp_char(%lu)", AST_GetIntValue(node));
 			return buff;
 		break;
-		case AST_Bool: 
-			sprintf(buff, "tp_bool(%lu)", AST_GetNumberValue(node));
+		case AST_BOOL: 
+			sprintf(buff, "tp_bool(%lu)", AST_GetIntValue(node));
 			return buff;
 		break;
-		case AST_String:
-			sprintf(buff, "tp_string(%s)", AST_GetNumberValue(node));
+		case AST_STRING:
+			sprintf(buff, "tp_string(%s)", AST_GetIntValue(node));
 			return buff;
 		break;
-		case AST_And: return "And";break;
-		case AST_Or: return "Or";break;
-		case AST_Not: return "Not";break;
-		case AST_BoolVal:
-			if( AST_GetNumberValue(node) ) {
+		case AST_AND: return "And";break;
+		case AST_OR: return "Or";break;
+		case AST_NOT: return "Not";break;
+		case AST_BOOL_VAL:
+			if( AST_GetIntValue(node) ) {
 				return "bool: True";
 			}
 			else {
 				return "bool: False";
 			}	
 		break;
-		case AST_IntVal: 
-			sprintf(buff, "int: '(%lu)'", AST_GetNumberValue(node));
+		case AST_INT_VAL: 
+			sprintf(buff, "int: '(%lu)'", AST_GetIntValue(node));
 			return buff;
 		break;
-		case AST_StringVal: 
+		case AST_STRING_VAL: 
 			sprintf(buff, "strVal: \"%s\"", AST_GetStringValue(node));
 			return buff;
 		break;
-		case AST_Plus: return "+";break;
-		case AST_Minus: return "-";break;
-		case AST_Mul: return "*";break;
-		case AST_Div: return "/";break;
-		case AST_Greater: return ">";break;
-		case AST_GreaterEqual: return ">=";break;
-		case AST_Less: return "<";break;
-		case AST_LessEqual: return "<=";break;
-		case AST_Equal: return "=";break;
-		case AST_Different: return "<>";break;
-		case AST_DeclFunction: 
+		case AST_PLUS: return "+";break;
+		case AST_MINUS: return "-";break;
+		case AST_MUL: return "*";break;
+		case AST_DIV: return "/";break;
+		case AST_GREATER: return ">";break;
+		case AST_GREATER_EQUAL: return ">=";break;
+		case AST_LESS: return "<";break;
+		case AST_LESS_EQUAL: return "<=";break;
+		case AST_EQUAL: return "=";break;
+		case AST_DIFFERENT: return "<>";break;
+		case AST_DECL_FUNCTION: 
 			sprintf(buff, "fun '(%s)'", AST_GetStringValue(node));
 			return buff;
 		break;
-		case AST_Param: 
+		case AST_PARAM: 
 			sprintf(buff, "Param '(%s)'", AST_GetStringValue(node));
 			return buff;
 		break;
-		case AST_ParamList: return "ParamList";break;
-		case AST_Expression: return "Exp";break;
-		case AST_Call: 
+		case AST_PARAM_LIST: return "ParamList";break;
+		case AST_EXPRESSION: return "Exp";break;
+		case AST_CALL: 
 			sprintf(buff, "Call '(%s)'", AST_GetStringValue(node));
 			return buff;
 		break;
-		case AST_Attr: return "Attr";break;
-		case AST_Block: return "Block";break;
-		case AST_Program: return "Program";break;
-		case AST_DeclVar:
+		case AST_ATTR: return "Attr";break;
+		case AST_BLOCK: return "Block";break;
+		case AST_PROGRAM: return "Program";break;
+		case AST_DECL_VAR:
 			sprintf(buff, "DeclVar '(%s)'", AST_GetStringValue(node));
 			return buff;
 	 	break;
-		case AST_Var: 
+		case AST_VAR: 
 			sprintf(buff, "Var '(%s)'", AST_GetStringValue(node));
 			return buff;
 		break;
-		case AST_UnaryMinus: return "(-)";break;
-		case AST_ElseIf: return "ElseIf";break;
+		case AST_UNARYMINUS: return "(-)";break;
+		case AST_ELSE_IF: return "ElseIf";break;
 		default: break;
 	}
 	return NULL;
@@ -329,17 +292,17 @@ static char* AST_nodeToString(AST node) {
 
 bool AST_IsNodeAConstant( AST node ) {
 	ASTNodeType tk = node->type;
-	return (tk == AST_IntVal || tk == AST_StringVal || tk == AST_BoolVal );
+	return (tk == AST_INT_VAL || tk == AST_STRING_VAL || tk == AST_BOOL_VAL );
 }
 
 bool AST_IsNodeABinOp( AST node ) {
 	ASTNodeType tk = node->type;
-	return( tk==PLUS || tk == MINUS || tk == MUL || tk == DIV || tk == AND || tk == OR || tk == GREATER || tk == GREATER_EQUAL || tk == LESS || tk == LESS_EQUAL || tk == EQUAL || tk == DIFFERENT );
+	return( tk==AST_PLUS || tk == AST_MINUS || tk == AST_MUL || tk == AST_DIV || tk == AST_AND || tk == AST_OR || tk == AST_GREATER || tk == AST_GREATER_EQUAL || tk == AST_LESS || tk == AST_LESS_EQUAL || tk == AST_EQUAL || tk == AST_DIFFERENT );
 }
 
 bool AST_IsBaseNodeType( AST node ) {
 	ASTNodeType tk = node->type;
-	return (tk == AST_Char || tk == AST_Int || tk == AST_Bool);
+	return (tk == AST_CHAR || tk == AST_INT || tk == AST_BOOL);
 }
 
 
@@ -354,7 +317,7 @@ void AST_PrettyPrint( AST t, int level ) {
 	}
 
 	printf("%s",AST_nodeToString(t));
-	//if( t->symbolType.type ) {
+	/*//if( t->symbolType.type ) {
 		j = t->symbolType.type;
 		printf( "  TYPE: ");
 		if( j == SYM_INT)
@@ -381,7 +344,7 @@ void AST_PrettyPrint( AST t, int level ) {
 			printf("VOID");
 		i = t->symbolType.dimension;
 		for(i;i;i--) printf("[]");
-	//}
+	//}*/
 	
 	printf("\n");
 	c = AST_GetFirstChild(t);
@@ -403,7 +366,7 @@ void AST_SetSymType( AST node, SymbolType tp ) {
 
 bool AST_IsOperatorNode( AST node ) {
 	switch( AST_GetType(node) ) {
-		case AST_Plus: case  AST_Minus : case  AST_Mul : case  AST_Div : case  AST_Greater : case  AST_GreaterEqual : case  AST_Less: case  AST_LessEqual: case  	AST_Equal : case  AST_Different : case  AST_UnaryMinus: case AST_And: case AST_Or:
+		case AST_PLUS: case  AST_MINUS : case  AST_MUL : case  AST_DIV : case  AST_GREATER : case  AST_GREATER_EQUAL : case  AST_LESS: case  AST_LESS_EQUAL: case  	AST_EQUAL : case  AST_DIFFERENT : case  AST_UNARYMINUS: case AST_AND: case AST_OR:
 		return true;
 	default:
 		return false;
@@ -424,11 +387,8 @@ void AST_Free( AST t ) {
 	}
 
 	
-	if( t->type  == AST_Var || t->type ==  AST_StringVal || t->type == AST_Call || t->type == AST_DeclFunction || t->type == AST_DeclVar || t->type == AST_Param ) {
-		if(t->value.string != NULL) {
-				free(t->value->string);
-			}
-	}
+	if( t->value.string != NULL && t->type  == AST_VAR || t->type ==  AST_STRING_VAL || t->type == AST_CALL || t->type == AST_DECL_FUNCTION || t->type == AST_DECL_VAR || t->type == AST_PARAM ) {
+			free(t->value.string);			
 	}
 	free(t);
 }

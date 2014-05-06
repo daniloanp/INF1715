@@ -172,7 +172,7 @@ char* Token_GetStringValue(Token t) {
 	}
 }
 
-long Token_GetNumberValue(Token t) {
+unsigned long Token_GetIntValue(Token t) {
 	assert( t );	
 	return t->value.number;
 }

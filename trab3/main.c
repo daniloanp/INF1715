@@ -4,9 +4,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include "../trab1/token.h"
-#include "../trab1/token_list.h"
-#include "../trab1/lex.h"
 #include "ast.h"
 #include "build_ast.h"
 
@@ -15,31 +12,35 @@
 
 
 int main( int argc, char **argv ) {	
-	int ret;
+	bool hasErrors;
 	FILE *input;
 	AST tree;
 	++argv, --argc;
-	if ( argc > 0 )
+	if ( argc > 0 ) {
 		input = fopen( argv[0], "r" );
-	else
-		input = stdin;
-	if(input) {
-		tree = BuildAst(input, &ret);
-		if(ret == 0 ) {
-			printf("Correct Syntax!!!\n");
-			AST_PrettyPrint(tree, 1);
+		if ( !input ) {
+			printf("\nError: Cannot open file.\n");
+			return 1;
 		}
 	}
 	else {
-		printf("\nError: Cannot open file.\n");
-		return 1;
+		input = stdin;
 	}
+	
+	tree = BuildAst(input, &hasErrors);
 
 	if( input != stdin ) {
-			fclose(input);
+		fclose(input);
 	}
 
-	return ret;
+	if( ! hasErrors ) {
+		printf("Correct Syntax!!!\n");
+		AST_PrettyPrint(tree, 1);
+		return 0;
+	} 
+	else {
+		return 1;
+	}
 }
 
 

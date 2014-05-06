@@ -1,7 +1,0 @@
-
-fun b(a:int, b:[]char):[][][]int
-	a[20] = 20 and 20 or 10 and 10 or 10 or 10 or 10 and true
-
-	
-	//a[20] = ((20 and 20) or ((10 and 10) or 10) or (10 or (10 and true)))))
-end

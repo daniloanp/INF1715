@@ -8,43 +8,43 @@ typedef struct struct_AST* AST;
 typedef union ast_val ASTNodeValue;
 
 typedef enum {
-	AST_If = 2,
-	AST_Else = 3,
-	AST_While = 5,
-	AST_Return = 8,
-	AST_New = 9,
-	AST_Int = 11,
-	AST_Char = 12,
-	AST_Bool = 13,
-	AST_String = 19, // Order
-	AST_And = 14,
-	AST_Or = 15,
-	AST_Not = 16,
-	AST_BoolVal = 17,
-	AST_IntVal = 18,
-	AST_StringVal = 36, // Order
-	AST_Plus = 20,
-	AST_Minus = 21,
-	AST_Mul = 22,
-	AST_Div = 23,
-	AST_Greater  = 30,
-	AST_GreaterEqual = 31,
-	AST_Less = 32,
-	AST_LessEqual = 33,
-	AST_Equal = 34,
-	AST_Different = 35,
-	AST_DeclFunction = 131,
-	AST_Param = 133,
-	AST_ParamList = 134,
-	AST_Expression = 142,
-	AST_Call = 144,
-	AST_Attr = 145,
-	AST_Block = 150,
-	AST_Program = 152,
-	AST_DeclVar = 154,
-	AST_Var = 156,
-	AST_UnaryMinus = 157,
-	AST_ElseIf = 258
+	AST_IF = 2,
+	AST_ELSE = 3,
+	AST_WHILE = 5,
+	AST_RETURN = 8,
+	AST_NEW = 9,
+	AST_INT = 11,
+	AST_CHAR = 12,
+	AST_BOOL = 13,
+	AST_STRING = 19, // ORDER
+	AST_AND = 14,
+	AST_OR = 15,
+	AST_NOT = 16,
+	AST_BOOL_VAL = 17,
+	AST_INT_VAL = 18,
+	AST_STRING_VAL = 36, // ORDER
+	AST_PLUS = 20,
+	AST_MINUS = 21,
+	AST_MUL = 22,
+	AST_DIV = 23,
+	AST_GREATER  = 30,
+	AST_GREATER_EQUAL = 31,
+	AST_LESS = 32,
+	AST_LESS_EQUAL = 33,
+	AST_EQUAL = 34,
+	AST_DIFFERENT = 35,
+	AST_DECL_FUNCTION = 131,
+	AST_PARAM = 133,
+	AST_PARAM_LIST = 134,
+	AST_EXPRESSION = 142,
+	AST_CALL = 144,
+	AST_ATTR = 145,
+	AST_BLOCK = 150,
+	AST_PROGRAM = 152,
+	AST_DECL_VAR = 154,
+	AST_VAR = 156,
+	AST_UNARYMINUS = 157,
+	AST_ELSE_IF = 258
 
 } ASTNodeType;
 
@@ -75,7 +75,7 @@ ASTNodeType AST_GetType( AST node );
 
 
 char* AST_GetStringValue(AST node);
-unsigned long AST_GetNumberValue(AST node);
+unsigned long AST_GetIntValue(AST node);
 unsigned int AST_GetLine( AST node );
 SymbolType AST_GetSymType( AST node );
 void AST_SetSymType( AST node, SymbolType tp );
