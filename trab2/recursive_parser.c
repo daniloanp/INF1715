@@ -407,7 +407,7 @@ static TokenList expressionList( TokenList tl ) {
 	processNonTerminal( NT_EXPRESSION_LIST );
 	tl = expression( tl );
 	while(verifyCurrentToken(tl, TK_COMMA)) {
-		tl = processTerminal(NT_EXPRESSION_LIST, tl, TK_COMMA);
+		tl = processTerminal( NT_EXPRESSION_LIST, tl, TK_COMMA );
 		tl = expression(tl);
 	}
 	return tl;
