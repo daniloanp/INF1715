@@ -59,7 +59,7 @@ static ASTNodeType TkToASTType( TokenKind tk ) {
 int buildAst( NonTerminal rule, Token t, int line ) {
 	AST node = NULL;
 	TokenKind tk = Token_GetKind( t );
-
+		
 	if ( _root == NULL ) {
 		_root = AST_New( AST_PROGRAM, line );
 	 	_currParent = _root;
@@ -68,23 +68,26 @@ int buildAst( NonTerminal rule, Token t, int line ) {
 	switch ( rule ) {
 		case NT_DECL_FUNCTION:
 			switch( tk ) {
+
 				case TK_IDENTIFIER:
 					node = AST_NewAsString( AST_DECL_FUNCTION, line, Token_GetStringValue( t ) );
 					_currParent = AST_InsertChild( _currParent, node);
-				 	
 				break;
+
 				case TK_CL_PARENTHESIS:
 				 	_currParent = AST_GetParent( _currParent );
 					if( AST_GetType( _currParent ) == AST_DECL_FUNCTION ) {
 					 	_currParent = AST_GetParent( _currParent );
 					}
 				break;
+
 				case TK_END:
 				 	_currParent = AST_GetParent( _currParent );
 				break;
 				default: break;
 			}
 		break;
+		
 		case NT_PARAM:
 			if( AST_GetType( _currParent ) != AST_PARAM_LIST ) {
 				node = AST_New( AST_PARAM_LIST, line );
@@ -112,7 +115,11 @@ int buildAst( NonTerminal rule, Token t, int line ) {
 		break;
 
 		case NT_BLOCK:
-			if( tk == TK_IDENTIFIER ) {
+			if( t  == NULL) {
+				node = AST_New( AST_BLOCK, line );
+				_currParent = AST_InsertChild( _currParent, node );
+			}
+			else if( tk == TK_IDENTIFIER ) { //Just saving the 
 				str = Token_GetStringValue( t );
 			}
 		break;
@@ -135,7 +142,12 @@ int buildAst( NonTerminal rule, Token t, int line ) {
 				str = Token_GetStringValue( t ); //Just store it for future usage.
 			}
 			else if( tk == TK_NL) {
-			 	_currParent = AST_GetParent( _currParent );
+
+				//upexp
+				do {
+					_currParent = AST_GetParent( _currParent );
+				} while( AST_GetType( _currParent ) != AST_BLOCK );
+			 	
 			}
 		break;
 
@@ -165,8 +177,10 @@ int buildAst( NonTerminal rule, Token t, int line ) {
 		break;
 
 		case NT_COMMAND_RETURN:
-			node = AST_New( AST_RETURN , line );
-		 	_currParent = AST_InsertChild( _currParent, node );
+			if( tk == TK_RETURN ) {
+				node = AST_New( AST_RETURN , line );
+			 	_currParent = AST_InsertChild( _currParent, node );
+		 	}
 		break;
 
 		case NT_COMMAND_WHILE:
@@ -195,6 +209,9 @@ int buildAst( NonTerminal rule, Token t, int line ) {
 			 	_currParent = AST_InsertChild( _currParent, node );
 				node = AST_NewAsString( AST_VAR , line, str ); 
 			 	_currParent = AST_InsertChild( _currParent, node );
+			} else if ( tk == TK_NL ) {
+				//UP EXP;
+				_currParent = AST_GetParent( _currParent );
 			}
 		break;
 
