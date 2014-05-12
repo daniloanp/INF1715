@@ -20,7 +20,7 @@ ALNUM [a-zA-Z0-9]
 %%
 
 "/*"		{ BEGIN(comment); }
-<comment><<EOF>>	{ printf("Unclosed comment block .\n"); return TK_ERROR;}
+<comment><<EOF>>	{ printf("Error: Unclosed comment block .\n"); return TK_ERROR;}
 <comment>"*/"	   { BEGIN(INITIAL); }
 <comment>[^*\n]*
 <comment>[\n]	   { ++line_num; }
@@ -59,14 +59,13 @@ or		{ return TK_OR;}
 not		{ return TK_NOT;}
 (true|false) { return TK_BOOL_VAL;}
 
-({DEC_NUM}|{HEX_NUM}) { 
+({DEC_NUM}|{HEX_NUM}) {
 	return TK_INT_VAL; 
 }
 
 ({ALPHA}|[_])({ALNUM}|[_])* {
 	return TK_IDENTIFIER; 
 }
-
 
 
 
