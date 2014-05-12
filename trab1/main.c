@@ -22,7 +22,7 @@ int printToken(Token t)
 	
 	switch ( Token_GetKind(t) ) {
 		case TK_INT_VAL:
-			printf( "%lu", Token_GetNumberValue( t ) );
+			printf( "%lu", Token_GetIntValue( t ) );
 		break;
 
 		case TK_STRING_VAL:
@@ -34,7 +34,7 @@ int printToken(Token t)
 		break;
 
 		case TK_BOOL_VAL:
-			if( Token_GetNumberValue( t ) ) {
+			if( Token_GetIntValue( t ) ) {
 				printf( "$true" );
 			}
 			else {
