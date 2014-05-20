@@ -10,7 +10,7 @@
 
 // Functions that are associated to a grammar non-terminal:
 static TokenList program( TokenList tl );
-static TokenList declFunction( TokenList tl ) ;
+static TokenList declFunction( TokenList tl );
 static TokenList declGlobalVar(TokenList tl);
 static TokenList type( TokenList tl );
 static TokenList block( TokenList tl );
@@ -27,11 +27,11 @@ static TokenList new(TokenList tl);
 static TokenList call( TokenList tl );
 static TokenList params(TokenList tl);
 static TokenList param(TokenList tl);
-static TokenList expression( TokenList tl ) ;
+static TokenList expression( TokenList tl );
 static TokenList expressionList( TokenList tl );
 static TokenList val(TokenList tl);
 static TokenList unaryOp( TokenList tl );
-static TokenList mulDivOp(TokenList tl) ;
+static TokenList mulDivOp(TokenList tl);
 static TokenList minAddOp( TokenList tl);
 static TokenList comparisonOp( TokenList tl);
 static TokenList and( TokenList tl );
@@ -48,13 +48,13 @@ static callbackOnDerivation actinOnRules = NULL;
 
 static int callOnConsume( NonTerminal rule, Token t, int line ) {
 	if( actinOnRules != NULL && !hasErrors ) {
-		return actinOnRules( rule,  t, line );
+		return actinOnRules( rule, t, line );
 	} else
 		return -1;
 }
 
 // -- Auxiliar Functions:
-static  int verifyCurrentToken(TokenList tl, TokenKind tk) {
+static int verifyCurrentToken(TokenList tl, TokenKind tk) {
 	if (tl == NULL)
 		return 0;
 	Token t = TokenList_GetCurrentToken( tl );
@@ -67,8 +67,8 @@ static void printError(int line, char *expected, char *got) {
 
 }
 
-static  TokenList processTerminal( NonTerminal rule, TokenList tl, TokenKind tk ) {
-	Token t = TokenList_GetCurrentToken(tl);
+static TokenList processTerminal( NonTerminal rule, TokenList tl, TokenKind tk ) {
+	Token t = TokenList_GetCurrentToken( tl );
 	if ( tl == NULL ) {
 		if ( !hasErrors ) {
 		
@@ -77,14 +77,14 @@ static  TokenList processTerminal( NonTerminal rule, TokenList tl, TokenKind tk 
 		hasErrors = true;
 		return NULL;
 	}
-	else if ( t!= NULL && Token_GetKind(t) == tk ) {
+	else if ( t!= NULL && Token_GetKind( t ) == tk ) {
 		line = Token_GetLine( t );
-		callOnConsume( rule, t, line  );
+		callOnConsume( rule, t, line );
 		return TokenList_Next( tl );
 	}
 	else {
 		hasErrors = true;
-		printError( Token_GetLine(t), TokenKind_ToString(tk),  Token_GetStringForKind(t));
+		printError( Token_GetLine(t), TokenKind_ToString(tk), Token_GetStringForKind(t));
 		return NULL;
 	}
 }
@@ -94,7 +94,7 @@ static void processNonTerminal( NonTerminal rule ) {
 }
 
 /*
-type ->  'CHAR'
+type -> 'CHAR'
 type -> 'STRING'
 type -> 'INT'
 type -> 'BOOL'
@@ -105,12 +105,12 @@ static TokenList type( TokenList tl ) {
 	processNonTerminal( NT_TYPE );
 	t = TokenList_GetCurrentToken( tl );
 	
-	switch( Token_GetKind(t) ) {
+	switch( Token_GetKind( t ) ) {
 		case TK_INT:
 		case TK_BOOL:
 		case TK_CHAR:
 		case TK_STRING:
-			tl = processTerminal(NT_TYPE, tl, Token_GetKind(t) );
+			tl = processTerminal(NT_TYPE, tl, Token_GetKind( t ) );
 		break;
 
 		case TK_OP_BRACKET:
@@ -118,7 +118,7 @@ static TokenList type( TokenList tl ) {
 				tl = processTerminal(NT_TYPE, tl, TK_OP_BRACKET );
 				tl = processTerminal(NT_TYPE, tl, TK_CL_BRACKET );	
 			}
-			tl = type( tl ) ;
+			tl = type( tl );
 		break;
 
 		default:
@@ -136,8 +136,8 @@ declGlobalVar -> 'ID' ':' type 'NL'
 */
 static TokenList declGlobalVar( TokenList tl ) {	
 	processNonTerminal( NT_DECL_GLOBAL_VAR );
-	tl = processTerminal(NT_DECL_GLOBAL_VAR,  tl, TK_IDENTIFIER );
-	tl = processTerminal(NT_DECL_GLOBAL_VAR,  tl, TK_COLON );
+	tl = processTerminal(NT_DECL_GLOBAL_VAR, tl, TK_IDENTIFIER );
+	tl = processTerminal(NT_DECL_GLOBAL_VAR, tl, TK_COLON );
 	tl = type( tl );
 	return processTerminal(NT_DECL_GLOBAL_VAR, tl, TK_NL );
 }
@@ -158,7 +158,7 @@ static TokenList params( TokenList tl ) {
 	tl = param( tl );
 	//pay attention, loop
 	while( verifyCurrentToken( tl, TK_COMMA ) ) {
-		tl = processTerminal(NT_PARAMS,  tl, TK_COMMA );
+		tl = processTerminal(NT_PARAMS, tl, TK_COMMA );
 		tl = param( tl );
 	}
 	return tl;
@@ -167,9 +167,9 @@ static TokenList params( TokenList tl ) {
 /*
 declOrCommand -> ':' type 'NL'
 declOrCommand -> ':' type 'NL' 'ID' declOrCommand
-declOrCommand ->  commandAttrOrCall 'NL'
+declOrCommand -> commandAttrOrCall 'NL'
 */
-static  TokenList declOrCommand( TokenList tl ) {
+static TokenList declOrCommand( TokenList tl ) {
 	processNonTerminal( NT_DECL_OR_COMMAND );
 	if( verifyCurrentToken( tl, TK_COLON ) )	{
 		tl = processTerminal( NT_DECL_OR_COMMAND, tl, TK_COLON );
@@ -211,11 +211,11 @@ F -> 'STRING_VAL'
 F -> varOrCall
 F-> new
 */
-static  TokenList val(TokenList tl) {
+static TokenList val(TokenList tl) {
 	Token t;
 	processNonTerminal( NT_VAL );
 	t = TokenList_GetCurrentToken( tl );	
-	switch( Token_GetKind(t) ) {
+	switch( Token_GetKind( t ) ) {
 
 		case TK_OP_PARENTHESIS:
 			tl = processTerminal( NT_VAL, tl, TK_OP_PARENTHESIS );
@@ -246,13 +246,13 @@ static  TokenList val(TokenList tl) {
 		break;
 
 		case TK_NEW:
-			tl = new(tl);
+			tl = new( tl );
 		break;
 
 		default:
 			if ( tl != NULL ) {
 				hasErrors = true;
-				printf( "Error at Line %d.\nAn expression was expected but got '%s'.\n", Token_GetLine( t ),  Token_GetStringForKind( t ) );
+				printf( "Error at Line %d.\nAn expression was expected but got '%s'.\n", Token_GetLine( t ), Token_GetStringForKind( t ) );
 				tl = NULL;		
 			}
 		break;
@@ -271,14 +271,14 @@ static TokenList unaryOp( TokenList tl ) {
 	Token t;
 	processNonTerminal( NT_UNARY_OP );
 	t = TokenList_GetCurrentToken( tl );
-	switch ( Token_GetKind(t) ) {
+	switch ( Token_GetKind( t ) ) {
 		case TK_MINUS: case TK_NOT:
 			tl = processTerminal( NT_UNARY_OP, tl, Token_GetKind( t ) );
 			tl = unaryOp( tl );
 		break;
 
 		default:
-			tl = val(tl);
+			tl = val( tl );
 		break;
 	}
 	return tl;
@@ -294,9 +294,9 @@ First(U) u First(F)
 static TokenList mulDivOp(TokenList tl) {
 	Token t;
 	processNonTerminal( NT_MUL_DIV_OP );
-	tl = unaryOp(tl);
-	t = TokenList_GetCurrentToken(tl);
-	switch( Token_GetKind(t) ) {
+	tl = unaryOp( tl );
+	t = TokenList_GetCurrentToken( tl );
+	switch( Token_GetKind( t ) ) {
 
 		case TK_MUL:case TK_DIV:
 			tl = processTerminal( NT_MUL_DIV_OP, tl, Token_GetKind( t ) );
@@ -320,7 +320,7 @@ static TokenList minAddOp( TokenList tl) {
 	processNonTerminal( NT_MIN_ADD_OP );
 	tl = mulDivOp( tl );
 	t = TokenList_GetCurrentToken( tl );	
-	switch( Token_GetKind(t) ) {
+	switch( Token_GetKind( t ) ) {
 
 		case TK_PLUS: case TK_MINUS:
 			tl = processTerminal( NT_MIN_ADD_OP, tl, Token_GetKind( t ) );
@@ -346,8 +346,8 @@ static TokenList comparisonOp( TokenList tl) {
 	Token t;
 	processNonTerminal( NT_COMPARISON_OP );
 	tl = minAddOp( tl );
-	t = TokenList_GetCurrentToken(tl);
-	switch( Token_GetKind(t) ) {
+	t = TokenList_GetCurrentToken( tl );
+	switch( Token_GetKind( t ) ) {
 
 		case TK_GREATER:
 		case TK_GREATER_EQUAL:
@@ -355,7 +355,7 @@ static TokenList comparisonOp( TokenList tl) {
 		case TK_LESS_EQUAL:
 		case TK_EQUAL:
 		case TK_DIFFERENT:
-			tl = processTerminal( NT_COMPARISON_OP, tl, Token_GetKind(t) );
+			tl = processTerminal( NT_COMPARISON_OP, tl, Token_GetKind( t ) );
 			tl = comparisonOp( tl );
 		break;
 
@@ -369,9 +369,9 @@ static TokenList and( TokenList tl ) {
 	processNonTerminal( NT_AND );
 	tl = comparisonOp( tl );
 	t = TokenList_GetCurrentToken( tl );
-	switch( Token_GetKind(t) ) {
+	switch( Token_GetKind( t ) ) {
 		case TK_AND:
-			tl = processTerminal(NT_AND,  tl, Token_GetKind(t) );
+			tl = processTerminal(NT_AND, tl, TK_AND );
 			tl = and( tl );
 		break;
 
@@ -389,9 +389,9 @@ static TokenList expression( TokenList tl ) {
 	processNonTerminal( NT_EXPRESSION );
 	tl = and( tl );
 	t = TokenList_GetCurrentToken( tl );
-	switch( Token_GetKind(t) ) {
+	switch( Token_GetKind( t ) ) {
 		case TK_OR:
-			tl = processTerminal( NT_EXPRESSION, tl, Token_GetKind(t) );
+			tl = processTerminal( NT_EXPRESSION, tl, TK_OR );
 			tl = expression( tl );
 		break;
 
@@ -408,7 +408,7 @@ static TokenList expressionList( TokenList tl ) {
 	tl = expression( tl );
 	while(verifyCurrentToken(tl, TK_COMMA)) {
 		tl = processTerminal( NT_EXPRESSION_LIST, tl, TK_COMMA );
-		tl = expression(tl);
+		tl = expression( tl );
 	}
 	return tl;
 }
@@ -446,14 +446,14 @@ attr -> 	arrayAccess '=' expression
 */
 static TokenList attr( TokenList tl ) {
 	processNonTerminal( NT_ATTR );
-	tl = arrayAccess(tl);
+	tl = arrayAccess( tl );
 	tl = processTerminal( NT_ATTR, tl, TK_EQUAL );
 	tl = expression( tl );
 	return tl;
 }
 
 /*
-arrayAccess -> 	{ '['  expression']' }
+arrayAccess -> 	{ '[' expression']' }
 */
 static TokenList arrayAccess( TokenList tl) {
 	processNonTerminal( NT_ARRAY_ACCESS );
@@ -475,11 +475,11 @@ static TokenList commandAttrOrCall( TokenList tl ) {
 		tl = attr( tl );	
 	}
 	else if ( verifyCurrentToken( tl, TK_OP_PARENTHESIS ) ) {
-		tl = call(tl);
+		tl = call( tl );
 	}
 	else {
 		hasErrors = true;
-		t = TokenList_GetCurrentToken(tl);
+		t = TokenList_GetCurrentToken( tl );
 		printf("Error at Line %d.\nExpected a function call or attribution, but got %s\n", Token_GetLine( t ), Token_GetStringForKind( t ));
 		tl = NULL;
 	}
@@ -503,7 +503,7 @@ static TokenList commandWhile( TokenList tl ) {
 /*
 commandReturn -> 'RETURN' [ 'expression' ]
 */
-static  TokenList commandReturn( TokenList tl ) {
+static TokenList commandReturn( TokenList tl ) {
 	Token t;
 	processNonTerminal( NT_COMMAND_RETURN );
 	tl = processTerminal( NT_COMMAND_RETURN, tl, TK_RETURN );
@@ -540,27 +540,38 @@ commandIf->'IF' expression 'NL'
 			]
 			'END'
 */
+
+static TokenList commandElseIf( TokenList tl ) {
+	processNonTerminal( NT_COMMAND_ELSE_IF );	
+	tl = processTerminal( NT_COMMAND_ELSE_IF, tl, TK_IF );
+	tl = expression( tl );
+	tl = processTerminal( NT_COMMAND_ELSE_IF, tl, TK_NL );
+	tl = block( tl );
+	return tl;
+	
+}
+static TokenList commandElse( TokenList tl ) {
+	processNonTerminal( NT_COMMAND_ELSE );
+	tl = processTerminal( NT_COMMAND_ELSE, tl, TK_NL );
+	tl = block( tl );
+	return tl;
+}
 static TokenList commandIf( TokenList tl ) {
 	processNonTerminal( NT_COMMAND_IF );
 	tl = processTerminal( NT_COMMAND_IF, tl, TK_IF );
 	tl = expression( tl );
-	tl =  processTerminal( NT_COMMAND_IF, tl, TK_NL );
+	tl = processTerminal( NT_COMMAND_IF, tl, TK_NL );
 	tl = block( tl );
 
 	while( verifyCurrentToken( tl, TK_ELSE ) ) {
 		tl = processTerminal( NT_COMMAND_IF, tl, TK_ELSE );
 		if( verifyCurrentToken (tl, TK_IF) ) {
-			tl = processTerminal( NT_COMMAND_IF, tl, TK_IF );
-			tl = expression( tl );
-			tl = processTerminal( NT_COMMAND_IF, tl, TK_NL );
-			tl = block( tl );
+			tl = commandElseIf( tl );
 		}
-		else{
-			tl = processTerminal( NT_COMMAND_IF, tl, TK_NL );
-			tl = block( tl );
+		else {
+			tl = commandElse( tl );	
 			break;
 		}
-		
 	}
 	
 	tl = processTerminal( NT_COMMAND_IF, tl, TK_END);
@@ -576,7 +587,7 @@ command -> commandIf 'NL'
 command -> commandReturn 'NL'
 
 */
-static  TokenList command( TokenList tl ) {
+static TokenList command( TokenList tl ) {
 	Token t;
 	processNonTerminal( NT_COMMAND );
 	t = TokenList_GetCurrentToken( tl );
@@ -603,7 +614,7 @@ static  TokenList command( TokenList tl ) {
 				hasErrors = true;
 				Token t = TokenList_GetCurrentToken( tl );
 				//printf( "\nToken: %s ", Token_GetStringForKind(t));
-				printf( "Error at Line %d.\nExpected identifier, if, return or while but got %s.\n", Token_GetLine(t),  Token_GetStringForKind(t) );
+				printf( "Error at Line %d.\nExpected identifier, if, return or while but got %s.\n", Token_GetLine(t), Token_GetStringForKind(t) );
 				return NULL;
 			}
 		break;
@@ -620,7 +631,7 @@ static TokenList block( TokenList tl ) {
 
 	processNonTerminal( NT_BLOCK );
 
-	t = TokenList_GetCurrentToken(tl);
+	t = TokenList_GetCurrentToken( tl );
 	if ( verifyCurrentToken( tl, TK_IDENTIFIER ) ) {
 		tl = processTerminal( NT_BLOCK, tl, TK_IDENTIFIER );
 		tl = declOrCommand( tl );//Recursividade
@@ -629,7 +640,7 @@ static TokenList block( TokenList tl ) {
 	while( tlf!=tl && tl ) {
 		t = TokenList_GetCurrentToken( tl );	
 		tlf = tl;
-		switch( Token_GetKind(t) ) {
+		switch( Token_GetKind( t ) ) {
 			case TK_ELSE: case TK_END: case TK_LOOP:
 				break;
 			default:
@@ -658,7 +669,7 @@ static TokenList declFunction( TokenList tl ) {
 		tl = processTerminal( NT_DECL_FUNCTION, tl, TK_COLON );
 		tl = type( tl );
 	}
-	tl = processTerminal( NT_DECL_FUNCTION, tl, TK_NL ) ;
+	tl = processTerminal( NT_DECL_FUNCTION, tl, TK_NL );
 	tl = block( tl );
 	tl = processTerminal( NT_DECL_FUNCTION, tl, TK_END );
 	tl = processTerminal( NT_DECL_FUNCTION, tl, TK_NL );
@@ -675,7 +686,7 @@ static TokenList decl( TokenList tl ) {
 	Token t;
 	processNonTerminal( NT_DECL );
 	t = TokenList_GetCurrentToken( tl );
-	switch ( Token_GetKind(t) ) {
+	switch ( Token_GetKind( t ) ) {
 		case TK_IDENTIFIER:
 			tl = declGlobalVar( tl );
 		break;
@@ -706,7 +717,7 @@ static TokenList program( TokenList tl ) {
 
 	// "{NL}"
 	while( verifyCurrentToken ( tl, TK_NL ) ) {
-			tl = processTerminal( NT_PROGRAM,  tl, TK_NL );
+		tl = processTerminal( NT_PROGRAM, tl, TK_NL );
 	}
 
 	do {
@@ -731,6 +742,6 @@ static TokenList program( TokenList tl ) {
 bool parser( TokenList tl, callbackOnDerivation f )
 {
 	actinOnRules = f;
-	program(tl);
+	program( tl );
 	return hasErrors;
 }

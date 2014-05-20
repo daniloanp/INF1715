@@ -34,7 +34,9 @@ typedef enum {
 	NT_MUL_DIV_OP = 23,
 	NT_MIN_ADD_OP = 24,
 	NT_COMPARISON_OP = 25,
-	NT_AND = 26
+	NT_AND = 26,
+	NT_COMMAND_ELSE_IF = 27,
+	NT_COMMAND_ELSE = 28,
 } NonTerminal;
 
 typedef int (*callbackOnDerivation) ( NonTerminal rule, Token t, int line );
