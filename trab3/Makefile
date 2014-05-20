@@ -1,6 +1,7 @@
-+CC=colorgcc
-
+CC=gcc
+CFLAGS=-std=c99 -D_GNU_SOURCE -ggdb
 +CFLAGS=-Wall
+
 mini0-ast:
 	cd ../trab1/ && rm -f lex.yy.c && $(MAKE) lex.yy.c
 	cd ../trab2/
