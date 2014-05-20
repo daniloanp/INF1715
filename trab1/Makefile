@@ -12,7 +12,4 @@ clean:
 	rm -f mini0-lex *.o lex.yy.h lex.yy.c
 
 test: mini0-lex
-	@echo "Teste sem erros:"
-	@echo
-	@echo
-	bash teste.sh	
+	bash -c "source ../iterate_directory.sh; iterate_directory mini0-lex testes"

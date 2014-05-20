@@ -9,4 +9,4 @@ mini0-parser:
 clean:
 	rm -f mini0-parser *.o
 test: mini0-parser
-	bash test.sh mini0-parser
+	bash -c "source ../iterate_directory.sh; iterate_directory mini0-parser testes"

@@ -10,7 +10,4 @@ clean:
 	rm -f mini0-parser *.o
 
 test: mini0-ast
-	bash test.sh
-
-test-valgrind: mini0-ast
-	bash test-valgrind.sh
+	bash -c "source ../iterate_directory.sh; iterate_directory mini0-parser testes"
