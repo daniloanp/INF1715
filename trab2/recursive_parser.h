@@ -11,7 +11,7 @@ ALL Terminals has the same number and name of the Token.
 typedef enum {
 	NT_PROGRAM = 1,
 	NT_DECL_FUNCTION = 2,
-	NT_DECL_GLOBAL_VAR = 3,
+	NT_DECL_VAR = 3,
 	NT_TYPE = 4,
 	NT_BLOCK = 5,
 	NT_DECL_OR_COMMAND = 6,

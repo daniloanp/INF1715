@@ -11,7 +11,7 @@
 // Functions that are associated to a grammar non-terminal:
 static TokenList program( TokenList tl );
 static TokenList declFunction( TokenList tl );
-static TokenList declGlobalVar(TokenList tl);
+static TokenList declVar(TokenList tl);
 static TokenList type( TokenList tl );
 static TokenList block( TokenList tl );
 static TokenList declOrCommand( TokenList tl );
@@ -132,14 +132,14 @@ static TokenList type( TokenList tl ) {
 }
 
 /*
-declGlobalVar -> 'ID' ':' type 'NL'
+declVar -> 'ID' ':' type 'NL'
 */
-static TokenList declGlobalVar( TokenList tl ) {	
-	processNonTerminal( NT_DECL_GLOBAL_VAR );
-	tl = processTerminal(NT_DECL_GLOBAL_VAR, tl, TK_IDENTIFIER );
-	tl = processTerminal(NT_DECL_GLOBAL_VAR, tl, TK_COLON );
+static TokenList declVar( TokenList tl ) {	
+	processNonTerminal( NT_DECL_VAR );
+	//tl = processTerminal(NT_DECL_VAR, tl, TK_IDENTIFIER );
+	tl = processTerminal(NT_DECL_VAR, tl, TK_COLON );
 	tl = type( tl );
-	return processTerminal(NT_DECL_GLOBAL_VAR, tl, TK_NL );
+	return processTerminal(NT_DECL_VAR, tl, TK_NL );
 }
 /*
 param -> 'ID' ':' type
@@ -171,10 +171,8 @@ declOrCommand -> commandAttrOrCall 'NL'
 */
 static TokenList declOrCommand( TokenList tl ) {
 	processNonTerminal( NT_DECL_OR_COMMAND );
-	if( verifyCurrentToken( tl, TK_COLON ) )	{
-		tl = processTerminal( NT_DECL_OR_COMMAND, tl, TK_COLON );
-		tl = type( tl );
-		tl = processTerminal( NT_DECL_OR_COMMAND, tl, TK_NL );
+	if( verifyCurrentToken( tl, TK_COLON ) ) {
+		tl = declVar( tl );
 		if( verifyCurrentToken( tl, TK_IDENTIFIER ) ) {		
 			tl = processTerminal( NT_DECL_OR_COMMAND, tl, TK_IDENTIFIER );
 			tl = declOrCommand( tl );
@@ -679,7 +677,7 @@ static TokenList declFunction( TokenList tl ) {
 
 
 /*
-decl -> declGlobalVar start 
+decl -> declVar start 
 decl -> declFunction start
 */
 static TokenList decl( TokenList tl ) {
@@ -688,7 +686,8 @@ static TokenList decl( TokenList tl ) {
 	t = TokenList_GetCurrentToken( tl );
 	switch ( Token_GetKind( t ) ) {
 		case TK_IDENTIFIER:
-			tl = declGlobalVar( tl );
+			tl = processTerminal( NT_DECL, tl, TK_IDENTIFIER );
+			tl = declVar( tl );
 		break;
 
 		case TK_FUN: 
