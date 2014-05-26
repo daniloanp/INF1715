@@ -3,31 +3,52 @@ make[1]: Entering directory '/home/danilo/puc-rio/INF1715/trab1'
 flex --header-file=lex.yy.h mini0-lex.l 
 make[1]: Leaving directory '/home/danilo/puc-rio/INF1715/trab1'
 cd ../trab2/
-cc  -o mini0-parser main.c build_ast.h build_ast.c  ast.h ast.c ../trab2/recursive_parser.h ../trab2/recursive_parser.c ../trab1/token.h ../trab1/token.c ../trab1/token_list.h ../trab1/token_list.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/lex.h ../trab1/lex.c 
-bash test-oficial.sh
+gcc -std=c99 -D_GNU_SOURCE -ggdb -o mini0-parser main.c build_ast.h build_ast.c  ast.h ast.c ../trab2/recursive_parser.h ../trab2/recursive_parser.c ../trab1/token.h ../trab1/token.c ../trab1/token_list.h ../trab1/token_list.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/mini0-lex.h ../trab1/mini0-lex.c 
+bash -c "source ../iterate_directory.sh; iterate_directory mini0-parser testes"
 
-==== --- |  Testing testes-oficiais//01-global.m0  | --- =====
+==== --- |  Testing file 'testes/01-global.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
+
+Correct Syntax!!!
+   Program
+      DeclVar '(i)'
+         tp_char(4)
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/02-fun.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
+
+Correct Syntax!!!
+   Program
+      fun '(f)'
+         ParamList
+            Param '(A)'
+               tp_int(0)
+            Param '(s)'
+               tp_char(1)
+            Param '(l)'
+               tp_bool(2)
+         tp_int(0)
+         Block
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/03-nls.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
       DeclVar '(i)'
          tp_int(0)
-
-------- x -------
-
-==== --- |  Testing testes-oficiais//02-fun.m0  | --- =====
-
-Correct Syntax!!!
-   Program
-      fun '(f)'
-         Block
-
-------- x -------
-
-==== --- |  Testing testes-oficiais//03-nls.m0  | --- =====
-
-Correct Syntax!!!
-   Program
       fun '(f)'
          Block
             Attr
@@ -37,7 +58,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//04-funglobal.m0  | --- =====
+
+==== --- |  Testing file 'testes/04-funglobal.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -60,7 +85,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//05-params.m0  | --- =====
+
+==== --- |  Testing file 'testes/05-params.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -113,7 +142,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//06-declvar.m0  | --- =====
+
+==== --- |  Testing file 'testes/06-declvar.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -121,6 +154,12 @@ Correct Syntax!!!
          Block
             DeclVar '(x)'
                tp_int(1)
+            Call '(x)'
+            Call '(y)'
+            Attr
+               Var '(x)'
+               Exp
+                  int: '(20)'
             Attr
                Var '(x)'
                Exp
@@ -128,6 +167,7 @@ Correct Syntax!!!
                      Exp
                         int: '(10)'
                      tp_int(0)
+            Call '(x)'
       fun '(_)'
          Block
             DeclVar '(x)'
@@ -141,21 +181,15 @@ Correct Syntax!!!
                      Exp
                         int: '(10)'
                      tp_int(0)
-            If
-               Exp
-                  =
-                     Var '(y)'
-                     bool: True
-               Block
-                  Call '(print)'
-                     Exp
-                        strVal: "ola"
-                     Exp
-                        strVal: "oi"
+               Call '(x)'
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//07-if.m0  | --- =====
+
+==== --- |  Testing file 'testes/07-if.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -201,84 +235,7 @@ Correct Syntax!!!
                   Exp
                      <
                         Var '(a)'
-                        (-)
-                           int: '(3)'
-                  Block
-                     Attr
-                        Var '(x)'
-                        Exp
-                           int: '(14)'
-      fun '(i)'
-         Block
-            If
-               Exp
-                  <>
-                     Var '(a)'
-                     int: '(3)'
-               Block
-                  Attr
-                     Var '(x)'
-                     Exp
-                        int: '(13)'
-               Else
-                  Block
-                     Attr
-                        Var '(x)'
-                        Exp
-                           int: '(14)'
-      fun '(j)'
-         Block
-            If
-               Exp
-                  =
-                     Var '(a)'
-                     int: '(0)'
-               Block
-                  Attr
-                     Var '(x)'
-                     Exp
-                        int: '(13)'
-               ElseIf
-                  Exp
-                     =
-                        Var '(a)'
-                        int: '(1)'
-                  Block
-                     Attr
-                        Var '(x)'
-                        Exp
-                           int: '(14)'
-               ElseIf
-                  Exp
-                     =
-                        Var '(a)'
-                        int: '(2)'
-                  Block
-                     Attr
-                        Var '(x)'
-                        Exp
-                           int: '(14)'
-               ElseIf
-                  Exp
-                     =
-                        Var '(a)'
                         int: '(3)'
-                  Block
-                     Attr
-                        Var '(x)'
-                        Exp
-                           int: '(14)'
-               ElseIf
-                  Exp
-                     =
-                        Var '(a)'
-                        bool: False
-                  Block
-                     Attr
-                        Var '(x)'
-                        Exp
-                           int: '(14)'
-               Else
                   Block
                      Attr
                         Var '(x)'
@@ -287,7 +244,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//11-ifdecl.m0  | --- =====
+
+==== --- |  Testing file 'testes/11-ifdecl.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -327,7 +288,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//12-while.m0  | --- =====
+
+==== --- |  Testing file 'testes/12-while.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -364,7 +329,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//14-ifwhile.m0  | --- =====
+
+==== --- |  Testing file 'testes/14-ifwhile.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -435,7 +404,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//16-atrib.m0  | --- =====
+
+==== --- |  Testing file 'testes/16-atrib.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -458,7 +431,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//17-call.m0  | --- =====
+
+==== --- |  Testing file 'testes/17-call.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -481,21 +458,25 @@ Correct Syntax!!!
                   Block
                      Return
                         Exp
-                           Call '(fibo)'
-                              Exp
-                                 +
+                           +
+                              Call '(fibo)'
+                                 Exp
                                     -
                                        Var '(i)'
                                        int: '(1)'
-                                    Call '(fibo)'
-                                       Exp
-                                          -
-                                             Var '(i)'
-                                             int: '(2)'
+                              Call '(fibo)'
+                                 Exp
+                                    -
+                                       Var '(i)'
+                                       int: '(2)'
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//19-callargs.m0  | --- =====
+
+==== --- |  Testing file 'testes/19-callargs.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -542,7 +523,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//20-return.m0  | --- =====
+
+==== --- |  Testing file 'testes/20-return.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -555,7 +540,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//21-arrays.m0  | --- =====
+
+==== --- |  Testing file 'testes/21-arrays.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -599,32 +588,32 @@ Correct Syntax!!!
                            Exp
                               Var '(x)'
                            tp_int(0)
-                  Attr
-                     Var '(j)'
-                     Exp
-                        int: '(0)'
-                  While
-                     Exp
-                        <
-                           Var '(j)'
-                           Var '(x)'
-                     Block
-                        Attr
-                           Var '(a)'
+                     Attr
+                        Var '(j)'
+                        Exp
+                           int: '(0)'
+                     While
+                        Exp
+                           <
+                              Var '(j)'
+                              Var '(x)'
+                        Block
+                           Attr
+                              Var '(a)'
+                                 Exp
+                                    Var '(i)'
+                                 Exp
+                                    Var '(j)'
                               Exp
-                                 Var '(i)'
+                                 *
+                                    Var '(i)'
+                                    Var '(j)'
+                                 Attr
+                                    Var '(j)'
                               Exp
-                                 Var '(j)'
-                           Exp
-                              *
-                                 Var '(i)'
-                                 Var '(j)'
-                        Attr
-                           Var '(j)'
-                           Exp
-                              +
-                                 Var '(j)'
-                                 int: '(1)'
+                                 +
+                                    Var '(j)'
+                                    int: '(1)'
                   Attr
                      Var '(i)'
                      Exp
@@ -637,7 +626,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//21-return-noargs.m0  | --- =====
+
+==== --- |  Testing file 'testes/21-return-noargs.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -653,7 +646,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//22-exp.m0  | --- =====
+
+==== --- |  Testing file 'testes/22-exp.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -700,12 +697,13 @@ Correct Syntax!!!
             Attr
                Var '(y)'
                Exp
-                  =
-                     Call '(foo)'
-                     Var '(a)'
-                     +
-                        int: '(1)'
-                        int: '(1)'
+                  Call '(foo)'
+            Attr
+               Var '(a)'
+               Exp
+                  +
+                     int: '(1)'
+                     int: '(1)'
             Attr
                Var '(b)'
                Exp
@@ -787,61 +785,65 @@ Correct Syntax!!!
             Attr
                Var '(e)'
                Exp
-                  Not
-                     >
+                  >
+                     Not
                         Var '(a)'
-                        Var '(b)'
+                     Var '(b)'
             Attr
                Var '(f)'
                Exp
                   -
                      int: '(3)'
-                     (-)
-                        int: '(2)'
+                  (-)
+                     int: '(2)'
             Attr
                Var '(x)'
                Exp
                   +
-                     int: '(1)'
                      +
+                        int: '(1)'
                         *
                            int: '(2)'
                            int: '(3)'
-                        int: '(4)'
+                     int: '(4)'
             If
                Exp
-                  Call '(f)'
-                     Exp
-                        Or
-                           >
+                  Or
+                     >
+                        Call '(f)'
+                           Exp
                               +
                                  Var '(x)'
                                  int: '(3)'
-                              int: '(2)'
-                           <=
-                              Var '(x)'
-                              int: '(3)'
+                        int: '(2)'
+                     <=
+                        Var '(x)'
+                        int: '(3)'
+               Block
                   Call '(print)'
                      Exp
                         strVal: "woof"
+            If
+               Exp
+                  Or
+                     And
+                        Var '(x)'
+                        Var '(y)'
+                     And
+                        Var '(z)'
+                        Var '(w)'
                Block
-                  If
+                  Call '(print)'
                      Exp
-                        Or
-                           And
-                              Var '(x)'
-                              Var '(y)'
-                           And
-                              Var '(z)'
-                              Var '(w)'
-                     Block
-                        Call '(print)'
-                           Exp
-                              strVal: "woof"
+                        strVal: "woof"
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//35-expprio.m0  | --- =====
+
+==== --- |  Testing file 'testes/35-expprio.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -850,19 +852,19 @@ Correct Syntax!!!
             Attr
                Var '(a)'
                Exp
+                  +
+                     Not
+                        Var '(a)'
                   Not
-                     +
-                        Var '(a)'
-                        Not
-                           Var '(b)'
-            Attr
-               Var '(b)'
+                     Var '(b)'
+                  Attr
+                     Var '(b)'
                Exp
-                  (-)
-                     +
+                  +
+                     (-)
                         Var '(a)'
-                        Not
-                           Var '(b)'
+                  Not
+                     Var '(b)'
             Attr
                Var '(c)'
                Exp
@@ -890,7 +892,11 @@ Correct Syntax!!!
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//37-invprio.m0  | --- =====
+
+==== --- |  Testing file 'testes/37-invprio.m0'  | --- =====
+
+_currParent: 152; 
+line: 0 
 
 Correct Syntax!!!
    Program
@@ -899,35 +905,35 @@ Correct Syntax!!!
             Attr
                Var '(a)'
                Exp
-                  Not
-                     +
+                  +
+                     Not
                         Var '(a)'
-                        Not
-                           Var '(b)'
-            Attr
-               Var '(a)'
+                  Not
+                     Var '(b)'
+                  Attr
+                     Var '(a)'
                Exp
-                  Not
-                     +
+                  +
+                     Not
                         Var '(a)'
-                        Not
-                           Var '(b)'
+                  Not
+                     Var '(b)'
             Attr
                Var '(b)'
                Exp
-                  (-)
-                     +
+                  +
+                     (-)
                         Var '(a)'
-                        Not
-                           Var '(b)'
+                  Not
+                     Var '(b)'
             Attr
                Var '(b)'
                Exp
-                  (-)
-                     +
+                  +
+                     (-)
                         Var '(a)'
-                        Not
-                           Var '(b)'
+                  Not
+                     Var '(b)'
             Attr
                Var '(c)'
                Exp
@@ -978,3 +984,4 @@ Correct Syntax!!!
                         Var '(c)'
 
 ------- x -------
+

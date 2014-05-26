@@ -1,9 +1,5 @@
-
+i:int
 fun f()
-
-
 i = 0
-
-
 end
 

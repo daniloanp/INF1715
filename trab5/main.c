@@ -9,8 +9,8 @@
 #include "../trab1/lex.h"
 #include "../trab3/ast.h"
 #include "../trab3/build_ast.h"
-#include "symboltable.h"
-#include "symbols.h"
+#include "../trab4/symboltable.h"
+#include "../trab4/symbols.h"
 
 //extern AST AST_ROOT ;
 

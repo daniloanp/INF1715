@@ -49,14 +49,17 @@ static callbackOnDerivation actinOnRules = NULL;
 static int callOnConsume( NonTerminal rule, Token t, int line ) {
 	if( actinOnRules != NULL && !hasErrors ) {
 		return actinOnRules( rule, t, line );
-	} else
+	} 
+	else {
 		return -1;
+	}
 }
 
 // -- Auxiliar Functions:
 static int verifyCurrentToken(TokenList tl, TokenKind tk) {
-	if (tl == NULL)
+	if (tl == NULL) {
 		return 0;
+	}
 	Token t = TokenList_GetCurrentToken( tl );
 	return Token_GetKind( t ) == tk;
 }
@@ -69,7 +72,10 @@ static void printError(int line, char *expected, char *got) {
 
 static TokenList processTerminal( NonTerminal rule, TokenList tl, TokenKind tk ) {
 	Token t = TokenList_GetCurrentToken( tl );
-	if ( tl == NULL ) {
+	if( hasErrors )
+		return NULL;
+
+	else if ( tl == NULL ) {
 		if ( !hasErrors ) {
 		
 			printf("Error: Unexpected End of File. The expected was '%s>'\n", TokenKind_ToString(tk) );
@@ -171,18 +177,19 @@ declOrCommand -> commandAttrOrCall 'NL'
 */
 static TokenList declOrCommand( TokenList tl ) {
 	processNonTerminal( NT_DECL_OR_COMMAND );
-	if( verifyCurrentToken( tl, TK_COLON ) ) {
-		tl = declVar( tl );
-		if( verifyCurrentToken( tl, TK_IDENTIFIER ) ) {		
-			tl = processTerminal( NT_DECL_OR_COMMAND, tl, TK_IDENTIFIER );
-			tl = declOrCommand( tl );
+	do {
+		tl = processTerminal( NT_DECL_OR_COMMAND, tl, TK_IDENTIFIER );
+		if( verifyCurrentToken( tl, TK_COLON ) ) {
+			tl = declVar( tl );
 		}
-		return tl;
-	}
-	else {
-		tl = commandAttrOrCall( tl );	
-		return processTerminal( NT_DECL_OR_COMMAND, tl, TK_NL );
-	}
+		else {
+			tl = commandAttrOrCall( tl );	
+			tl = processTerminal( NT_DECL_OR_COMMAND, tl, TK_NL );
+			break;
+		}
+	} 
+	while ( verifyCurrentToken( tl, TK_IDENTIFIER ) );
+
 	return tl;
 }
 
@@ -209,7 +216,7 @@ F -> 'STRING_VAL'
 F -> varOrCall
 F-> new
 */
-static TokenList val(TokenList tl) {
+static TokenList val( TokenList tl ) {
 	Token t;
 	processNonTerminal( NT_VAL );
 	t = TokenList_GetCurrentToken( tl );	
@@ -346,7 +353,6 @@ static TokenList comparisonOp( TokenList tl) {
 	tl = minAddOp( tl );
 	t = TokenList_GetCurrentToken( tl );
 	switch( Token_GetKind( t ) ) {
-
 		case TK_GREATER:
 		case TK_GREATER_EQUAL:
 		case TK_LESS:
@@ -356,7 +362,6 @@ static TokenList comparisonOp( TokenList tl) {
 			tl = processTerminal( NT_COMPARISON_OP, tl, Token_GetKind( t ) );
 			tl = comparisonOp( tl );
 		break;
-
 		default:	break;
 	}
 	return tl;
@@ -631,7 +636,6 @@ static TokenList block( TokenList tl ) {
 
 	t = TokenList_GetCurrentToken( tl );
 	if ( verifyCurrentToken( tl, TK_IDENTIFIER ) ) {
-		tl = processTerminal( NT_BLOCK, tl, TK_IDENTIFIER );
 		tl = declOrCommand( tl );//Recursividade
 	}
 	tlf = NULL;
@@ -640,10 +644,11 @@ static TokenList block( TokenList tl ) {
 		tlf = tl;
 		switch( Token_GetKind( t ) ) {
 			case TK_ELSE: case TK_END: case TK_LOOP:
-				break;
+			break;
+
 			default:
 				tl = command( tl );
-				break;
+			break;
 		}
 	}
 	return tl;

@@ -1,10 +1,10 @@
 program -> {NL} decl {decl};
 
-decl -> declGlobalVar start 
+decl -> declVar start 
 decl -> declFunction start
 
 
-declGlobalVar -> 'ID' ':' type 'NL'
+declVar -> 'ID' ':' type 'NL'
 
 type -> 'CHAR'
 type -> 'STRING'

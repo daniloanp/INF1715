@@ -101,8 +101,7 @@ AST AST_InsertNewChildParentOfChildren( AST curr, AST newParent ) {
 
 
 ASTNodeType AST_GetType(AST node) {
-	if(!node)
-		return (ASTNodeType)0;
+	assert(node);
 	return node->type;
 }
 

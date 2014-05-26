@@ -67,6 +67,7 @@
 	- Var
 	- Expression
 * Block  
+	- DeclVar
 	- While  
 	- If  
 	- Attr  

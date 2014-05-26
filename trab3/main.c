@@ -13,6 +13,7 @@
 
 int main( int argc, char **argv ) {	
 	bool hasErrors;
+	hasErrors = false;
 	FILE *input;
 	AST tree;
 	++argv, --argc;
@@ -36,11 +37,11 @@ int main( int argc, char **argv ) {
 	if( ! hasErrors ) {
 		printf("Correct Syntax!!!\n");
 		AST_PrettyPrint(tree, 1);
-		return 0;
 	} 
-	else {
-		return 1;
-	}
+	AST_Free( tree );
+	
+
+	return hasErrors == true;
 }
 
 
