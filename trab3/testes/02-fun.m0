@@ -1,4 +1,7 @@
 
-   fun f(A:int,s:string, l:[][]bool):int
+fun f()
    end
+
+   /*fun f(A:int,s:string, l:[][]bool):int
+   end*/
 

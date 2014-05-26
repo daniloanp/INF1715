@@ -13,10 +13,12 @@
 
 int main( int argc, char **argv ) {	
 	bool hasErrors;
-	hasErrors = false;
-	FILE *input;
+	FILE* input;
 	AST tree;
+
+	hasErrors = false;
 	++argv, --argc;
+
 	if ( argc > 0 ) {
 		input = fopen( argv[0], "r" );
 		if ( !input ) {
@@ -39,7 +41,6 @@ int main( int argc, char **argv ) {
 		AST_PrettyPrint(tree, 1);
 	} 
 	AST_Free( tree );
-	
 
 	return hasErrors == true;
 }

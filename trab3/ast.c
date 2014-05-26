@@ -352,7 +352,7 @@ void AST_PrettyPrint( AST t, int level ) {
 		AST_PrettyPrint( c, level+1 );
 		c = AST_GetNextSibling(c);
 	}
-};
+}
 
 
 SymbolType AST_GetSymType( AST node ) {

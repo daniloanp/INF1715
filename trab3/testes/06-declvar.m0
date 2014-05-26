@@ -5,12 +5,15 @@ fun foo()
    y()
    x = 20
    x = new [10]int
-   x()  
+   x()
 end
 
 fun _()
    x:[]int
    y: bool
    x = new [10]int
-   x()
+   if y = true
+      print("ola","oi")
+   end
 end
+

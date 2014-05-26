@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "../trab1/token.h"
 #include "../trab1/token_list.h"
-#include "../trab1/lex.h"
+#include "../trab1/mini0-lex.h"
 #include "../trab3/ast.h"
 #include "../trab3/build_ast.h"
 #include "symboltable.h"
@@ -16,37 +16,40 @@
 
 
 int main( int argc, char **argv ) {	
-	int ret;
+	bool hasErrors;
 	FILE *input;
-	++argv, --argc;
 	AST tree;
+
+	hasErrors = false;
+	++argv, --argc;
 	
 	if ( argc > 0 ) {
 		input = fopen( argv[0], "r" );
+		if ( !input ) {
+			printf("\nError: Cannot open file.\n");
+			return 1;
+		}
 	}
 	else {
 		input = stdin;
 	}
 
-	if(input) {
-		tree = BuildAst(input, &ret);
-		ret = ! Symbols_annotate( tree );
+	tree = BuildAst( input, &hasErrors );
 
-		if(ret == 0 ) {
-			printf("Correct Syntax!!!\n");
-			AST_PrettyPrint(tree, 1);
-		}
-		AST_Free(tree);
+	if ( input != stdin ) {
+		fclose(input);
 	}
-	else {
-		printf("\nError: Cannot open file.\n");
-		return 1;
+	
+	hasErrors = ! Symbols_annotate( tree );
+
+	if ( ! hasErrors ) {
+			printf("Valid Program!!!\n");
+			AST_PrettyPrint( tree, 1 );
 	}
 
-	if( input != stdin )
-			fclose(input);
+	AST_Free( tree );
 
-	return ret;
+	return hasErrors == true;
 }
 
 

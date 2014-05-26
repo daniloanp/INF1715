@@ -3,112 +3,211 @@ make[1]: Entering directory '/home/danilo/puc-rio/INF1715/trab1'
 flex --header-file=lex.yy.h mini0-lex.l 
 make[1]: Leaving directory '/home/danilo/puc-rio/INF1715/trab1'
 cd ../trab2/
-colorgcc  -o mini0-parser main.c  symboltype.h symboltype.c ../trab3/build_ast.h    ../trab3/build_ast.c symbols.h symbols.c  symboltable.h symboltable.c ../trab3/ast.h ../trab3/ast.c ../trab2/recursive_parser.h ../trab2/recursive_parser.c ../trab1/token.h ../trab1/token.c ../trab1/token_list.h ../trab1/token_list.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/lex.h ../trab1/lex.c 
-bash test.sh
+gcc -std=c99 -D_GNU_SOURCE -ggdb -o mini0-parser main.c  symboltype.h symboltype.c ../trab3/build_ast.h    ../trab3/build_ast.c symbols.h symbols.c  symboltable.h symboltable.c ../trab3/ast.h ../trab3/ast.c ../trab2/recursive_parser.h ../trab2/recursive_parser.c ../trab1/token.h ../trab1/token.c ../trab1/token_list.h ../trab1/token_list.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/mini0-lex.h ../trab1/mini0-lex.c 
+bash -c "source ../iterate_directory.sh; iterate_directory mini0-parser testes"
 
-==== --- |  Testing testes-oficiais//01-global.m0  | --- =====
+==== --- |  Testing file 'testes/01-global.m0'  | --- =====
+
+Valid Program!!!
+   Program
+      DeclVar '(i)'
+         tp_int(0)
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/02-fun.m0'  | --- =====
+
+Valid Program!!!
+   Program
+      fun '(f)'
+         Block
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/03-nls.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//02-fun.m0  | --- =====
+
+==== --- |  Testing file 'testes/04-funglobal.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//03-nls.m0  | --- =====
+
+==== --- |  Testing file 'testes/05-params.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//04-funglobal.m0  | --- =====
 
-12
-
-
-------- x -------
-
-==== --- |  Testing testes-oficiais//05-params.m0  | --- =====
+==== --- |  Testing file 'testes/06-declvar.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//06-declvar.m0  | --- =====
+
+==== --- |  Testing file 'testes/07-if.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//07-if.m0  | --- =====
+
+==== --- |  Testing file 'testes/11-ifdecl.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//11-ifdecl.m0  | --- =====
+
+==== --- |  Testing file 'testes/12-while.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//12-while.m0  | --- =====
+
+==== --- |  Testing file 'testes/14-ifwhile.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//14-ifwhile.m0  | --- =====
 
-12
+==== --- |  Testing file 'testes/16-atrib.m0'  | --- =====
+
+Valid Program!!!
+   Program
+      DeclVar '(i)'
+         tp_int(0)
+      fun '(f)'
+         ParamList
+            Param '(i)'
+               tp_int(0)
+         tp_int(0)
+         Block
+            DeclVar '(b)'
+               tp_char(1)
+            Attr
+               Var '(b)'
+               Exp
+                  strVal: "10"
+            Attr
+               Var '(i)'
+               Exp
+                  +
+                     Var '(i)'
+                     int: '(3)'
+      fun '(g)'
+         tp_bool(0)
+         Block
+            DeclVar '(i)'
+               tp_int(0)
+            Attr
+               Var '(i)'
+               Exp
+                  Call '(f)'
+                     Exp
+                        int: '(1)'
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/17-call.m0'  | --- =====
+
+Valid Program!!!
+   Program
+      fun '(fibo)'
+         ParamList
+            Param '(i)'
+               tp_int(0)
+         tp_int(0)
+         Block
+            If
+               Exp
+                  <=
+                     Var '(i)'
+                     int: '(1)'
+               Block
+                  Return
+                     Exp
+                        int: '(1)'
+               Else
+                  Block
+                     Return
+                        Exp
+                           +
+                              Call '(fibo)'
+                                 Exp
+                                    -
+                                       Var '(i)'
+                                       int: '(1)'
+                              Call '(fibo)'
+                                 Exp
+                                    -
+                                       Var '(i)'
+                                       int: '(2)'
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/19-callargs.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//16-atrib.m0  | --- =====
+
+==== --- |  Testing file 'testes/20-return.m0'  | --- =====
+
+Valid Program!!!
+   Program
+      fun '(the_answer)'
+         tp_char(0)
+         Block
+            Return
+               Exp
+                  int: '(42)'
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/21-arrays.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//17-call.m0  | --- =====
 
-11
+==== --- |  Testing file 'testes/21-return-noargs.m0'  | --- =====
+
+Valid Program!!!
+   Program
+      fun '(sim)'
+         Block
+            If
+               Exp
+                  >
+                     int: '(1)'
+                     int: '(2)'
+               Block
+                  Return
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/22-exp.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//19-callargs.m0  | --- =====
 
-11
-
-
-------- x -------
-
-==== --- |  Testing testes-oficiais//20-return.m0  | --- =====
+==== --- |  Testing file 'testes/35-expprio.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//21-arrays.m0  | --- =====
 
-11
-
-11
+==== --- |  Testing file 'testes/37-invprio.m0'  | --- =====
 
 
 ------- x -------
 
-==== --- |  Testing testes-oficiais//21-return-noargs.m0  | --- =====
-
-
-------- x -------
-
-==== --- |  Testing testes-oficiais//22-exp.m0  | --- =====
-
-
-------- x -------
-
-==== --- |  Testing testes-oficiais//35-expprio.m0  | --- =====
-
-
-------- x -------
-
-==== --- |  Testing testes-oficiais//37-invprio.m0  | --- =====
-
-
-------- x -------

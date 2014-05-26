@@ -2,7 +2,6 @@
 #define SYMBOLS_C
 #include "symboltype.h"
 #include "symbols.h"
-
 #include "symboltable.h"
 #include <stdio.h>
 #include "../trab3/ast.h"
@@ -344,16 +343,16 @@ bool Symbols_IntBinOp( SymbolTable* st, AST op ) {
 
 bool Symbols_Operators( SymbolTable* st, AST node ) {
     switch( AST_GetType( node ) ) {
-      case AST_And:
-      case AST_Or:
+      case AST_AND:
+      case AST_OR:
          return Symbols_BoolBinOp( st, node );
       break;
 
-      case AST_UnaryMinus:
+      case AST_UNARYMINUS:
          return Symbols_UnaryMinusOp( st, node );
       break;
 
-      case AST_Not:
+      case AST_NOT:
          return Symbols_NotOp( st, node );
       break;
 
@@ -364,7 +363,7 @@ bool Symbols_Operators( SymbolTable* st, AST node ) {
 }
 
 
-Symbols_New( SymbolTable* st, AST newArr ) {
+bool Symbols_New( SymbolTable* st, AST newArr ) {
    AST node;
    SymbolType tp;
    node = AST_GetFirstChild(newArr);
@@ -381,7 +380,7 @@ Symbols_New( SymbolTable* st, AST newArr ) {
    return true;
 }
 
-Symbols_Literal( SymbolTable* st, AST lit ) {
+bool Symbols_Literal( SymbolTable* st, AST lit ) {
 
    SymbolBaseType bt = 0;
    unsigned int dimension = 0;
@@ -397,7 +396,7 @@ Symbols_Literal( SymbolTable* st, AST lit ) {
          dimension = 1;
       break;
       default: 
-         printf("Oops;;; %d\n\n", AST_GetType(lit));
+         fprintf(stderr, "Oops;;; %d\n\n", AST_GetType(lit));
          return false; //Não vai acontecer;;;
          break;
    }
@@ -408,13 +407,13 @@ Symbols_Literal( SymbolTable* st, AST lit ) {
 //I don't now if that is a great name :-(
 bool Symbols_Constants( SymbolTable* st, AST node ) {
    switch( AST_GetType( node ) ) {
-      case AST_Call:
+      case AST_CALL:
          return Symbols_Call( st, node );
       break;
-      case AST_Var:
+      case AST_VAR:
          return Symbols_Var( st, node );
       break;
-      case AST_New:
+      case AST_NEW:
          return Symbols_New( st, node );
       break;
       default: //Só pode ser Literal
@@ -462,7 +461,7 @@ bool Symbols_Attr ( SymbolTable* st, AST attr ) {
 
 
    if( ! SYM_CompatibleTypes( AST_GetSymType(var) , AST_GetSymType(expr)) ) {
-      printf("\n\n%d --- %d\n\n", AST_GetSymType(var) , AST_GetSymType(expr) );
+      //printf("\n\n%d --- %d\n\n", AST_GetSymType(var) , AST_GetSymType(expr) );
       fprintf(stderr, "incompatible types when assigning - at line %d\n" , AST_GetLine(var) );
       return false;
    }
@@ -473,19 +472,19 @@ bool Symbols_Attr ( SymbolTable* st, AST attr ) {
 
 bool Symbols_Command( SymbolTable* st, AST command) {
    switch ( AST_GetType( command ) ) {
-      case AST_If:
+      case AST_IF:
          return Symbols_If( st, command );
       break;
-      case AST_While:
+      case AST_WHILE:
          return Symbols_While( st, command );
       break;
-      case AST_Return:
+      case AST_RETURN:
          return Symbols_Return( st, command );
       break;
-      case AST_Call:
+      case AST_CALL:
          return Symbols_Call( st, command );
       break;
-      case AST_Attr:
+      case AST_ATTR:
          return Symbols_Attr( st, command );
       break;
       default: break;
@@ -498,7 +497,7 @@ bool Symbols_Block( SymbolTable* st, AST block ) {
    AST node;
 
    node = AST_GetFirstChild( block );
-   while( ret && AST_GetType( node ) == AST_DECL_VAR ) {
+   while( ret && node && AST_GetType( node ) == AST_DECL_VAR ) {
       ret =  Symbols_DeclVar( st, node ) ;
       node = AST_GetNextSibling( node );
    }

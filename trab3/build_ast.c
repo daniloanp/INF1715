@@ -208,8 +208,6 @@ int buildAst( NonTerminal rule, Token t, int line ) {
 				
 				str = NULL;
 			break;
-
-			
 			default: break;
 		}
 		return 0;
@@ -223,24 +221,28 @@ int buildAst( NonTerminal rule, Token t, int line ) {
 					node = AST_NewAsInt( AST_INT, line, dimension );
 					AST_InsertChild( _currParent, node );
 					dimension = 0;
+					_currParent = upToExp( _currParent );
 				break;
 				
 				case TK_BOOL:
 					node = AST_NewAsInt( AST_BOOL, line, dimension );
 					AST_InsertChild( _currParent, node );
 					dimension = 0;
+					_currParent = upToExp( _currParent );
 				break;
 				
 				case TK_CHAR:
 					node = AST_NewAsInt( AST_CHAR, line, dimension );
 					AST_InsertChild( _currParent, node );
 					dimension = 0;
+					_currParent = upToExp( _currParent );
 				break;
 				
 				case TK_STRING:
 					node = AST_NewAsInt( AST_CHAR, line, dimension+1 );
 					AST_InsertChild( _currParent, node );
 					dimension = 0;
+					_currParent = upToExp( _currParent );
 				break;
 				
 				case TK_OP_BRACKET:
@@ -728,7 +730,7 @@ AST BuildAst( FILE* input, bool* hasErrors ) {
 		*hasErrors = parser( tl, buildAst );
 	}
 	TokenList_Free( tl );
-	printf("_currParent: %d; \nline: %d \n\n", AST_GetType(_currParent), AST_GetLine(_currParent) );
+	
 	return _root;
 }
 
