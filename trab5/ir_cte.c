@@ -3,15 +3,18 @@
 
 typedef enum {
 	ENDR_VAL,
+	ENDR_STR,
 	ENDR_VAR,
-	ENDR_TEMP
+	ENDR_TEMP,
+	ENR_LABEL,
 }
 
-typedef endr_* ENDR;
+typedef endr_ ENDR; //passed by copy!
 
 struct endr_ {
 	EndrType type;
-	unsigned long val; //usandostring
+	unsigned long val;
+	char *str;//caso seja uma VAR
 } Endr;
 
 typedef enum {
@@ -93,19 +96,33 @@ void handleCmd( CTE cte, Endr* endr ) {
 	}
 }
 
-static Endr Endr_New( EndrType tp, unsigned long val ) {
-	Endr endr = (Endr)malloc( sizeof( struct endr_ ));
-	endr->type = tp;
-	endr->val = val;
+Endr Endr_New( EndrType tp, unsigned long val ) {
+	Endr endr;// = (Endr)malloc( sizeof( struct endr_ ));
+	endr.type = tp;
+	endr.val = val;
+	endr.str = 0;
 	return endr;
 }
 
-static CTE CTE_New( Instr in, Endr* enr ) {
+
+Endr Endr_NewAsString( EndrType tp, char* s ) {
+	Endr endr = (Endr)malloc( sizeof( struct endr_ ));
+	endr->type = tp;
+	endr->val = 0;
+	endr->str = s;
+	return endr;
+}
+
+CTE CTE_New( Instr in, Endr enr[3] ) {
 	CTE cte = (CTE)malloc( sizeof( struct cte_ ));
 	cte->next = NULL;
 	cte->cmd = in;
 	handleCmd( cte, endr );
 	return cte;
 }
+
+
+
+
 
 

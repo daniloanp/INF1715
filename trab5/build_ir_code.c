@@ -1,6 +1,23 @@
 #ifndef BUILD_IR_CODE_C
 #define BUILD_IR_CODE_C
 
+Function _func;
+
+Endr args[3];
+
+static void clanArgs() {
+	args[0] = NULL;
+	args[1] = NULL;
+	args[2] = NULL;
+}
+void _addDecl ( char* s ){
+	CTE cte = CTE_New
+	args[2] = Endr_NewAsString( ENDR_VAR, s );
+	args[1] = Endr_New( ENDR_VAL, 0 );
+
+
+}
+
 
 static void _addCommand ( AST cmd  ) {
 	AST expNode, blockNode;
@@ -9,18 +26,18 @@ static void _addCommand ( AST cmd  ) {
 
 	switch ( AST_GetType( cmd ) ) {
 		case AST_DECL_VAR:
-			Function_addDecl( _func, AST_GetStringValue( cmd ) );
+			_addDecl(  AST_GetStringValue( cmd ) );
 		break;
 
 		case AST_WHILE:
 			labelBegin = newLabel( );
 			labelEnd = newLabel( );
-			Function_AddLabel( _func, labelBegin );
+			_addLabel(  labelBegin );
 			valID = _addExpression( AST_GetFirstChild( cmd ) );
-			Funtion_AddIfFalse( _func, labelBegin, labelEnd );
+			_addIfFalse(  labelBegin, labelEnd );
 			_addBlock( AST_GetLastChild );
-			Function_AddGoto( _func, labelBegin );
-			Function_AddLabel( _func, labelEnd );
+			_addGoto(  labelBegin );
+			_addLabel(  labelEnd );
 		break;
 
 		case AST_IF:
@@ -34,7 +51,7 @@ static void _addCommand ( AST cmd  ) {
 
 			do {
 				if ( labelElIf ) {
-					Function_AddLabel( _func, labelElIf );
+					_addLabel(  labelElIf );
 					expNode = AST_GetFirstChild( elIfNode );
 					blockNode = AST_GetNextSibling( expNode );
 				}
@@ -47,15 +64,15 @@ static void _addCommand ( AST cmd  ) {
 				}
 
 				valID = _addExpression( expNode, NULL );
-				Function_AddIfFalse( _func, valID, labelElIf );
+				_addIfFalse(  valID, labelElIf );
 				_addBlock( blockNode );
-				Function_AddGoto( _func, labelEnd );
+				_addGoto(  labelEnd );
 
 
 			} while( elIfNode && AST_GetType( elIfNode ) == AST_ELSE_IF );
 
 			if ( elIfNode ) { //É um else
-				Function_AddLabel( _func,  labelElIf );
+				_addLabel(  labelElIf );
 				blockNode = AST_GetFirstChild( elIfNode );
 				_addBlock( blockNode );
 			}
