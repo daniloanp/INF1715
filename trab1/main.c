@@ -55,10 +55,12 @@ int main( int argc, char **argv ) {
 	FILE *inputFile;
 	bool hasErrors = false;
 	++argv, --argc;
-	if ( argc > 0 )
+	if ( argc > 0 ) {
 		inputFile = fopen( argv[0], "r" );
-	else
+	}
+	else {
 		inputFile = stdin;
+	}
 	tl = generateTokens( inputFile, &hasErrors );
 	if ( tl != NULL ) {
 		printf( "%s", header );
@@ -67,7 +69,8 @@ int main( int argc, char **argv ) {
 		TokenList_Destroy( tl );
 	}
 	
-	if( inputFile != stdin )
+	if( inputFile != stdin ) {
 		fclose(inputFile);
+	}
 	return hasErrors;
 }
