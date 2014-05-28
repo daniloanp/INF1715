@@ -2,11 +2,14 @@
 #define IR_CTE_C
 
 typedef enum {
-	ENDR_VAL,
+	ENDR_WORD,
+	ENDR_BYTE,
 	ENDR_STR,
 	ENDR_VAR,
 	ENDR_TEMP,
-	ENR_LABEL,
+	ENDR_LABEL,
+	ENDR_RETEXP,
+	ENDR_FUNC
 }
 
 typedef endr_ ENDR; //passed by copy!
@@ -44,7 +47,8 @@ typedef enum {
 	CALL,
 	PARAM,
 	RET_VAL,
-	RET
+	RET,
+	LABEL
 } Instr;
 
 typedef struct _cte* CTE;

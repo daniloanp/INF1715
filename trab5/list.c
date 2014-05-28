@@ -16,7 +16,7 @@ struct _list {
 List List_New( void* val ) {
 	List l = (List) malloc( sizeof( _list ) );
 	l->id = ++_id;
-	l->val;
+	l->val = val;
 	l->next = NULL;
 	return l;
 }

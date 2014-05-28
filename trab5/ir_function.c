@@ -5,9 +5,11 @@ typedef struct _function* Function;
 
 struct _function {
 	char *id;
-	List args;//Nomes
+	List args;//Endrs
 	CTE commands;
 };
+
+
 
 
 #endif
