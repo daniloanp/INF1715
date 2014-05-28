@@ -1,63 +1,8 @@
 #ifndef IR_CTE_C
 #define IR_CTE_C
-
-typedef enum {
-	ENDR_WORD,
-	ENDR_BYTE,
-	ENDR_STR,
-	ENDR_VAR,
-	ENDR_TEMP,
-	ENDR_LABEL,
-	ENDR_RETEXP,
-	ENDR_FUNC
-}
-
-typedef endr_ ENDR; //passed by copy!
-
-struct endr_ {
-	EndrType type;
-	unsigned long val;
-	char *str;//caso seja uma VAR
-} Endr;
-
-typedef enum {
-	ATTR_SIMPLE,
-	ATTR_BYTE,
-	ATTR_ADD,
-	ATTR_MIN,
-	ATTR_DIV,
-	ATTR_MUL,
-	ATTR_GTE,
-	ATTR_GT,
-	ATTR_LTE,
-	ATTR_LE,
-	ATTR_EQ,
-	ATTR_NE,
-	ATTR_NOT,
-	ATTR_UN_MINUS,
-	ATTR_NEW,
-	ATTR_NEW_BYTE,
-	ATTR_FROM_ARR,
-	ATTR_BYTE_FROM_ARR,
-	ATTR_TO_ARR,
-	ATTR_BYTE_TO_ARR,
-	GOTO_IF,
-	GOTO_IF_FALSE,
-	GOTO,
-	CALL,
-	PARAM,
-	RET_VAL,
-	RET,
-	LABEL
-} Instr;
-
-typedef struct _cte* CTE;
-
-struct cte_ {
-	Instr cmd;
-	Endr args[3];
-	CTE next;
-};
+#include "ir_cte.h"
+#include <malloc.h>
+#include <assert.h>
 
 void handleCmd( CTE cte, Endr* endr ) {
 	assert( cte );
@@ -90,10 +35,10 @@ void handleCmd( CTE cte, Endr* endr ) {
 			//assert( endr[1] );
 			cte->args[1] = endr[1];
 		// DE NOVO, no break;
-		case GOTO,
-		case CALL,
-		case PARAM,
-		case RET_VAL,
+		case GOTO:
+		case CALL:
+		case PARAM:
+		case RET_VAL:
 			//assert( endr[0] );
 			cte->args[0] = endr[0];
 		default: break;
@@ -110,15 +55,15 @@ Endr Endr_New( EndrType tp, unsigned long val ) {
 
 
 Endr Endr_NewAsString( EndrType tp, char* s ) {
-	Endr endr = (Endr)malloc( sizeof( struct endr_ ));
-	endr->type = tp;
-	endr->val = 0;
-	endr->str = s;
+	Endr endr;
+	endr.type = tp;
+	endr.val = 0;
+	endr.str = s;
 	return endr;
 }
 
-CTE CTE_New( Instr in, Endr enr[3] ) {
-	CTE cte = (CTE)malloc( sizeof( struct cte_ ));
+CTE CTE_New( Instr in, Endr* endr ) {
+	CTE cte = (CTE)malloc( sizeof( struct _cte ));
 	cte->next = NULL;
 	cte->cmd = in;
 	handleCmd( cte, endr );
@@ -127,6 +72,6 @@ CTE CTE_New( Instr in, Endr enr[3] ) {
 
 
 
-
+#endif
 
 

@@ -1,15 +1,6 @@
 #ifndef IR_FUNCTION_C
 #define IR_FUNCTION_C
-
-typedef struct _function* Function;
-
-struct _function {
-	char *id;
-	List args;//Endrs
-	CTE commands;
-};
-
-
+#include "ir_function.h"
 
 
 #endif

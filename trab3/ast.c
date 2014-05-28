@@ -202,6 +202,12 @@ unsigned long AST_GetIntValue(AST node) {
 }
 
 
+bool AST_GetBoolValue(AST node) {
+	assert(node != NULL);
+	return node->value.boolean;
+}
+
+
 static char buff[1000];
 
 static char* AST_nodeToString(AST node) {

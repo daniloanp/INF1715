@@ -76,6 +76,7 @@ ASTNodeType AST_GetType( AST node );
 
 char* AST_GetStringValue(AST node);
 unsigned long AST_GetIntValue(AST node);
+bool AST_GetBoolValue(AST node);
 unsigned int AST_GetLine( AST node );
 SymbolType AST_GetSymType( AST node );
 void AST_SetSymType( AST node, SymbolType tp );

@@ -1,0 +1,7 @@
+cd ../trab1/ && rm -f lex.yy.c && make lex.yy.c
+make[1]: Entering directory '/home/danilo/puc-rio/INF1715/trab1'
+flex --header-file=lex.yy.h mini0-lex.l 
+make[1]: Leaving directory '/home/danilo/puc-rio/INF1715/trab1'
+cd ../trab2/
+colorgcc -std=c99 -D_GNU_SOURCE -ggdb -o mini0-li ir_code.h ir_code.c build_ir_code.h build_ir_code.c ir_cte.h ir_cte.c ir_function.h ir_function.c list.h list.c main.c  ../trab4/symboltype.h ../trab4/symboltype.c ../trab3/build_ast.h    ../trab3/build_ast.c ../trab4/symbols.h ../trab4/symbols.c  ../trab4/symboltable.h ../trab4/symboltable.c ../trab3/ast.h ../trab3/ast.c ../trab2/recursive_parser.h ../trab2/recursive_parser.c ../trab1/token.h ../trab1/token.c ../trab1/token_list.h ../trab1/token_list.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/mini0-lex.h ../trab1/mini0-lex.c 
+Makefile:6: recipe for target 'mini0-li' failed
