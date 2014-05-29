@@ -3,8 +3,6 @@
 #include <stdio.h>
 
 typedef enum {
-	ENDR_WORD,
-	ENDR_BYTE,
 	ENDR_STR,
 	ENDR_VAR,
 	ENDR_TEMP,

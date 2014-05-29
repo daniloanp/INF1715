@@ -4,10 +4,11 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 
+Endr args[3];
 Function _func;
 IRCode _code;
-CTE _lastExpr;
 
 static void _addBlock( AST block );
 static void _addCommand ( AST cmd  );
@@ -35,13 +36,12 @@ static Endr _newStringID( ) {
 	return endr;
 }
 
-Endr args[3]; //unitialized
-char temp[20] = "t";
+
 
 static void _addDeclVar ( AST node ) {
 	CTE cte;
 	args[0] = Endr_NewAsString( ENDR_VAR, AST_GetStringValue( node ) );
-	args[1] = Endr_New( ENDR_WORD, 0 );
+	args[1] = Endr_New( ENDR_CONST, 0 );
 	cte = CTE_New( ATTR_SIMPLE, args );
 	Function_AddCTE( _func, cte );
 }
@@ -56,55 +56,68 @@ static void _addGlobal ( AST node ) {
 static void _addLabel( Endr label ) {
 	CTE cte;
 	args[0] = label;
-	cte = CTE_New( ATTR_SIMPLE, args );
+	cte = CTE_New( LABEL, args );
 	Function_AddCTE( _func, cte );
+
 }
 
 static Endr _addBinOp( AST expr ) {
-	Endr endr;
+	Endr endr, arg1, arg2;
 	CTE cte;
 	Instr instr;
 
-	args[1] = _addExprNode( AST_GetFirstChild( expr ) );
-	args[2] = _addExprNode( AST_GetLastChild( expr ) );
+	arg1 = _addExprNode( AST_GetFirstChild( expr ) );
+	arg2 = _addExprNode( AST_GetLastChild( expr ) );
 
 	switch ( AST_GetType( expr ) ) {
 		case AST_LESS:
 			instr = ATTR_LE;
 		break;
+
 		case AST_LESS_EQUAL:
 			instr = ATTR_LTE;
 		break;
+
 		case AST_GREATER:
 			instr = ATTR_GT;
 		break;
+
 		case AST_GREATER_EQUAL:
 			instr = ATTR_GTE;
 		break;
+
 		case AST_EQUAL:
 			instr = ATTR_EQ;
 		break;
+
 		case AST_DIFFERENT:
 			instr = ATTR_NE;
 		break;
+
 		case AST_PLUS:
 			instr = ATTR_ADD;
 		break;
+
 		case AST_MINUS:
 			instr = ATTR_MIN;
 		break;
+
 		case AST_MUL:
 			instr = ATTR_MUL;
 		break;
+
 		case AST_DIV:
 			instr = ATTR_DIV;
 		break;
+
 		default:
 			return endr;
 		break;
 	}
 	endr = Endr_New( ENDR_TEMP, _newTemp( ) );
 	args[0] = endr;
+	args[1] = arg1;
+	args[2] = arg2;
 	cte = CTE_New( instr, args );
 	Function_AddCTE( _func, cte );
 	return endr;
@@ -209,12 +222,12 @@ static Endr _addNew( AST newNode ) {
 }
 
 static Endr _addIntVal ( AST intVal ) {
-	Endr e = Endr_New( ENDR_WORD, AST_GetIntValue( intVal ));
+	Endr e = Endr_New( ENDR_CONST, AST_GetIntValue( intVal ));
 	return e;
 }
 
 static Endr _addBoolVal ( AST intVal ) {
-	Endr e = Endr_New( ENDR_BYTE, AST_GetBoolValue( intVal ) );
+	Endr e = Endr_New( ENDR_CONST, AST_GetBoolValue( intVal ) );
 	return e;
 }
 
@@ -288,9 +301,26 @@ static Endr _addExpression( AST expr ) {
 }
 static Endr _addExpressionToEndr( AST expr, Endr endr ) {
 	AST child = AST_GetFirstChild( expr );
+	CTE c, c_;
+
+	c = Function_GetLastCTE( _func );
+
 	Endr e =  _addExprNode( child ); //ATENÇÂO
-	CTE c = Function_GetLastCTE( _func );
-	c->args[0] = endr;
+
+	c_ = Function_GetLastCTE( _func );
+	if( c_ != c ) {
+		c->args[0] = endr;
+	}
+	else {
+		args[0] = endr;
+		args[1] = e;
+		c_ = CTE_New( ATTR_SIMPLE, args );
+		Function_AddCTE( _func, c_ );
+
+	}
+	
+	
+	return endr;
 }
 
 static void _addBlock( AST block ) {
@@ -307,7 +337,7 @@ static void _addReturn( AST ret ) {
 	CTE cte;
 	Endr endr;
 	if( AST_GetFirstChild( ret ) ) {
-		endr = _addExpressionToEndr( AST_GetFirstChild( ret ), endr );
+		endr = _addExpression(  ret  );
 		args[0] = endr;
 		cte = CTE_New( RET_VAL, args );
 	} 
@@ -342,11 +372,12 @@ static void _addGoto( Endr destination) {
 
 static void _addCommand ( AST cmd  ) {
 	AST expNode, blockNode;
-	Endr labelBegin, labelEnd, labelElIf;
+	Endr labelBegin, labelEnd, labelElIf, labelNext;
 	Endr valID, varID;
-	Endr rValID;
+	Endr rendr, lendr;
 	AST rval, lval;
 	AST elIfNode;
+	AST _if;
 
 	switch ( AST_GetType( cmd ) ) {
 		case AST_DECL_VAR:
@@ -365,66 +396,63 @@ static void _addCommand ( AST cmd  ) {
 		break;
 
 		case AST_IF:			
-			AST _if;
 			expNode = AST_GetFirstChild( cmd );
 			blockNode = AST_GetNextSibling( expNode );
 			elIfNode = blockNode;
 			labelEnd = _newLabel( );
 			labelNext;
-			_if = AST_GetNextSibling( blockNode);
+			_if = AST_GetNextSibling( blockNode );
 
 			// IF "NORMAL"
-			Endr result = _addExpression( exprNode );
+			varID = _addExpression( expNode );
+			
 			if( _if ) {
-				_addIfFalse( result, labelEnd );
+				labelNext = _newLabel( );
+				_addIfFalse( varID, labelNext );
 			}
 			else {
-				labelNext( );
-
+				_addIfFalse( varID, labelEnd );
 			}
 			_addBlock( blockNode );
-			_addGoto( labelEnd );
+
+			if( _if ) {
+				_addGoto( labelEnd);
+			}
+			
 			//FOI
 			
-			for( _if ; _if && AST_GetType( _if ) == AST_ELSE_IF; _if = AST_GetNextSibling( _if )) {
-				Endr result = _addExpression( exprNode );
-				_addIfFalse( result, labelEnd );
+			for( _if ; _if && AST_GetType( _if ) == AST_ELSE_IF ;  ) {
+				expNode = AST_GetFirstChild( _if );
+				blockNode = AST_GetNextSibling( expNode );
+				_if = AST_GetNextSibling( _if );
+				_addLabel( labelNext );
+				varID = _addExpression( expNode );
+				if( _if ) {
+					labelNext = _newLabel( );
+					_addIfFalse( varID, labelNext );
+				}
+				else {
+					_addIfFalse( varID, labelEnd );
+				}
 				_addBlock( blockNode );
-				_addGoto( labelEnd );
+				if( _if ) {
+					_addGoto( labelEnd);
+				}
 			}
-			/*do {
-				if ( elIfNode != blockNode ) {
-					_addLabel(  labelElIf );
-					expNode = AST_GetFirstChild( elIfNode );
-					blockNode = AST_GetNextSibling( expNode );
-				}
 
-				elIfNode = AST_GetNextSibling( elIfNode ); //Proximo Else ou If
-				if ( elIfNode ) { //Se tem proximo, gera label, se não, termina.
-					labelElIf = _newLabel( );
-				} else {
-					labelElIf = labelEnd;
-				}
-
-				valID = _addExpression( expNode );
-				_addIfFalse(  valID, labelElIf );
+			if( _if ) {
+				_addLabel( labelNext );
+				blockNode = AST_GetFirstChild( _if );
 				_addBlock( blockNode );
-				
-			} while( elIfNode && AST_GetType( elIfNode ) == AST_ELSE_IF );
-			_addGoto( labelEnd );
-			if ( elIfNode ) { //É um else
-				_addLabel(  labelElIf );
-				blockNode = AST_GetFirstChild( elIfNode );
-				_addBlock( blockNode );
-			}*/
+			}
 			_addLabel( labelEnd );
 		break;
 
 		case AST_ATTR:			
-			rval = AST_GetFirstChild( cmd );
-			lval = AST_GetLastChild( cmd );
-			rValID = _addVar( rval );
-			_addExpressionToEndr( lval, rValID );
+			lval = AST_GetFirstChild( cmd );
+			lendr = _addVar( lval );
+			rval = AST_GetLastChild( cmd );
+			rendr = _addExpressionToEndr( rval, lendr );
 
 		break;
 

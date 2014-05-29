@@ -5,6 +5,12 @@
 #include <assert.h>
 #include <stdio.h>
 
+void cpy_enr( Endr *dest, Endr source ) {
+	dest->type = source.type;
+	dest->str = source.str;
+	dest->val = source.val;
+}
+
 void handleCmd( CTE cte, Endr* endr ) {
 	assert( cte );
 	switch ( cte->cmd ) {
@@ -33,14 +39,12 @@ void handleCmd( CTE cte, Endr* endr ) {
 		case ATTR_NEW_BYTE:
 		case GOTO_IF:
 		case GOTO_IF_FALSE:
-			//assert( endr[1] );
 			cte->args[1] = endr[1];
-		// DE NOVO, no break;
 		case GOTO:
 		case CALL:
 		case PARAM:
 		case RET_VAL:
-			//assert( endr[0] );
+		case LABEL:
 			cte->args[0] = endr[0];
 		default: break;
 	}
@@ -63,7 +67,7 @@ Endr Endr_NewAsString( EndrType tp, char* s ) {
 	return endr;
 }
 
-CTE CTE_New( Instr in, Endr* endr ) {
+CTE CTE_New( Instr in, Endr endr[3] ) {
 	CTE cte = (CTE)malloc( sizeof( struct _cte ));
 	cte->next = NULL;
 	cte->cmd = in;
@@ -74,8 +78,6 @@ CTE CTE_New( Instr in, Endr* endr ) {
 static void Endr_DumpToFile( Endr e, FILE *f ) {
 	switch( e.type ) {
 		case ENDR_CONST:
-		case ENDR_WORD:
-		case ENDR_BYTE:
 			fprintf( f, "%lu", e.val);
 		break;
 
@@ -294,6 +296,10 @@ static void printCMD( CTE cte, FILE* f ) {
 		case RET:
 			fprintf(f, " ret ");	
 		break;
+		case LABEL:
+			Endr_DumpToFile( cte->args[0], f);
+		break;
+
 		default: break;
 	}
 	fprintf(f, "\n");

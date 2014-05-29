@@ -23,17 +23,18 @@ struct _strings {
 };
 
 void IRCode_AddString( IRCode code, Endr label, char* s ) {
-	unsigned long i = 0;
+	
 	StringList l = code->strings;
 	StringList string = malloc( sizeof( struct _strings ) );
 	string->str = malloc( sizeof(char)*(strlen(s)+1));
+	string->next = NULL;
 	string->label = label;
 	memcpy( string->str, s, strlen( s )+1 );
 	if ( !l ) {
 		code->strings =  string;
 	} 
 	else {
-		while ( l->next ) {
+		while ( l && l->next ) {
 			l = l->next;
 		}
 		l->next = string;
@@ -83,7 +84,7 @@ void IRCode_DumpToFile( IRCode code, FILE * f) {
 	assert( code );
 	StringList strl = code->strings;
 	while( strl ) {
-		fprintf(f, "string $S%d = %s\n", strl->label.val, strl->str );
+		fprintf(f, "string $S%d = \"%s\"\n", strl->label.val, strl->str );
 		strl = strl->next;
 	}
 	CTE cte = code->globals;

@@ -57,7 +57,7 @@ void Function_AddCTE( Function func, CTE cte) {
 }
 
 void Function_DumpToFile( Function func, FILE * f) {
-	printf( "fun %s (", func->id);
+	fprintf( f, "fun %s (", func->id);
 	Args arg = func->args;
 	while( arg ) {
 		if( arg->next ) {
