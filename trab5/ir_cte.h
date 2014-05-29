@@ -62,5 +62,6 @@ struct _cte {
 
 
 CTE CTE_New( Instr in, Endr* args );
-Endr Endr_New( EndrType tp, unsigned long val );	
+Endr Endr_New( EndrType tp, unsigned long val );
+Endr Endr_NewAsString( EndrType tp, char* s );
 #endif

@@ -4,7 +4,6 @@
 #include "ir_code.h"
 #include "ir_cte.h"
 #include "ir_function.h"
-#include "list.h"
 #include "../trab3/ast.h"
 
 

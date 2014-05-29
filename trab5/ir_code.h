@@ -1,17 +1,21 @@
 #ifndef IR_CODE_H
 #define IR_CODE_H
-#include "list.h"
 #include "ir_function.h"
-
+#include "ir_cte.h"
+#include <string.h>
+#include <stdbool.h>
 typedef struct _ir_code* IRCode;
-
+typedef struct _strings* StringList;
 struct _ir_code {
-	List strings; //Lista de Declarações, Simples
-	List globals; //Lista de Globais, Complexo.
+	StringList strings; //Lista de Declarações, Simples
+	CTE globals; //Lista de Globais, Complexo.
 	Function functions; // Lista de Programs
 };
 
 IRCode IRCode_New( );
-Endr Endr_New( EndrType tp, unsigned long val );
-Endr Endr_NewAsString( EndrType tp, char* s );
+void IRCode_AddString( IRCode code, Endr label, char* s );
+bool IRCode_FindString( IRCode code, char* s, Endr *e );
+void IRCode_AddGlobal( IRCode code, CTE cte );
+void IRCode_AddFunction( IRCode code, Function func );
+
 #endif

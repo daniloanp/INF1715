@@ -2,6 +2,8 @@
 #define BUILD_IR_CODE_C
 #include "build_ir_code.h"
 #include <malloc.h>
+#include <string.h>
+#include <stdlib.h>
 
 Function _func;
 IRCode _code;
@@ -14,8 +16,10 @@ static Endr _addBinOp( AST expr );
 static Endr _addExprNode( AST node );
 
 static unsigned long _label = 0;
-static unsigned long _newLabel( ) {
-	return _label++;
+static Endr _newLabel( ) {
+	Endr endr;
+	endr = Endr_New( LABEL, ++_label );
+	return endr;
 }
 
 static unsigned long _temp = 0;
@@ -23,22 +27,29 @@ static unsigned long _newTemp( ) {
 	return _temp++;
 }
 
+static unsigned long _str = 0;
+static Endr _newStringID( ) {
+	Endr endr;
+	endr = Endr_New( ENDR_STR, ++_label );
+	return endr;
+}
+
 Endr args[3]; //unitialized
 char temp[20] = "t";
 
 static void _addDeclVar ( AST node ) {
 	CTE cte;
-	args[0] = Endr_NewAsString( ENDR_VAR, node );
+	args[0] = Endr_NewAsString( ENDR_VAR, AST_GetStringValue( node ) );
 	args[1] = Endr_New( ENDR_WORD, 0 );
 	cte = CTE_New( ATTR_SIMPLE, args );
-	//ADD_FUNCTION
+	Function_AddCTE( _func, cte );
 }
 
-static void _addLabel( unsigned long label ) {
+static void _addLabel( Endr label ) {
 	CTE cte;
-	args[0] = Endr_New( ENDR_LABEL, label );
+	args[0] = label;
 	cte = CTE_New( ATTR_SIMPLE, args );
-	//ADD_FUNCTION
+	Function_AddCTE( _func, cte );
 }
 
 static Endr _addBinOp( AST expr ) {
@@ -86,39 +97,39 @@ static Endr _addBinOp( AST expr ) {
 	}
 	endr = Endr_New( ENDR_TEMP, _newTemp( ) );
 	cte = CTE_New( instr, args );
-	//ADD_FUNCTION
+	Function_AddCTE( _func, cte );
 	return endr;
 }
 
 static Endr _addOr( AST or ) {
 	CTE cte;
 	Endr endr, endrLabel;
-	endrLabel = Endr_New( ENDR_LABEL, _newLabel() ); //RESULTADO do OR
+	endrLabel =  _newLabel( ); //RESULTADO do OR
 	args[1] = endrLabel;
 	endr = _addExprNode( AST_GetFirstChild( or ) );
 	args[0] = endr;
 	cte = CTE_New( GOTO_IF, args );
-	//ADD CTE Function
+	Function_AddCTE( _func, cte );
 	endr = _addExprNode( AST_GetLastChild( or ) ); //ATENÇÂO NO FILHO
 	args[0] = endrLabel;
 	cte = CTE_New( LABEL, args );
-	//ADDLabelCTE
+	Function_AddCTE( _func, cte );
 	return endr;
 }
 
 static Endr _addAnd( AST and ) {
 	CTE cte;
 	Endr endr, endrLabel;
-	endrLabel = Endr_New( ENDR_LABEL, _newLabel() ); //RESULTADO do OR
+	endrLabel =  _newLabel( ); //RESULTADO do OR
 	args[1] = endrLabel;
 	endr = _addExprNode( AST_GetFirstChild( and ) );
 	args[0] = endr;
 	cte = CTE_New( GOTO_IF_FALSE,  args );
-	//ADD CTE Function
+	Function_AddCTE( _func, cte );
 	endr = _addExprNode( AST_GetLastChild( and ) ); //ATENÇÂO NO FILHO
 	args[0] = endrLabel;
 	cte = CTE_New( LABEL, args );
-	//ADDLabelCTE
+	Function_AddCTE( _func, cte );
 	return endr;
 }
 
@@ -136,7 +147,7 @@ static Endr _addVar( AST var ) {
 		args[1] = endrID;
 		args[2] = endrI;
 		cte = CTE_New( ATTR_FROM_ARR, args );
-		//ADDFUNCTION
+		Function_AddCTE( _func, cte );
 		endrID = endr;
 	}
 
@@ -160,10 +171,10 @@ static Endr _addCall( AST call ) {
 			currCTE = currCTE->next;
 		}
 	}
-	//ADD headCTE;
+	Function_AddCTE( _func, headCte );
 	args[0] = Endr_NewAsString( ENDR_FUNC, AST_GetStringValue( call ) );
 	currCTE = CTE_New( CALL, args );
-	//ADD CALL;
+	Function_AddCTE( _func, currCTE );
 	return Endr_New( ENDR_RETEXP, 0 );
 }
 
@@ -175,16 +186,16 @@ static Endr _addNew( AST newNode ) {
 	expr = AST_GetFirstChild( newNode );
 	type = AST_GetLastChild( newNode );
 
-	if( AST_GetIntValue( type ) == 0 && ( AST_GetType( type ) == AST_BOOL || AST_GetType == AST_CHAR ) ) {
+	if( AST_GetIntValue( type ) == 0 && ( AST_GetType( type ) == AST_BOOL || AST_GetType( type ) == AST_CHAR ) ) {
 		instr = ATTR_NEW_BYTE;
 	}
 
 	len = _addExpression( expr );
-	endr = Endr_New( ENDR_TEMP, _newTemp());
+	endr = Endr_New( ENDR_TEMP, _newTemp( ) );
 	args[0] = endr;
 	args[1] = len;
 	cte = CTE_New( instr, args );
-	//ADD_IT
+	Function_AddCTE( _func, cte );
 	return endr;
 }
 
@@ -199,11 +210,12 @@ static Endr _addBoolVal ( AST intVal ) {
 }
 
 static Endr _addStringVal ( AST strVal ) {
+	Endr e;
+	if ( ! IRCode_FindString( _code, AST_GetStringValue( strVal ), &e ) ) {
+		e = _newStringID( );
+		IRCode_AddString( _code, e, AST_GetStringValue( strVal ) );
 
-	//Find at list
-	Endr e = Endr_NewAsString( ENDR_STR, AST_GetStringValue( strVal ) ); //ERRADO
-
-
+	}	
 	return e;
 }
 
@@ -280,7 +292,7 @@ static void _addBlock( AST block ) {
 } 
 
 
-static _addReturn( AST ret ) {
+static void _addReturn( AST ret ) {
 	CTE cte;
 	Endr endr;
 	if( AST_GetFirstChild( ret ) ) {
@@ -293,24 +305,33 @@ static _addReturn( AST ret ) {
 	}
 
 }
-/*if( expNode ) {
-		valID = _addExpression( expNode ); //WARNING
-	_addReturnVal( valID );
-} else {
-	_addReturn( );
-}*/
 
-static endr _addIfFalse( ){
-
+static void _addIfFalse( Endr val , Endr destination ) {
+	CTE cte;
+	args[0] = val;
+	args[1] = destination;
+	cte = CTE_New( GOTO_IF_FALSE, args );
+	Function_AddCTE( _func, cte );
 }
 
-static void _addGoto( Endr Label ) {
+static void _addIf( Endr val , Endr destination ) {
+	CTE cte;
+	args[0] = val;
+	args[1] = destination;
+	cte = CTE_New( GOTO_IF, args );
+	Function_AddCTE( _func, cte );
+}
 
+static void _addGoto( Endr destination) {
+	CTE cte;
+	args[0] = destination;
+	cte = CTE_New( GOTO, args );
+	Function_AddCTE( _func, cte );
 }
 
 static void _addCommand ( AST cmd  ) {
 	AST expNode, blockNode;
-	unsigned long labelBegin, labelEnd, labelElIf;
+	Endr labelBegin, labelEnd, labelElIf;
 	Endr valID, varID;
 	Endr rValID;
 	AST rval, lval;
@@ -339,7 +360,7 @@ static void _addCommand ( AST cmd  ) {
 			labelEnd = _newLabel( );
 
 			do {
-				if ( labelElIf ) {
+				if ( elIfNode != blockNode ) {
 					_addLabel(  labelElIf );
 					expNode = AST_GetFirstChild( elIfNode );
 					blockNode = AST_GetNextSibling( expNode );
@@ -356,6 +377,7 @@ static void _addCommand ( AST cmd  ) {
 				_addIfFalse(  valID, labelElIf );
 				_addBlock( blockNode );
 				_addGoto( labelEnd );
+
 
 
 			} while( elIfNode && AST_GetType( elIfNode ) == AST_ELSE_IF );
@@ -388,19 +410,25 @@ static void _addCommand ( AST cmd  ) {
 	}
 }
 
-
+static void _addArgs( AST paramList ) {
+	AST param = AST_GetFirstChild( paramList );
+	while( param ) {
+		Function_AddArg( _func, AST_GetStringValue( param ) );
+		param = AST_GetNextSibling( param );
+	}
+}
 
 Function _buildFunction( AST nodeFunc ) {
 	AST child;
 	Function function;
 	function = (Function)malloc( sizeof( struct _function ) );
-	_func = function; //Seta global por praticidade
+	_func = function;
 
 	child = AST_GetFirstChild( nodeFunc ) ;
 
 	function->id = AST_GetStringValue( nodeFunc );
 	if ( AST_GetType( child ) == AST_PARAM_LIST ) {
-		addArgs( child );
+		_addArgs( child );
 		child = AST_GetNextSibling( child );
 	}
 	
@@ -408,7 +436,6 @@ Function _buildFunction( AST nodeFunc ) {
 		child = AST_GetNextSibling( child );	
 	}
 
-	//BLOCK
 
 	_addBlock( child );
 
@@ -426,7 +453,7 @@ void _addFunction( AST nodeFunc ) {
 
 
 void build_ir ( AST tree ) {
-	AST child; // a DeclVar OR a DeclFunction
+	AST child;
 	int i,j;
 	_code = IRCode_New( );
 	if (tree == NULL) {
