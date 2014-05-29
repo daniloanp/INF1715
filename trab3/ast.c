@@ -322,12 +322,12 @@ void AST_PrettyPrint( AST t, int level ) {
 	}
 
 	printf("%s",AST_nodeToString(t));
-	/*//if( t->symbolType.type ) {
+	if( t->symbolType.type ) {
 		j = t->symbolType.type;
 		printf( "  TYPE: ");
 		if( j == SYM_INT)
 			printf("INT");
-		else if( j == SYM_BOOL) {->
+		else if( j == SYM_BOOL) {
 			printf("BOOL");
 		}
 		else if( j == SYM_CHAR) {
@@ -349,7 +349,7 @@ void AST_PrettyPrint( AST t, int level ) {
 			printf("VOID");
 		i = t->symbolType.dimension;
 		for(i;i;i--) printf("[]");
-	//}*/
+	}
 	
 	printf("\n");
 	c = AST_GetFirstChild(t);
@@ -371,7 +371,7 @@ void AST_SetSymType( AST node, SymbolType tp ) {
 
 bool AST_IsOperatorNode( AST node ) {
 	switch( AST_GetType(node) ) {
-		case AST_PLUS: case  AST_MINUS : case  AST_MUL : case  AST_DIV : case  AST_GREATER : case  AST_GREATER_EQUAL : case  AST_LESS: case  AST_LESS_EQUAL: case  	AST_EQUAL : case  AST_DIFFERENT : case  AST_UNARYMINUS: case AST_AND: case AST_OR:
+		case AST_PLUS: case  AST_MINUS : case  AST_MUL : case  AST_DIV : case  AST_GREATER : case  AST_GREATER_EQUAL : case  AST_LESS: case  AST_LESS_EQUAL: case  	AST_EQUAL : case  AST_DIFFERENT : case  AST_UNARYMINUS: case AST_AND: case AST_OR: case AST_NOT:
 		return true;
 	default:
 		return false;

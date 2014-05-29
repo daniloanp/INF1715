@@ -7,6 +7,7 @@
 
 Function _func;
 IRCode _code;
+CTE _lastExpr;
 
 static void _addBlock( AST block );
 static void _addCommand ( AST cmd  );
@@ -18,7 +19,7 @@ static Endr _addExprNode( AST node );
 static unsigned long _label = 0;
 static Endr _newLabel( ) {
 	Endr endr;
-	endr = Endr_New( LABEL, ++_label );
+	endr = Endr_New( ENDR_LABEL, ++_label );
 	return endr;
 }
 
@@ -43,6 +44,13 @@ static void _addDeclVar ( AST node ) {
 	args[1] = Endr_New( ENDR_WORD, 0 );
 	cte = CTE_New( ATTR_SIMPLE, args );
 	Function_AddCTE( _func, cte );
+}
+
+static void _addGlobal ( AST node ) {
+	CTE cte;
+	args[0] = Endr_NewAsString( ENDR_VAR, AST_GetStringValue( node ) );
+	cte = CTE_New( ATTR_SIMPLE, args);
+	IRCode_AddGlobal( _code, cte );
 }
 
 static void _addLabel( Endr label ) {
@@ -96,6 +104,7 @@ static Endr _addBinOp( AST expr ) {
 		break;
 	}
 	endr = Endr_New( ENDR_TEMP, _newTemp( ) );
+	args[0] = endr;
 	cte = CTE_New( instr, args );
 	Function_AddCTE( _func, cte );
 	return endr;
@@ -279,7 +288,9 @@ static Endr _addExpression( AST expr ) {
 }
 static Endr _addExpressionToEndr( AST expr, Endr endr ) {
 	AST child = AST_GetFirstChild( expr );
-	return _addExprNode( child ); //ATENÇÂO
+	Endr e =  _addExprNode( child ); //ATENÇÂO
+	CTE c = Function_GetLastCTE( _func );
+	c->args[0] = endr;
 }
 
 static void _addBlock( AST block ) {
@@ -354,12 +365,34 @@ static void _addCommand ( AST cmd  ) {
 		break;
 
 		case AST_IF:			
+			AST _if;
 			expNode = AST_GetFirstChild( cmd );
 			blockNode = AST_GetNextSibling( expNode );
 			elIfNode = blockNode;
 			labelEnd = _newLabel( );
+			labelNext;
+			_if = AST_GetNextSibling( blockNode);
 
-			do {
+			// IF "NORMAL"
+			Endr result = _addExpression( exprNode );
+			if( _if ) {
+				_addIfFalse( result, labelEnd );
+			}
+			else {
+				labelNext( );
+
+			}
+			_addBlock( blockNode );
+			_addGoto( labelEnd );
+			//FOI
+			
+			for( _if ; _if && AST_GetType( _if ) == AST_ELSE_IF; _if = AST_GetNextSibling( _if )) {
+				Endr result = _addExpression( exprNode );
+				_addIfFalse( result, labelEnd );
+				_addBlock( blockNode );
+				_addGoto( labelEnd );
+			}
+			/*do {
 				if ( elIfNode != blockNode ) {
 					_addLabel(  labelElIf );
 					expNode = AST_GetFirstChild( elIfNode );
@@ -376,24 +409,21 @@ static void _addCommand ( AST cmd  ) {
 				valID = _addExpression( expNode );
 				_addIfFalse(  valID, labelElIf );
 				_addBlock( blockNode );
-				_addGoto( labelEnd );
-
-
-
+				
 			} while( elIfNode && AST_GetType( elIfNode ) == AST_ELSE_IF );
-
+			_addGoto( labelEnd );
 			if ( elIfNode ) { //É um else
 				_addLabel(  labelElIf );
 				blockNode = AST_GetFirstChild( elIfNode );
 				_addBlock( blockNode );
-			}
-			_addLabel( labelEnd);
+			}*/
+			_addLabel( labelEnd );
 		break;
 
 		case AST_ATTR:			
 			rval = AST_GetFirstChild( cmd );
 			lval = AST_GetLastChild( cmd );
-			rValID = _addExpression( rval );
+			rValID = _addVar( rval );
 			_addExpressionToEndr( lval, rValID );
 
 		break;
@@ -421,12 +451,10 @@ static void _addArgs( AST paramList ) {
 Function _buildFunction( AST nodeFunc ) {
 	AST child;
 	Function function;
-	function = (Function)malloc( sizeof( struct _function ) );
-	_func = function;
+	_func = Function_New( AST_GetStringValue( nodeFunc ) );
 
 	child = AST_GetFirstChild( nodeFunc ) ;
 
-	function->id = AST_GetStringValue( nodeFunc );
 	if ( AST_GetType( child ) == AST_PARAM_LIST ) {
 		_addArgs( child );
 		child = AST_GetNextSibling( child );
@@ -439,7 +467,7 @@ Function _buildFunction( AST nodeFunc ) {
 
 	_addBlock( child );
 
-	return function;
+	return _func;
 
 }
 
@@ -452,18 +480,15 @@ void _addFunction( AST nodeFunc ) {
 
 
 
-void build_ir ( AST tree ) {
+IRCode buildIRCode ( AST tree ) {
 	AST child;
 	int i,j;
 	_code = IRCode_New( );
-	if (tree == NULL) {
-		return;
-	}
 	child = AST_GetFirstChild( tree );
 
 	while( child != NULL ) {
 		if( AST_GetType( child ) == AST_DECL_VAR ) {
-			_addDeclVar( child );
+			_addGlobal( child );
 		}
 		else {
 			_addFunction( child );
@@ -471,5 +496,6 @@ void build_ir ( AST tree ) {
 		
 		child = AST_GetNextSibling( child );
 	}
+	return _code;
 }
 #endif

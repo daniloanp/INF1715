@@ -636,7 +636,7 @@ int buildAst( NonTerminal rule, Token t, int line ) {
 				case TK_NL:
 					_currParent = upToExp( _currParent );
 					_currParent = AST_GetParent( _currParent );
-					if( AST_GetType( _currParent) != AST_BLOCK ) {
+					while( AST_GetType( _currParent) != AST_BLOCK ) {
 						_currParent = AST_GetParent( _currParent );
 					}
 				break;
@@ -685,8 +685,12 @@ int buildAst( NonTerminal rule, Token t, int line ) {
 				break;
 				
 				case TK_END:
-					_currParent = AST_GetParent( _currParent );
-					_currParent = AST_GetParent( _currParent );
+
+					_currParent = AST_GetParent( _currParent ); //BLOCK?
+					_currParent = AST_GetParent( _currParent );//DEclFunction?
+					if( AST_GetType(_currParent) != AST_PROGRAM ) {
+						_currParent = AST_GetParent( _currParent );//DEclFunction?
+					}
 				break;
 				
 				case TK_NL:

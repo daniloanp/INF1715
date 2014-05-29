@@ -1,5 +1,6 @@
 #ifndef IR_CTE_H
 #define IR_CTE_H
+#include <stdio.h>
 
 typedef enum {
 	ENDR_WORD,
@@ -64,4 +65,5 @@ struct _cte {
 CTE CTE_New( Instr in, Endr* args );
 Endr Endr_New( EndrType tp, unsigned long val );
 Endr Endr_NewAsString( EndrType tp, char* s );
+void CTE_Print( CTE cmds, FILE* f );
 #endif

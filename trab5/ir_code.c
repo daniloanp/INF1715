@@ -1,8 +1,10 @@
 #ifndef IR_CODE_C
 #define IR_CODE_C
 #include "ir_code.h"
-#include "malloc.h"
+#include <malloc.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <assert.h>
 
 
 IRCode IRCode_New( ) {
@@ -73,6 +75,27 @@ void IRCode_AddFunction( IRCode code, Function func ) {
 			f = f->next;
 		}
 		f->next = func;
+	}
+}
+
+void IRCode_DumpToFile( IRCode code, FILE * f) {
+	//Primeiro Strings;
+	assert( code );
+	StringList strl = code->strings;
+	while( strl ) {
+		fprintf(f, "string $S%d = %s\n", strl->label.val, strl->str );
+		strl = strl->next;
+	}
+	CTE cte = code->globals;
+	while( cte ) {
+		fprintf(f, "global %s\n", cte->args[0].str );
+		cte = cte->next;
+	}
+
+	Function func = code->functions;
+	while ( func ) {
+		Function_DumpToFile( func , f );
+		func = func->next;
 	}
 }
 

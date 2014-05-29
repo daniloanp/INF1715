@@ -6,5 +6,6 @@
 #include "ir_function.h"
 #include "../trab3/ast.h"
 
+IRCode buildIRCode ( AST tree );
 
 #endif

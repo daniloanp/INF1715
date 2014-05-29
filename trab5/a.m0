@@ -1,0 +1,28 @@
+a:int
+b:int
+
+fun c( b:int, l:int):bool
+	k:int
+	j:int
+	g:int
+	d:string
+	e:[]string
+	e = new[20]string
+	g = 20+3+4*3/23
+	if false
+		j = 23 - g
+	end
+	k = 0 
+	if true
+		j = 45*32
+	else if not true
+		j = 67-12
+	else if 65 = 87
+		k = 10-1-2
+	else
+		k = k+1+k
+	end
+end
+f:string
+
+

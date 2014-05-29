@@ -11,7 +11,8 @@
 #include "../trab3/build_ast.h"
 #include "../trab4/symboltable.h"
 #include "../trab4/symbols.h"
-
+#include "ir_code.h"
+#include "build_ir_code.h"
 //extern AST AST_ROOT ;
 
 
@@ -44,8 +45,11 @@ int main( int argc, char **argv ) {
 	hasErrors = ! Symbols_annotate( tree );
 
 	if ( ! hasErrors ) {
-			printf("Valid Program!!!\n");
-			AST_PrettyPrint( tree, 1 );
+			IRCode code = buildIRCode( tree );
+			IRCode_DumpToFile( code, stdout );
+			/*printf("Valid Program!!!\n");
+			AST_PrettyPrint( tree, 1 );*/
+
 	}
 
 	AST_Free( tree );
