@@ -4,7 +4,7 @@ fun foo()
    x()
    y()
    x = 20
-   x = new [10]int
+   x = new[10]int
    x()
 end
 

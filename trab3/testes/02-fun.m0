@@ -1,7 +1,11 @@
 
-fun f()
-   end
+fun f(a:int, b:int)
+	i = 12 + 1 * 3
+	call(a)
+	i = 1*3/2+1
+end
 
-   /*fun f(A:int,s:string, l:[][]bool):int
-   end*/
+fun f(A:int,s:string, l:[][]bool):int
+
+end
 

@@ -1,4 +1,4 @@
-CC=gcc
+CC=colorgcc
 CFLAGS=-std=c99 -D_GNU_SOURCE -ggdb
 +CFLAGS=-Wall -fdiagnostics-color=always
 
