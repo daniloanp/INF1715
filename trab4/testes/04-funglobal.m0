@@ -1,4 +1,3 @@
-
 x:int
 fun f(k:char)
 	x:[][]bool

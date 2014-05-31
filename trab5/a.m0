@@ -6,28 +6,11 @@ fun c( b:int, l:int):bool
 	j:int
 	g:int
 	d:string
-	e:[][]char
-	e = new[20][]char
-
-	e[1] = "12"
-	g = 20+3+4*3//*3/23
-	d = "sasddasds"
-	while false
-		g = 20
-	loop
-
-	if 12+65 = 45 -65
-		d = "sasddasds"
-	else if 3*3/2+1
-		d = "Danilo"
-		d = "Danilo"
-	else 
-		d = "E aê?"
-		j = g - 67
-	end
-
+	f:bool
+	v:int
+	v[2] = 3
 end
-f:string
+lf:string
 
 
 /*if false

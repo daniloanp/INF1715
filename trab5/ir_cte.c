@@ -28,9 +28,8 @@ void handleCmd( CTE cte, Endr* endr ) {
 		case ATTR_BYTE_FROM_ARR:
 		case ATTR_TO_ARR:
 		case ATTR_BYTE_TO_ARR:
-			//assert( endr[2] );
 			cte->args[2] = endr[2];
-		//SEM BREAK!!!;
+		
 		case ATTR_SIMPLE:
 		case ATTR_BYTE:
 		case ATTR_NOT:
@@ -298,6 +297,7 @@ static void printCMD( CTE cte, FILE* f ) {
 		break;
 		case LABEL:
 			Endr_DumpToFile( cte->args[0], f);
+			printf(":");
 		break;
 
 		default: break;

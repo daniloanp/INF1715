@@ -17,7 +17,7 @@ int main( int argc, char **argv ) {
 	if(input) {
 		tl = generateTokens( input, &hasErrors );
 		if ( !hasErrors ) {
-			hasErrors = parser(tl, NULL);
+			hasErrors = parser(tl, NULL, NULL, NULL);
 		}
 
 		if( input != stdin ) {

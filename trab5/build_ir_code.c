@@ -16,6 +16,7 @@ static Endr _addExpression( AST expr );
 static Endr _addExpressionToEndr( AST expr, Endr endr );
 static Endr _addBinOp( AST expr );
 static Endr _addExprNode( AST node );
+static Endr _addExprNodeToEndr( AST child, Endr endr );
 
 static unsigned long _label = 0;
 static Endr _newLabel( ) {
@@ -35,8 +36,6 @@ static Endr _newStringID( ) {
 	endr = Endr_New( ENDR_STR, ++_label );
 	return endr;
 }
-
-
 
 static void _addDeclVar ( AST node ) {
 	CTE cte;
@@ -125,34 +124,41 @@ static Endr _addBinOp( AST expr ) {
 
 static Endr _addOr( AST or ) {
 	CTE cte;
-	Endr endr, endrLabel;
-	endrLabel =  _newLabel( ); //RESULTADO do OR
-	args[1] = endrLabel;
-	endr = _addExprNode( AST_GetFirstChild( or ) );
-	args[0] = endr;
+	Endr eval, endOr;
+	endOr =  _newLabel( ); //RESULTADO do OR, vai ficar aqui.
+
+	eval = Endr_New( ENDR_TEMP, _newTemp( ) );
+
+	_addExprNodeToEndr( AST_GetFirstChild( or ), eval );
+
+	args[0] = eval;
+	args[1] = endOr;
 	cte = CTE_New( GOTO_IF, args );
 	Function_AddCTE( _func, cte );
-	endr = _addExprNode( AST_GetLastChild( or ) ); //ATENÇÂO NO FILHO
-	args[0] = endrLabel;
-	cte = CTE_New( LABEL, args );
-	Function_AddCTE( _func, cte );
-	return endr;
+
+	_addExprNodeToEndr( AST_GetLastChild( or ), eval ); //ATENÇÂO NO FILHO
+	
+	_addLabel( endOr );
+	return eval;
 }
 
 static Endr _addAnd( AST and ) {
 	CTE cte;
-	Endr endr, endrLabel;
-	endrLabel =  _newLabel( ); //RESULTADO do OR
-	args[1] = endrLabel;
-	endr = _addExprNode( AST_GetFirstChild( and ) );
-	args[0] = endr;
-	cte = CTE_New( GOTO_IF_FALSE,  args );
+	Endr eval, endOr;
+	endOr =  _newLabel( ); //RESULTADO do OR, vai ficar aqui.
+
+	eval = Endr_New( ENDR_TEMP, _newTemp( ) );
+
+	_addExprNodeToEndr( AST_GetFirstChild( and ), eval );
+
+	args[0] = eval;
+	args[1] = endOr;
+	cte = CTE_New( GOTO_IF_FALSE, args );
 	Function_AddCTE( _func, cte );
-	endr = _addExprNode( AST_GetLastChild( and ) ); //ATENÇÂO NO FILHO
-	args[0] = endrLabel;
-	cte = CTE_New( LABEL, args );
-	Function_AddCTE( _func, cte );
-	return endr;
+
+	_addExprNodeToEndr( AST_GetLastChild( and ), eval ); //ATENÇÂO NO FILHO
+	_addLabel( endOr );
+	return eval;
 }
 
 
@@ -308,7 +314,8 @@ static Endr _addExpressionToEndr( AST expr, Endr endr ) {
 	Endr e =  _addExprNode( child ); //ATENÇÂO
 
 	c_ = Function_GetLastCTE( _func );
-	if( c_ != c ) {
+
+	if( c_ != c && c_->cmd != LABEL) {
 		c->args[0] = endr;
 	}
 	else {
@@ -320,6 +327,26 @@ static Endr _addExpressionToEndr( AST expr, Endr endr ) {
 	}
 	
 	
+	return endr;
+}
+
+static Endr _addExprNodeToEndr( AST child, Endr endr ) {
+	CTE c, c_;
+
+	c = Function_GetLastCTE( _func );
+
+	Endr e =  _addExprNode( child ); //ATENÇÂO
+
+	c_ = Function_GetLastCTE( _func );
+	if( c_ != c ) {
+		c->args[0] = endr;
+	}
+	else {
+		args[0] = endr;
+		args[1] = e;
+		c_ = CTE_New( ATTR_SIMPLE, args );
+		Function_AddCTE( _func, c_ );
+	}
 	return endr;
 }
 

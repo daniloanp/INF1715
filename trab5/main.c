@@ -16,11 +16,24 @@
 //extern AST AST_ROOT ;
 
 
-
+char * getOutPutFileName( char *inputf ) {
+	char *s,*c;
+	s = (char*)malloc( sizeof(char)*(strlen( inputf )+4));
+	strcpy( s, inputf);
+	
+	for(c = s;*c; c++);
+	*c = '.'; c++;
+	*c = 'i'; c++;
+	*c = 'r'; c++;
+	*c = '\0'; c++;
+	return s;
+}
 int main( int argc, char **argv ) {	
 	bool hasErrors;
 	FILE *input;
+	FILE *output;
 	AST tree;
+	char *outputName;
 
 	hasErrors = false;
 	++argv, --argc;
@@ -42,14 +55,15 @@ int main( int argc, char **argv ) {
 		fclose(input);
 	}
 	
-	hasErrors = ! Symbols_annotate( tree );
+	hasErrors = hasErrors || (! Symbols_annotate( tree ));
 
 	if ( ! hasErrors ) {
 			IRCode code = buildIRCode( tree );
-			IRCode_DumpToFile( code, stdout );
-			/*printf("Valid Program!!!\n");
-			AST_PrettyPrint( tree, 1 );*/
-
+			outputName = getOutPutFileName( argv[0] );
+			output = fopen( outputName, "w" );
+			free( outputName );
+			IRCode_DumpToFile( code, output );
+			fclose( output );
 	}
 
 	AST_Free( tree );

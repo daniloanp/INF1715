@@ -1,0 +1,1092 @@
+Terminals unused in grammar
+
+   ERROR
+
+
+Gramática
+
+    0 $accept: program $end
+
+    1 program: strings globals functions
+
+    2 strings: string strings
+    3        | %empty
+
+    4 globals: global globals
+    5        | %empty
+
+    6 functions: function functions
+    7          | %empty
+
+    8 nl: NL opt_nl
+
+    9 opt_nl: NL opt_nl
+   10       | %empty
+
+   11 string: STRING ID '=' LITSTRING nl
+
+   12 global: GLOBAL ID nl
+
+   13 function: FUN ID '(' args ')' nl commands
+
+   14 args: arg more_args
+   15     | %empty
+
+   16 more_args: ',' args
+   17          | %empty
+
+   18 arg: ID
+
+   19 commands: label command nl commands
+   20         | %empty
+
+   21 label: LABEL ':' opt_nl label
+   22      | %empty
+
+   23 rval: LITNUM
+   24     | ID
+
+   25 command: ID '=' rval
+   26        | ID '=' BYTE rval
+   27        | ID '=' rval binop rval
+   28        | ID '=' unop rval
+   29        | ID '=' ID '[' rval ']'
+   30        | ID '[' rval ']' '=' rval
+   31        | ID '=' BYTE ID '[' rval ']'
+   32        | ID '[' rval ']' '=' BYTE rval
+   33        | IF rval GOTO LABEL
+   34        | IFFALSE rval GOTO LABEL
+   35        | GOTO LABEL
+   36        | call
+   37        | RET rval
+   38        | RET
+
+   39 binop: EQ
+   40      | NE
+   41      | '<'
+   42      | '>'
+   43      | GE
+   44      | LE
+   45      | '+'
+   46      | '-'
+   47      | '*'
+   48      | '/'
+
+   49 unop: '-'
+   50     | NEW
+   51     | NEW BYTE
+
+   52 call: params CALL ID
+
+   53 params: param nl params
+   54       | %empty
+
+   55 param: PARAM rval
+
+
+Terminais, com as regras onde eles aparecem
+
+$end (0) 0
+'(' (40) 13
+')' (41) 13
+'*' (42) 47
+'+' (43) 45
+',' (44) 16
+'-' (45) 46 49
+'/' (47) 48
+':' (58) 21
+'<' (60) 41
+'=' (61) 11 25 26 27 28 29 30 31 32
+'>' (62) 42
+'[' (91) 29 30 31 32
+']' (93) 29 30 31 32
+error (256)
+ERROR (258)
+FUN (259) 13
+GLOBAL (260) 12
+STRING (261) 11
+BYTE (262) 26 31 32 51
+LABEL (263) 21 33 34 35
+ID (264) 11 12 13 18 24 25 26 27 28 29 30 31 32 52
+NEW (265) 50 51
+IF (266) 33
+IFFALSE (267) 34
+GOTO (268) 33 34 35
+PARAM (269) 55
+CALL (270) 52
+RET (271) 37 38
+NL (272) 8 9
+LITSTRING (273) 11
+LITNUM (274) 23
+EQ (275) 39
+NE (276) 40
+LE (277) 44
+GE (278) 43
+
+
+Não-terminais com as regras onde eles aparecem
+
+$accept (37)
+    à esquerda: 0
+program (38)
+    à esquerda: 1, à direita: 0
+strings (39)
+    à esquerda: 2 3, à direita: 1 2
+globals (40)
+    à esquerda: 4 5, à direita: 1 4
+functions (41)
+    à esquerda: 6 7, à direita: 1 6
+nl (42)
+    à esquerda: 8, à direita: 11 12 13 19 53
+opt_nl (43)
+    à esquerda: 9 10, à direita: 8 9 21
+string (44)
+    à esquerda: 11, à direita: 2
+global (45)
+    à esquerda: 12, à direita: 4
+function (46)
+    à esquerda: 13, à direita: 6
+args (47)
+    à esquerda: 14 15, à direita: 13 16
+more_args (48)
+    à esquerda: 16 17, à direita: 14
+arg (49)
+    à esquerda: 18, à direita: 14
+commands (50)
+    à esquerda: 19 20, à direita: 13 19
+label (51)
+    à esquerda: 21 22, à direita: 19 21
+rval (52)
+    à esquerda: 23 24, à direita: 25 26 27 28 29 30 31 32 33 34 37
+    55
+command (53)
+    à esquerda: 25 26 27 28 29 30 31 32 33 34 35 36 37 38, à direita:
+    19
+binop (54)
+    à esquerda: 39 40 41 42 43 44 45 46 47 48, à direita: 27
+unop (55)
+    à esquerda: 49 50 51, à direita: 28
+call (56)
+    à esquerda: 52, à direita: 36
+params (57)
+    à esquerda: 53 54, à direita: 52 53
+param (58)
+    à esquerda: 55, à direita: 53
+
+
+State 0
+
+    0 $accept: . program $end
+
+    STRING  deslocar, e ir ao estado 1
+
+    $padrão  reduzir usando a regra 3 (strings)
+
+    program  ir ao estado 2
+    strings  ir ao estado 3
+    string   ir ao estado 4
+
+
+State 1
+
+   11 string: STRING . ID '=' LITSTRING nl
+
+    ID  deslocar, e ir ao estado 5
+
+
+State 2
+
+    0 $accept: program . $end
+
+    $end  deslocar, e ir ao estado 6
+
+
+State 3
+
+    1 program: strings . globals functions
+
+    GLOBAL  deslocar, e ir ao estado 7
+
+    $padrão  reduzir usando a regra 5 (globals)
+
+    globals  ir ao estado 8
+    global   ir ao estado 9
+
+
+State 4
+
+    2 strings: string . strings
+
+    STRING  deslocar, e ir ao estado 1
+
+    $padrão  reduzir usando a regra 3 (strings)
+
+    strings  ir ao estado 10
+    string   ir ao estado 4
+
+
+State 5
+
+   11 string: STRING ID . '=' LITSTRING nl
+
+    '='  deslocar, e ir ao estado 11
+
+
+State 6
+
+    0 $accept: program $end .
+
+    $padrão  aceitar
+
+
+State 7
+
+   12 global: GLOBAL . ID nl
+
+    ID  deslocar, e ir ao estado 12
+
+
+State 8
+
+    1 program: strings globals . functions
+
+    FUN  deslocar, e ir ao estado 13
+
+    $padrão  reduzir usando a regra 7 (functions)
+
+    functions  ir ao estado 14
+    function   ir ao estado 15
+
+
+State 9
+
+    4 globals: global . globals
+
+    GLOBAL  deslocar, e ir ao estado 7
+
+    $padrão  reduzir usando a regra 5 (globals)
+
+    globals  ir ao estado 16
+    global   ir ao estado 9
+
+
+State 10
+
+    2 strings: string strings .
+
+    $padrão  reduzir usando a regra 2 (strings)
+
+
+State 11
+
+   11 string: STRING ID '=' . LITSTRING nl
+
+    LITSTRING  deslocar, e ir ao estado 17
+
+
+State 12
+
+   12 global: GLOBAL ID . nl
+
+    NL  deslocar, e ir ao estado 18
+
+    nl  ir ao estado 19
+
+
+State 13
+
+   13 function: FUN . ID '(' args ')' nl commands
+
+    ID  deslocar, e ir ao estado 20
+
+
+State 14
+
+    1 program: strings globals functions .
+
+    $padrão  reduzir usando a regra 1 (program)
+
+
+State 15
+
+    6 functions: function . functions
+
+    FUN  deslocar, e ir ao estado 13
+
+    $padrão  reduzir usando a regra 7 (functions)
+
+    functions  ir ao estado 21
+    function   ir ao estado 15
+
+
+State 16
+
+    4 globals: global globals .
+
+    $padrão  reduzir usando a regra 4 (globals)
+
+
+State 17
+
+   11 string: STRING ID '=' LITSTRING . nl
+
+    NL  deslocar, e ir ao estado 18
+
+    nl  ir ao estado 22
+
+
+State 18
+
+    8 nl: NL . opt_nl
+
+    NL  deslocar, e ir ao estado 23
+
+    $padrão  reduzir usando a regra 10 (opt_nl)
+
+    opt_nl  ir ao estado 24
+
+
+State 19
+
+   12 global: GLOBAL ID nl .
+
+    $padrão  reduzir usando a regra 12 (global)
+
+
+State 20
+
+   13 function: FUN ID . '(' args ')' nl commands
+
+    '('  deslocar, e ir ao estado 25
+
+
+State 21
+
+    6 functions: function functions .
+
+    $padrão  reduzir usando a regra 6 (functions)
+
+
+State 22
+
+   11 string: STRING ID '=' LITSTRING nl .
+
+    $padrão  reduzir usando a regra 11 (string)
+
+
+State 23
+
+    9 opt_nl: NL . opt_nl
+
+    NL  deslocar, e ir ao estado 23
+
+    $padrão  reduzir usando a regra 10 (opt_nl)
+
+    opt_nl  ir ao estado 26
+
+
+State 24
+
+    8 nl: NL opt_nl .
+
+    $padrão  reduzir usando a regra 8 (nl)
+
+
+State 25
+
+   13 function: FUN ID '(' . args ')' nl commands
+
+    ID  deslocar, e ir ao estado 27
+
+    $padrão  reduzir usando a regra 15 (args)
+
+    args  ir ao estado 28
+    arg   ir ao estado 29
+
+
+State 26
+
+    9 opt_nl: NL opt_nl .
+
+    $padrão  reduzir usando a regra 9 (opt_nl)
+
+
+State 27
+
+   18 arg: ID .
+
+    $padrão  reduzir usando a regra 18 (arg)
+
+
+State 28
+
+   13 function: FUN ID '(' args . ')' nl commands
+
+    ')'  deslocar, e ir ao estado 30
+
+
+State 29
+
+   14 args: arg . more_args
+
+    ','  deslocar, e ir ao estado 31
+
+    $padrão  reduzir usando a regra 17 (more_args)
+
+    more_args  ir ao estado 32
+
+
+State 30
+
+   13 function: FUN ID '(' args ')' . nl commands
+
+    NL  deslocar, e ir ao estado 18
+
+    nl  ir ao estado 33
+
+
+State 31
+
+   16 more_args: ',' . args
+
+    ID  deslocar, e ir ao estado 27
+
+    $padrão  reduzir usando a regra 15 (args)
+
+    args  ir ao estado 34
+    arg   ir ao estado 29
+
+
+State 32
+
+   14 args: arg more_args .
+
+    $padrão  reduzir usando a regra 14 (args)
+
+
+State 33
+
+   13 function: FUN ID '(' args ')' nl . commands
+
+    LABEL  deslocar, e ir ao estado 35
+
+    $end      reduzir usando a regra 20 (commands)
+    FUN       reduzir usando a regra 20 (commands)
+    $padrão  reduzir usando a regra 22 (label)
+
+    commands  ir ao estado 36
+    label     ir ao estado 37
+
+
+State 34
+
+   16 more_args: ',' args .
+
+    $padrão  reduzir usando a regra 16 (more_args)
+
+
+State 35
+
+   21 label: LABEL . ':' opt_nl label
+
+    ':'  deslocar, e ir ao estado 38
+
+
+State 36
+
+   13 function: FUN ID '(' args ')' nl commands .
+
+    $padrão  reduzir usando a regra 13 (function)
+
+
+State 37
+
+   19 commands: label . command nl commands
+
+    ID       deslocar, e ir ao estado 39
+    IF       deslocar, e ir ao estado 40
+    IFFALSE  deslocar, e ir ao estado 41
+    GOTO     deslocar, e ir ao estado 42
+    PARAM    deslocar, e ir ao estado 43
+    RET      deslocar, e ir ao estado 44
+
+    $padrão  reduzir usando a regra 54 (params)
+
+    command  ir ao estado 45
+    call     ir ao estado 46
+    params   ir ao estado 47
+    param    ir ao estado 48
+
+
+State 38
+
+   21 label: LABEL ':' . opt_nl label
+
+    NL  deslocar, e ir ao estado 23
+
+    $padrão  reduzir usando a regra 10 (opt_nl)
+
+    opt_nl  ir ao estado 49
+
+
+State 39
+
+   25 command: ID . '=' rval
+   26        | ID . '=' BYTE rval
+   27        | ID . '=' rval binop rval
+   28        | ID . '=' unop rval
+   29        | ID . '=' ID '[' rval ']'
+   30        | ID . '[' rval ']' '=' rval
+   31        | ID . '=' BYTE ID '[' rval ']'
+   32        | ID . '[' rval ']' '=' BYTE rval
+
+    '='  deslocar, e ir ao estado 50
+    '['  deslocar, e ir ao estado 51
+
+
+State 40
+
+   33 command: IF . rval GOTO LABEL
+
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 54
+
+
+State 41
+
+   34 command: IFFALSE . rval GOTO LABEL
+
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 55
+
+
+State 42
+
+   35 command: GOTO . LABEL
+
+    LABEL  deslocar, e ir ao estado 56
+
+
+State 43
+
+   55 param: PARAM . rval
+
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 57
+
+
+State 44
+
+   37 command: RET . rval
+   38        | RET .
+
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    $padrão  reduzir usando a regra 38 (command)
+
+    rval  ir ao estado 58
+
+
+State 45
+
+   19 commands: label command . nl commands
+
+    NL  deslocar, e ir ao estado 18
+
+    nl  ir ao estado 59
+
+
+State 46
+
+   36 command: call .
+
+    $padrão  reduzir usando a regra 36 (command)
+
+
+State 47
+
+   52 call: params . CALL ID
+
+    CALL  deslocar, e ir ao estado 60
+
+
+State 48
+
+   53 params: param . nl params
+
+    NL  deslocar, e ir ao estado 18
+
+    nl  ir ao estado 61
+
+
+State 49
+
+   21 label: LABEL ':' opt_nl . label
+
+    LABEL  deslocar, e ir ao estado 35
+
+    $padrão  reduzir usando a regra 22 (label)
+
+    label  ir ao estado 62
+
+
+State 50
+
+   25 command: ID '=' . rval
+   26        | ID '=' . BYTE rval
+   27        | ID '=' . rval binop rval
+   28        | ID '=' . unop rval
+   29        | ID '=' . ID '[' rval ']'
+   31        | ID '=' . BYTE ID '[' rval ']'
+
+    BYTE    deslocar, e ir ao estado 63
+    ID      deslocar, e ir ao estado 64
+    NEW     deslocar, e ir ao estado 65
+    LITNUM  deslocar, e ir ao estado 53
+    '-'     deslocar, e ir ao estado 66
+
+    rval  ir ao estado 67
+    unop  ir ao estado 68
+
+
+State 51
+
+   30 command: ID '[' . rval ']' '=' rval
+   32        | ID '[' . rval ']' '=' BYTE rval
+
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 69
+
+
+State 52
+
+   24 rval: ID .
+
+    $padrão  reduzir usando a regra 24 (rval)
+
+
+State 53
+
+   23 rval: LITNUM .
+
+    $padrão  reduzir usando a regra 23 (rval)
+
+
+State 54
+
+   33 command: IF rval . GOTO LABEL
+
+    GOTO  deslocar, e ir ao estado 70
+
+
+State 55
+
+   34 command: IFFALSE rval . GOTO LABEL
+
+    GOTO  deslocar, e ir ao estado 71
+
+
+State 56
+
+   35 command: GOTO LABEL .
+
+    $padrão  reduzir usando a regra 35 (command)
+
+
+State 57
+
+   55 param: PARAM rval .
+
+    $padrão  reduzir usando a regra 55 (param)
+
+
+State 58
+
+   37 command: RET rval .
+
+    $padrão  reduzir usando a regra 37 (command)
+
+
+State 59
+
+   19 commands: label command nl . commands
+
+    LABEL  deslocar, e ir ao estado 35
+
+    $end      reduzir usando a regra 20 (commands)
+    FUN       reduzir usando a regra 20 (commands)
+    $padrão  reduzir usando a regra 22 (label)
+
+    commands  ir ao estado 72
+    label     ir ao estado 37
+
+
+State 60
+
+   52 call: params CALL . ID
+
+    ID  deslocar, e ir ao estado 73
+
+
+State 61
+
+   53 params: param nl . params
+
+    PARAM  deslocar, e ir ao estado 43
+
+    $padrão  reduzir usando a regra 54 (params)
+
+    params  ir ao estado 74
+    param   ir ao estado 48
+
+
+State 62
+
+   21 label: LABEL ':' opt_nl label .
+
+    $padrão  reduzir usando a regra 21 (label)
+
+
+State 63
+
+   26 command: ID '=' BYTE . rval
+   31        | ID '=' BYTE . ID '[' rval ']'
+
+    ID      deslocar, e ir ao estado 75
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 76
+
+
+State 64
+
+   24 rval: ID .
+   29 command: ID '=' ID . '[' rval ']'
+
+    '['  deslocar, e ir ao estado 77
+
+    $padrão  reduzir usando a regra 24 (rval)
+
+
+State 65
+
+   50 unop: NEW .
+   51     | NEW . BYTE
+
+    BYTE  deslocar, e ir ao estado 78
+
+    $padrão  reduzir usando a regra 50 (unop)
+
+
+State 66
+
+   49 unop: '-' .
+
+    $padrão  reduzir usando a regra 49 (unop)
+
+
+State 67
+
+   25 command: ID '=' rval .
+   27        | ID '=' rval . binop rval
+
+    EQ   deslocar, e ir ao estado 79
+    NE   deslocar, e ir ao estado 80
+    LE   deslocar, e ir ao estado 81
+    GE   deslocar, e ir ao estado 82
+    '<'  deslocar, e ir ao estado 83
+    '>'  deslocar, e ir ao estado 84
+    '+'  deslocar, e ir ao estado 85
+    '-'  deslocar, e ir ao estado 86
+    '*'  deslocar, e ir ao estado 87
+    '/'  deslocar, e ir ao estado 88
+
+    $padrão  reduzir usando a regra 25 (command)
+
+    binop  ir ao estado 89
+
+
+State 68
+
+   28 command: ID '=' unop . rval
+
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 90
+
+
+State 69
+
+   30 command: ID '[' rval . ']' '=' rval
+   32        | ID '[' rval . ']' '=' BYTE rval
+
+    ']'  deslocar, e ir ao estado 91
+
+
+State 70
+
+   33 command: IF rval GOTO . LABEL
+
+    LABEL  deslocar, e ir ao estado 92
+
+
+State 71
+
+   34 command: IFFALSE rval GOTO . LABEL
+
+    LABEL  deslocar, e ir ao estado 93
+
+
+State 72
+
+   19 commands: label command nl commands .
+
+    $padrão  reduzir usando a regra 19 (commands)
+
+
+State 73
+
+   52 call: params CALL ID .
+
+    $padrão  reduzir usando a regra 52 (call)
+
+
+State 74
+
+   53 params: param nl params .
+
+    $padrão  reduzir usando a regra 53 (params)
+
+
+State 75
+
+   24 rval: ID .
+   31 command: ID '=' BYTE ID . '[' rval ']'
+
+    '['  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 24 (rval)
+
+
+State 76
+
+   26 command: ID '=' BYTE rval .
+
+    $padrão  reduzir usando a regra 26 (command)
+
+
+State 77
+
+   29 command: ID '=' ID '[' . rval ']'
+
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 95
+
+
+State 78
+
+   51 unop: NEW BYTE .
+
+    $padrão  reduzir usando a regra 51 (unop)
+
+
+State 79
+
+   39 binop: EQ .
+
+    $padrão  reduzir usando a regra 39 (binop)
+
+
+State 80
+
+   40 binop: NE .
+
+    $padrão  reduzir usando a regra 40 (binop)
+
+
+State 81
+
+   44 binop: LE .
+
+    $padrão  reduzir usando a regra 44 (binop)
+
+
+State 82
+
+   43 binop: GE .
+
+    $padrão  reduzir usando a regra 43 (binop)
+
+
+State 83
+
+   41 binop: '<' .
+
+    $padrão  reduzir usando a regra 41 (binop)
+
+
+State 84
+
+   42 binop: '>' .
+
+    $padrão  reduzir usando a regra 42 (binop)
+
+
+State 85
+
+   45 binop: '+' .
+
+    $padrão  reduzir usando a regra 45 (binop)
+
+
+State 86
+
+   46 binop: '-' .
+
+    $padrão  reduzir usando a regra 46 (binop)
+
+
+State 87
+
+   47 binop: '*' .
+
+    $padrão  reduzir usando a regra 47 (binop)
+
+
+State 88
+
+   48 binop: '/' .
+
+    $padrão  reduzir usando a regra 48 (binop)
+
+
+State 89
+
+   27 command: ID '=' rval binop . rval
+
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 96
+
+
+State 90
+
+   28 command: ID '=' unop rval .
+
+    $padrão  reduzir usando a regra 28 (command)
+
+
+State 91
+
+   30 command: ID '[' rval ']' . '=' rval
+   32        | ID '[' rval ']' . '=' BYTE rval
+
+    '='  deslocar, e ir ao estado 97
+
+
+State 92
+
+   33 command: IF rval GOTO LABEL .
+
+    $padrão  reduzir usando a regra 33 (command)
+
+
+State 93
+
+   34 command: IFFALSE rval GOTO LABEL .
+
+    $padrão  reduzir usando a regra 34 (command)
+
+
+State 94
+
+   31 command: ID '=' BYTE ID '[' . rval ']'
+
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 98
+
+
+State 95
+
+   29 command: ID '=' ID '[' rval . ']'
+
+    ']'  deslocar, e ir ao estado 99
+
+
+State 96
+
+   27 command: ID '=' rval binop rval .
+
+    $padrão  reduzir usando a regra 27 (command)
+
+
+State 97
+
+   30 command: ID '[' rval ']' '=' . rval
+   32        | ID '[' rval ']' '=' . BYTE rval
+
+    BYTE    deslocar, e ir ao estado 100
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 101
+
+
+State 98
+
+   31 command: ID '=' BYTE ID '[' rval . ']'
+
+    ']'  deslocar, e ir ao estado 102
+
+
+State 99
+
+   29 command: ID '=' ID '[' rval ']' .
+
+    $padrão  reduzir usando a regra 29 (command)
+
+
+State 100
+
+   32 command: ID '[' rval ']' '=' BYTE . rval
+
+    ID      deslocar, e ir ao estado 52
+    LITNUM  deslocar, e ir ao estado 53
+
+    rval  ir ao estado 103
+
+
+State 101
+
+   30 command: ID '[' rval ']' '=' rval .
+
+    $padrão  reduzir usando a regra 30 (command)
+
+
+State 102
+
+   31 command: ID '=' BYTE ID '[' rval ']' .
+
+    $padrão  reduzir usando a regra 31 (command)
+
+
+State 103
+
+   32 command: ID '[' rval ']' '=' BYTE rval .
+
+    $padrão  reduzir usando a regra 32 (command)

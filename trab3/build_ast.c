@@ -130,7 +130,7 @@ int handleGetIntoRule( NonTerminal rule,  int line ) {
 					case AST_WHILE:
 					case AST_RETURN:
 					case AST_ATTR:
-					case AST_OR:
+					//case AST_OR:
 					node = AST_New( AST_EXPRESSION, line );
 					insertChild( node );
 					default: 
@@ -170,8 +170,7 @@ int handleGetIntoRule( NonTerminal rule,  int line ) {
 			break;
 
 			case NT_NEW:
-				node = AST_NewAsString(AST_CALL, line, str);
-				str = NULL;
+				node = AST_New(AST_NEW, line);
 				insertChild( node );
 			break;
 
@@ -194,14 +193,13 @@ int handleGetOutRule( NonTerminal rule, int line ) {
 			case NT_ATTR:
 			case NT_BLOCK:
 			case NT_DECL_FUNCTION:
-			//case NT_COMMAND_IF:
 			case NT_TYPE:
 			case NT_PARAM:
 				_currParent = AST_GetParent( _currParent );	
 			break;
 
 			case NT_EXPRESSION:
-				if( AST_GetType( _currParent ) == AST_EXPRESSION ) {
+				if( AST_GetType( _currParent ) == AST_EXPRESSION || AST_GetType( _currParent ) == AST_OR ) {
 					_currParent = AST_GetParent( _currParent );	
 				}
 			break;
@@ -268,11 +266,9 @@ int handleGetOutRule( NonTerminal rule, int line ) {
 
 			case NT_COMMAND_IF: 
 				_currParent = AST_GetParent( _currParent );
-				//_currParent = AST_GetParent( _currParent );
 			break;
 
 			default: 
-			//_currParent = AST_GetParent( _currParent );
 			break;
 	}
 }
@@ -528,7 +524,6 @@ int handleTerminal( NonTerminal rule, Token t, int line ) {
 
 		case NT_DECL_FUNCTION:
 			switch ( tk ) {
-				
 				case TK_IDENTIFIER:
 					node = AST_NewAsString( AST_DECL_FUNCTION, line, Token_GetStringValue( t ) );
 					insertChild( node );

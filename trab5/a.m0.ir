@@ -1,0 +1,11 @@
+global a
+global b
+global lf
+fun c (b, l)
+j = 0
+g = 0
+d = 0
+f = 0
+v = 0
+$T0 = v [ 2 ] 
+$T0 = 3

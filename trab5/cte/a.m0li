@@ -1,0 +1,13 @@
+global a
+global b
+global lf
+fun c (b, l)
+j = 0
+g = 0
+d = 0
+f = 0
+$T0 = 1
+if $T0 goto .L1
+$T0 = 0
+.L1:
+f = $T0

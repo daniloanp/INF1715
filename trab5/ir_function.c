@@ -26,7 +26,7 @@ Function Function_New( char *name  ) {
 void Function_AddArg( Function func, char* s ) {
 	Args l, i;
 	l = (Args) malloc( sizeof( struct _args ) );
-	l->next = NULL;
+	l->next = NULL;	
 	l->name = (char*) malloc( sizeof( strlen( s ) +1 ) );
 	memcpy( l->name, s, strlen( s ) +1 );
 
@@ -76,12 +76,17 @@ void Function_DumpToFile( Function func, FILE * f) {
 
 CTE Function_GetLastCTE( Function func ) {
 	CTE commands = func->commands;
+	CTE nonLabel;
+
 	if( commands == NULL ) {
 		return NULL;
 	}
 	else {
 		while( commands->next ) {
 			commands = commands->next;
+			if( commands->cmd != LABEL ) {
+				nonLabel = commands;
+			}
 		}
 		return commands;
 	}
