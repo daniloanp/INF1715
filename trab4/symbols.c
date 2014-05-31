@@ -63,7 +63,7 @@ bool Symbols_DeclVar( SymbolTable* st, AST declVar ) {
    AST type;
    Symbol* sym;
    name = AST_GetStringValue( declVar );
-   sym = SymbolTable_getInScope( st, name );
+   sym = SymbolTable_get( st, name );
 
    if( ! sym ) {
       
@@ -408,6 +408,7 @@ bool Symbols_Literal( SymbolTable* st, AST lit ) {
 bool Symbols_Constants( SymbolTable* st, AST node ) {
    switch( AST_GetType( node ) ) {
       case AST_CALL:
+         printf("Line %d\n ", AST_GetLine( node ));
          return Symbols_Call( st, node );
       break;
       case AST_VAR:
@@ -519,7 +520,7 @@ bool Symbols_DeclFunction ( SymbolTable* st, AST declFunc ) {
    AST params, type = NULL,node, node_;
 
    name = AST_GetStringValue( declFunc );
-   sym = SymbolTable_getInScope (st, name );
+   sym = SymbolTable_get(st, name );
 
    if( ! sym ) {
 

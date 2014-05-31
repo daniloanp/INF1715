@@ -37,10 +37,12 @@ typedef enum {
 	NT_AND = 26,
 	NT_COMMAND_ELSE_IF = 27,
 	NT_COMMAND_ELSE = 28,
+	NT_VAR_ACCESS = 29
 } NonTerminal;
 
 typedef int (*callbackOnDerivation) ( NonTerminal rule, Token t, int line );
-bool parser( TokenList tl, callbackOnDerivation f );
+typedef int (*callbackOnRule) ( NonTerminal rule, int line );
+bool parser( TokenList tl, callbackOnDerivation terminal, callbackOnRule getInto, callbackOnRule getOut );
 
 
 #endif //REC_PARSER_H

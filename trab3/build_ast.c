@@ -170,8 +170,7 @@ int handleGetIntoRule( NonTerminal rule,  int line ) {
 			break;
 
 			case NT_NEW:
-				node = AST_NewAsString(AST_CALL, line, str);
-				str = NULL;
+				node = AST_New(AST_NEW, line);
 				insertChild( node );
 			break;
 
