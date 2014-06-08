@@ -2,13 +2,14 @@
 #include "token_list.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "mini0-lex.h"
 
 
 char header[] ="  Passou na Análise Léxica Sem Erros!!! \n\t"; 
 
-char footer[] ="\n\n\t*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados\n\t**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.\n\t***Booleanos são prefixados de $ para melhoras a visualização\n\t"; 
 
+char footer[] ="\n\n\n\t*Identificadores são impressos entre apóstrofos\n\t**Aspas \"externas\" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.\n\t***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização\n\t"; 
 //Funtion that print a Token
 int printToken(Token t)
 {
@@ -22,7 +23,7 @@ int printToken(Token t)
 	
 	switch ( Token_GetKind(t) ) {
 		case TK_INT_VAL:
-			printf( "%lu", Token_GetIntValue( t ) );
+			printf( "$%lu", Token_GetIntValue( t ) );
 		break;
 
 		case TK_STRING_VAL:
@@ -30,11 +31,11 @@ int printToken(Token t)
 		break;
 
 		case TK_IDENTIFIER:
-			printf( "%s" , Token_GetStringValue(t) );
+			printf( "'%s'" , Token_GetStringValue(t) );
 		break;
 
 		case TK_BOOL_VAL:
-			if( Token_GetIntValue( t ) ) {
+			if( Token_GetBoolValue( t ) ) {
 				printf( "$true" );
 			}
 			else {

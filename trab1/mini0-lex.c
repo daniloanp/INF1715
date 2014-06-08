@@ -55,7 +55,6 @@ TokenList generateTokens(FILE* f, bool* errors) {
 			case TK_BOOL_VAL:
 				bool_val = (strcmp(yytext, "false")==0)? false : true;
 				t = Token_NewAsBool( (TokenKind)b, line_num, bool_val );
-				// - createTokenNumberValue(aux)
 			break;
 
 			case TK_ERROR:

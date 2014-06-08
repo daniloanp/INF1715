@@ -10,11 +10,45 @@
 #include "build_ast.h"
 #include "assert.h"
 
+//Simple static local and global Stack of AST pointers
+
+typedef struct _nodeStack NodeStack;
+struct _nodeStack {
+	AST node;
+	NodeStack* prev;
+};
+static NodeStack* stack = NULL;
+
+void NodeStack_Push( AST node ) {
+	NodeStack* item = (NodeStack*)malloc( sizeof( NodeStack ) );
+	item->prev = stack;
+	item->node = node;
+	stack = item;
+}
+
+AST NodeStack_Pop(  ) {
+	AST node;
+	NodeStack* item;
+	if( stack != NULL ) {
+		item = stack; 
+		node = stack->node;
+		stack = stack->prev;
+		free(item);
+		return node;
+	}
+	else {
+		return NULL;
+	}
+}
+
+
+//END Simple stack
+
 
 static AST _root = NULL;
 static AST _currParent = NULL;
-static AST _lastOp = NULL;
-static AST _parentExp = NULL;
+
+
 
 
 static char* str = NULL;
@@ -365,8 +399,16 @@ int handleTerminal( NonTerminal rule, Token t, int line ) {
 		case NT_VAL:
 			switch ( tk ) {
 				case TK_OP_PARENTHESIS:
+					NodeStack_Push( _currParent );
+					_currParent = AST_New( AST_EXPRESSION, line );//it' also;
+					NodeStack_Push( _currParent ); 
 				break;
-				case TK_CL_PARENTHESIS:	
+
+				case TK_CL_PARENTHESIS:
+					node = NodeStack_Pop(  );
+					_currParent = NodeStack_Pop(  );
+					AST_InsertChild( _currParent, AST_GetFirstChild( node ));
+					free( node );
 				break;
 				
 				case TK_BOOL_VAL:
