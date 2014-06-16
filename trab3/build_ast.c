@@ -41,7 +41,6 @@ AST NodeStack_Pop(  ) {
 	}
 }
 
-
 //END Simple stack
 
 
@@ -164,9 +163,10 @@ int handleGetIntoRule( NonTerminal rule,  int line ) {
 					case AST_WHILE:
 					case AST_RETURN:
 					case AST_ATTR:
-					//case AST_OR:
-					node = AST_New( AST_EXPRESSION, line );
-					insertChild( node );
+						node = AST_New( AST_EXPRESSION, line );
+						insertChild( node );
+					break;
+
 					default: 
 					break;
 				}
@@ -182,9 +182,6 @@ int handleGetIntoRule( NonTerminal rule,  int line ) {
 				node = AST_NewAsString( AST_VAR , line, str ); 
 				insertChild( node );
 				str = NULL;
-			break;
-
-			case NT_ARRAY_ACCESS:
 			break;
 
 			case NT_COMMAND_WHILE: 
@@ -214,20 +211,21 @@ int handleGetIntoRule( NonTerminal rule,  int line ) {
 
 int handleGetOutRule( NonTerminal rule, int line ) {
 	switch( rule ) {
-			case NT_COMMAND_ELSE:
-			case NT_COMMAND_ELSE_IF:
+			case NT_PROGRAM:
+			case NT_TYPE:
 			case NT_DECL_VAR:
-			case NT_VAR_ACCESS:
+			case NT_DECL_FUNCTION:
+			case NT_PARAMS:
+			case NT_ATTR:
+			case NT_COMMAND_IF:
+			case NT_COMMAND_ELSE_IF:
+			case NT_COMMAND_ELSE:
 			case NT_COMMAND_WHILE:
 			case NT_COMMAND_RETURN:
 			case NT_CALL:
+			case NT_VAR_ACCESS:
 			case NT_NEW:
-			case NT_PROGRAM:
-			case NT_PARAMS:
-			case NT_ATTR:
 			case NT_BLOCK:
-			case NT_DECL_FUNCTION:
-			case NT_TYPE:
 			case NT_PARAM:
 				_currParent = AST_GetParent( _currParent );	
 			break;
@@ -257,26 +255,35 @@ int handleGetOutRule( NonTerminal rule, int line ) {
 					case AST_NOT:
 						_currParent = AST_GetParent( _currParent );	
 					break;
-					default: break;
+
+					default:
+					break;
 				}
 			break;
+
 			case NT_MUL_DIV_OP:
 				switch( AST_GetType( _currParent ) ) {
 					case AST_MUL:
 					case AST_DIV:
 						_currParent = AST_GetParent( _currParent );	
 					break;
-					default: break;
+
+					default: 
+					break;
 				}
 			break;
+
 			case NT_MIN_ADD_OP:
 				switch( AST_GetType( _currParent ) ) {
 					case AST_PLUS:
 					case AST_MINUS:
 						_currParent = AST_GetParent( _currParent );	
+					break;
+
 					default: break;
 				}
 			break;
+
 			case NT_COMPARISON_OP:
 				switch( AST_GetType( _currParent ) ) {
 					case AST_LESS_EQUAL:
@@ -286,20 +293,20 @@ int handleGetOutRule( NonTerminal rule, int line ) {
 					case AST_GREATER:
 					case AST_GREATER_EQUAL:
 						_currParent = AST_GetParent( _currParent );	
+					break;
+
 					default: break;		
 				}
 			break;
+
 			case NT_AND:
 				switch( AST_GetType( _currParent ) ) {
 					case AST_AND:
 						_currParent = AST_GetParent( _currParent );	
 					break;
+
 					default: break;
 				}
-			break;
-
-			case NT_COMMAND_IF: 
-				_currParent = AST_GetParent( _currParent );
 			break;
 
 			default: 

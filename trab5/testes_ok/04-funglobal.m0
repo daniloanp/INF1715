@@ -1,0 +1,19 @@
+x:int
+fun f(k:char)
+	y:[][]bool
+	l:int
+    y = new[20][]bool
+    k = 1//"aasdsad"
+end
+
+z:int
+
+g:int
+
+fun c()
+	w:bool
+    w = false
+    w = true and 1 = 1
+end
+
+   

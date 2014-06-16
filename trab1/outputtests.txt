@@ -1,93 +1,84 @@
 flex --header-file=lex.yy.h mini0-lex.l 
-colorgcc -Wall -o mini0-lex main.c lex.yy.c mini0-lex.h mini0-lex.c token.h token.c token_list.h token_list.c
-Teste sem erros:
+gcc -std=c99 -D_GNU_SOURCE -ggdb -Wall -o mini0-lex main.c lex.yy.c mini0-lex.h mini0-lex.c token.h token.c token_list.h token_list.c
+bash -c "source ../iterate_directory.sh; iterate_directory mini0-lex testes"
+
+==== --- |  Testing file 'testes/00-empty.m0'  | --- =====
 
 
-bash teste.sh	
-
-==== --- |  Testing file 'testes//00-empty.m0'  | --- =====
-
-  Passou na Análise Léxica Sem Erros!!! 
-	
-    1| nl 
-
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
-	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//01-multicomment1.m0'  | --- =====
+==== --- |  Testing file 'testes/01-multicomment1.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
     1| nl 
-    4| preceding nl 
-    5| afterwards nl 
-    6| preceding 
+    4| 'preceding' nl 
+    5| 'afterwards' nl 
+    6| 'preceding' 
     7| nl 
-    9| afterwards nl 
-   11| nl 
+    9| 'afterwards' nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//02-err-multicomment2.m0'  | --- =====
+==== --- |  Testing file 'testes/02-err-multicomment2.m0'  | --- =====
 
-Unclosed comment block .
+Error: Unclosed comment block .
 Lexical Error at line 1.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//03-singlecomment.m0'  | --- =====
+==== --- |  Testing file 'testes/03-singlecomment.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
     1| nl 
-    2| bla bla bla nl 
-    4| nl 
+    2| 'bla' 'bla' 'bla' nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//04-singlecomment-enter.m0'  | --- =====
+==== --- |  Testing file 'testes/04-singlecomment-enter.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| ouch nl 
+    1| 'ouch' 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//05-nesting-is-invalid.m0'  | --- =====
+==== --- |  Testing file 'testes/05-nesting-is-invalid.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| bla this is mult and div : * / nl 
-    2| nl 
+    1| 'bla' 'this' 'is' 'mult' and 'div' : * / nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//06-strings.m0'  | --- =====
+==== --- |  Testing file 'testes/06-strings.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
@@ -102,272 +93,272 @@ sou outra linha" nl
     8| "escreve-se " usando \"" nl 
     9| "" nl 
    10| " eu nao sou um comentario: /* hello */ " nl 
-   11| nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//07-err-multistring.m0'  | --- =====
+==== --- |  Testing file 'testes/07-err-multistring.m0'  | --- =====
 
 Lexical Error at line 1.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//08-ints.m0'  | --- =====
+==== --- |  Testing file 'testes/08-ints.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| 0 nl 
-    2| 1 nl 
-    3| 15 nl 
-    4| - 2 nl 
-    5| 450 nl 
-    6| 9223372036854775807 nl 
-    8| nl 
+    1| $0 nl 
+    2| $1 nl 
+    3| $15 nl 
+    4| - $2 nl 
+    5| $450 nl 
+    6| $9223372036854775807 nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//09-hex.m0'  | --- =====
+==== --- |  Testing file 'testes/09-hex.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| 16 nl 
-    2| 0 nl 
-    3| 0 x nl 
-    4| 10 nl 
-    5| 27 nl 
-    6| 43690 nl 
-    7| 160 xa nl 
-    8| 9223372036854775807 nl 
-    9| nl 
+    1| $16 nl 
+    2| $0 nl 
+    3| $0 'x' nl 
+    4| $10 nl 
+    5| $27 nl 
+    6| $43690 nl 
+    7| $160 'xa' nl 
+    8| $9223372036854775807 nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//10-maxint.m0'  | --- =====
+==== --- |  Testing file 'testes/10-maxint.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| 9223372036854775807 nl 
-    3| 9223372036854775807 nl 
-    4| nl 
+    1| $9223372036854775807 nl 
+    3| $9223372036854775807 nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//11-nl.m0'  | --- =====
+==== --- |  Testing file 'testes/11-nl.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| one nl 
-    2| another nl 
-    4| two_later nl 
-    8| three_later nl 
-   10| then_two nl 
-   14| after_a_comment nl 
-   18| after_a_line_comment nl 
-   19| nl 
+    1| 'one' nl 
+    2| 'another' nl 
+    4| 'two_later' nl 
+    8| 'three_later' nl 
+   10| 'then_two' nl 
+   14| 'after_a_comment' nl 
+   18| 'after_a_line_comment' nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//12-keywords.m0'  | --- =====
+==== --- |  Testing file 'testes/12-keywords.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| if else end while loop fun return new goto string int char bool $true $false and or not nl 
+    1| if else end while loop fun return new 'goto' string int char bool $true $false and or not nl 
     2| "this and that are not keywords" nl 
-    4| function nl 
+    4| 'function' nl 
     5| < end > nl 
     6| <= end = > nl 
-    7| ( x > 2 ) and ( y < 3 ) nl 
-    8| returnif nl 
-    9| andor nl 
-   10| nl 
+    7| ( 'x' > $2 ) and ( 'y' < $3 ) nl 
+    8| 'returnif' nl 
+    9| 'andor' nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//13-ids.m0'  | --- =====
+==== --- |  Testing file 'testes/13-ids.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
     1| nl 
-    2| a a0 _ _A nl 
-    4| _0 nl 
-    5| __ nl 
-    6| ___ nl 
-    7| ____ nl 
-    8| _____ nl 
-    9| ____ nl 
-   10| ___ nl 
-   11| __ nl 
-   12| _ nl 
-   13| _0 nl 
-   15| a_ A_ Z nl 
-   17| 0 a 0 foo123 foo nl 
-   19| ovo nl 
-   20| nl 
+    2| 'a' 'a0' '_' '_A' nl 
+    4| '_0' nl 
+    5| '__' nl 
+    6| '___' nl 
+    7| '____' nl 
+    8| '_____' nl 
+    9| '____' nl 
+   10| '___' nl 
+   11| '__' nl 
+   12| '_' nl 
+   13| '_0' nl 
+   15| 'a_' 'A_' 'Z' nl 
+   17| $0 'a' $0 'foo123' 'foo' nl 
+   19| 'ovo' nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//14-invalidids.m0'  | --- =====
+==== --- |  Testing file 'testes/14-invalidids.m0'  | --- =====
 
 Lexical Error at line 2.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//15-punct.m0'  | --- =====
+==== --- |  Testing file 'testes/15-punct.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
     1| ( ) , : > < >= <= = <> [ ] + - * / nl 
-    2| ( a ) nl 
-    3| ( ( a ) ) nl 
+    2| ( 'a' ) nl 
+    3| ( ( 'a' ) ) nl 
     4| ( ( ) ) nl 
-    5| x : string nl 
-    6| x [ i ] nl 
-    7| table [ 18 ] nl 
+    5| 'x' : string nl 
+    6| 'x' [ 'i' ] nl 
+    7| 'table' [ $18 ] nl 
     8| >= nl 
     9| <= nl 
    10| > < nl 
    11| <> nl 
    12| < <> > nl 
-   13| nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//16-punctbrk.m0'  | --- =====
+==== --- |  Testing file 'testes/16-punctbrk.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| i + + nl 
-    2| - - i nl 
+    1| 'i' + + nl 
+    2| - - 'i' nl 
     3| * / nl 
-    7| if x >= - 1 nl 
-   10| nl 
+    7| if 'x' >= - $1 nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//50-allanschottler.m0'  | --- =====
+==== --- |  Testing file 'testes/50-allanschottler.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
     1| nl 
-    2| fun foo ( var : bool , _var2 : int ) : string nl 
-    4| if 250 <> var2 nl 
-    6| intarray : new [ 2 ] int nl 
-    7| _int : int nl 
-    8| a : string nl 
-    9| int2 : int nl 
-   11| a = "string" nl 
-   13| _int = 46 + ( 46 - 2 ) nl 
-   14| _int = _int / 2 nl 
+    2| fun 'foo' ( 'var' : bool , '_var2' : int ) : string nl 
+    4| if $250 <> 'var2' nl 
+    6| 'intarray' : new [ $2 ] int nl 
+    7| '_int' : int nl 
+    8| 'a' : string nl 
+    9| 'int2' : int nl 
+   11| 'a' = "string" nl 
+   13| '_int' = $46 + ( $46 - $2 ) nl 
+   14| '_int' = '_int' / $2 nl 
    19| end nl 
-   21| return a nl 
+   21| return 'a' nl 
    23| end nl 
-   24| nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//51-daniloanp-erro1.m0'  | --- =====
+==== --- |  Testing file 'testes/51-daniloanp-erro1.m0'  | --- =====
 
 Lexical Error at line 5.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//52-daniloanp-erro2.m0'  | --- =====
+==== --- |  Testing file 'testes/52-daniloanp-erro2.m0'  | --- =====
 
 Lexical Error at line 8.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//52-daniloanp-ok.m0'  | --- =====
+==== --- |  Testing file 'testes/52-daniloanp-ok.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| if ( a > 12 and b < 10 ) then nl 
-    2| printf ( a ) nl 
-    3| next ( b , 20 ) nl 
+    1| if ( 'a' > $12 and 'b' < $10 ) 'then' nl 
+    2| 'printf' ( 'a' ) nl 
+    3| 'next' ( 'b' , $20 ) nl 
     4| end nl 
-    6| while life_is_going nl 
-    7| increaseHappiness ( current_happiness + 1 ) nl 
+    6| while 'life_is_going' nl 
+    7| 'increaseHappiness' ( 'current_happiness' + $1 ) nl 
     8| loop nl 
    10| "danilo
 	André
 	do Nascimento
 	
 	Rio de Janeiro\	Estudante da "PUC-Rio"" nl 
-   12| print ( "'André do Nascimento'" ) nl 
-   14| if foo = $true nl 
-   18| led = - 14 nl 
+   12| 'print' ( "'André do Nascimento'" ) nl 
+   14| if 'foo' = $true nl 
+   18| 'led' = - $14 nl 
    22| else if nl 
-   23| luz = 12 nl 
+   23| 'luz' = $12 nl 
    24| else if nl 
-   25| vila = 25 nl 
+   25| 'vila' = $25 nl 
    26| else nl 
-   27| amizade = amizada + 10 nl 
+   27| 'amizade' = 'amizada' + $10 nl 
    28| end nl 
-   30| foo bar "bla
+   30| 'foo' 'bar' "bla
 " "hello world" nl 
-   32| foo "weeee" foo foo nl 
-   33| bar nl 
-   34| bar bar nl 
-   40| dsakjdshjsdasdsajhashjds nl 
-   41| 1 nl 
-   42| 20 nl 
-   43| 522 nl 
-   44| 15 + 48 nl 
-   45| 4015 nl 
+   32| 'foo' "weeee" 'foo' 'foo' nl 
+   33| 'bar' nl 
+   34| 'bar' 'bar' nl 
+   40| 'dsakjdshjsdasdsajhashjds' nl 
+   41| $1 nl 
+   42| $20 nl 
+   43| $522 nl 
+   44| $15 + $48 nl 
+   45| $4015 nl 
    46| ( nl 
    47| ) nl 
    48| , nl 
@@ -385,169 +376,171 @@ Lexical Error at line 8.
    60| - nl 
    61| * nl 
    62| / nl 
-   64| 1 + 2 + 3 = x nl 
+   64| $1 + $2 + $3 = 'x' 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//53-jpfabris-aloc.m0'  | --- =====
+==== --- |  Testing file 'testes/53-jpfabris-aloc.m0'  | --- =====
 
 Lexical Error at line 1.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//54-jpfabris-exp.m0'  | --- =====
+==== --- |  Testing file 'testes/54-jpfabris-exp.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| fun main ( ) : bool nl 
-    2| a : new [ 20 ] char nl 
-    3| a = "Teste Lexico" nl 
-    4| b : new int nl 
-    5| b = 10 nl 
-    6| c : new int nl 
-    7| c = 25 nl 
-    8| if c > b nl 
-    9| b = b * 3 nl 
-   10| while c <> 0 nl 
-   11| c = c - 1 nl 
-   12| return c and b nl 
-   13| nl 
+    1| fun 'main' ( ) : bool nl 
+    2| 'a' : new [ $20 ] char nl 
+    3| 'a' = "Teste Lexico" nl 
+    4| 'b' : new int nl 
+    5| 'b' = $10 nl 
+    6| 'c' : new int nl 
+    7| 'c' = $25 nl 
+    8| if 'c' > 'b' nl 
+    9| 'b' = 'b' * $3 nl 
+   10| while 'c' <> $0 nl 
+   11| 'c' = 'c' - $1 nl 
+   12| return 'c' and 'b' nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//55-jpfabris-test.m0'  | --- =====
+==== --- |  Testing file 'testes/55-jpfabris-test.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| fun soma ( a : int , b : int ) : int 
+    1| fun 'soma' ( 'a' : int , 'b' : int ) : int 
    32| nl 
-   33| a nl 
-   34| a nl 
-   35| * / a nl 
-   36| a nl 
-   37| * * * * * * / a nl 
-   38| a * * * nl 
-   40| fun main ( ) nl 
-   41| a : new [ 20 ] char nl 
-   42| a = "Testando primeira string" nl 
-   43| a = "Testando em 
+   33| 'a' nl 
+   34| 'a' nl 
+   35| * / 'a' nl 
+   36| 'a' nl 
+   37| * * * * * * / 'a' nl 
+   38| 'a' * * * nl 
+   40| fun 'main' ( ) nl 
+   41| 'a' : new [ $20 ] char nl 
+   42| 'a' = "Testando primeira string" nl 
+   43| 'a' = "Testando em 
  duas linhas" nl 
-   44| a = "\
+   44| 'a' = "\
  Uma linha" nl 
-   45| a = "\
+   45| 'a' = "\
 
  Mais um espaco" nl 
    47| return nl 
-   49| nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//56-malelu-comentario_aberto.m0'  | --- =====
+==== --- |  Testing file 'testes/56-malelu-comentario_aberto.m0'  | --- =====
 
-Unclosed comment block .
+Error: Unclosed comment block .
 Lexical Error at line 4.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//57-malelu-comentario.m0'  | --- =====
+==== --- |  Testing file 'testes/57-malelu-comentario.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| fun main ( ) : int nl 
+    1| fun 'main' ( ) : int nl 
     3| end nl 
-    4| nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//58-malelu-exp.m0'  | --- =====
+==== --- |  Testing file 'testes/58-malelu-exp.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| fun main ( ) : int nl 
-    2| a : int nl 
-    3| _b : int nl 
-    4| C : bool nl 
-    5| variavel : string nl 
-    6| A_ : [ ] char nl 
-    7| a = 8 nl 
-    8| _b = 52 nl 
-    9| C = $true nl 
-   11| if a = 8 or _b <> 9 nl 
-   12| variavel = "marina" nl 
-   13| else if a <= 4 and _b > 0 nl 
-   14| return 4 * 5 - 4 + 1 / ( 1 + 3 ) nl 
-   16| while not C nl 
-   17| func ( 5 , 6 ) nl 
+    1| fun 'main' ( ) : int nl 
+    2| 'a' : int nl 
+    3| '_b' : int nl 
+    4| 'C' : bool nl 
+    5| 'variavel' : string nl 
+    6| 'A_' : [ ] char nl 
+    7| 'a' = $8 nl 
+    8| '_b' = $52 nl 
+    9| 'C' = $true nl 
+   11| if 'a' = $8 or '_b' <> $9 nl 
+   12| 'variavel' = "marina" nl 
+   13| else if 'a' <= $4 and '_b' > $0 nl 
+   14| return $4 * $5 - $4 + $1 / ( $1 + $3 ) nl 
+   16| while not 'C' nl 
+   17| 'func' ( $5 , $6 ) nl 
    18| end nl 
-   20| nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//59-malelu-str_aberta.m0'  | --- =====
+==== --- |  Testing file 'testes/59-malelu-str_aberta.m0'  | --- =====
 
 Lexical Error at line 3.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//60-malelu-str.m0'  | --- =====
+==== --- |  Testing file 'testes/60-malelu-str.m0'  | --- =====
 
 Lexical Error at line 14.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//61-ojunqueira-general1.m0'  | --- =====
+==== --- |  Testing file 'testes/61-ojunqueira-general1.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
     1| nl 
-    9| p : " ola ola " nl 
-   14| x <> 3 nl 
-   15| _ < 3 nl 
-   16| y = 4 + 6 nl 
-   17| temp = 0 nl 
-   18| _temp = 2 - 10 nl 
-   19| _temp2 = 4 nl 
-   21| if ( x <= 5 ) nl 
-   22| y = 2 nl 
-   23| end nl 
+    9| 'p' : " ola ola " nl 
+   14| 'x' <> $3 nl 
+   15| '_' < $3 nl 
+   16| 'y' = $4 + $6 nl 
+   17| 'temp' = $0 nl 
+   18| '_temp' = $2 - $10 nl 
+   19| '_temp2' = $4 nl 
+   21| if ( 'x' <= $5 ) nl 
+   22| 'y' = $2 nl 
+   23| end 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//62-ojunqueira-keyword1.m0'  | --- =====
+==== --- |  Testing file 'testes/62-ojunqueira-keyword1.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
@@ -555,22 +548,23 @@ Lexical Error at line 14.
     2| char nl 
     3| fun loop nl 
     4| bool nl 
-    5| if then else nl 
+    5| if 'then' else nl 
     6| end nl 
     7| $true nl 
     8| $false nl 
     9| and or not nl 
-   10| new number nl 
-   11| return nl 
+   10| new 'number' nl 
+   11| return 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//63-ojunqueira-operator1.m0'  | --- =====
+==== --- |  Testing file 'testes/63-ojunqueira-operator1.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
@@ -585,53 +579,54 @@ Lexical Error at line 14.
     9| - nl 
    10| [ ] nl 
    11| * nl 
-   12| / nl 
+   12| / 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 
 
-==== --- |  Testing file 'testes//64-ojunqueira-string1.m0'  | --- =====
+==== --- |  Testing file 'testes/64-ojunqueira-string1.m0'  | --- =====
 
 Lexical Error at line 3.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//65-lhpelosi.m0'  | --- =====
+==== --- |  Testing file 'testes/65-lhpelosi.m0'  | --- =====
 
 Lexical Error at line 52.
 
 ------- x -------
 
 
-==== --- |  Testing file 'testes//correct_syntax_2.m0'  | --- =====
+==== --- |  Testing file 'testes/correct_syntax_2.m0'  | --- =====
 
   Passou na Análise Léxica Sem Erros!!! 
 	
-    1| h : int nl 
-    2| f : [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] int nl 
-    4| fun b ( ) : [ ] [ ] [ ] int nl 
-    5| print ( a ) nl 
+    1| 'h' : int nl 
+    2| 'f' : [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] int nl 
+    4| fun 'b' ( ) : [ ] [ ] [ ] int nl 
+    5| 'print' ( 'a' ) nl 
     6| end nl 
-    8| fun c ( ) nl 
-    9| h = not a nl 
+    8| fun 'c' ( ) nl 
+    9| 'h' = not 'a' nl 
    10| end nl 
-   12| fun c ( ) nl 
-   13| h = not a - a nl 
-   14| h = not a nl 
-   15| h = - b nl 
-   16| h = - - - - - - - - a nl 
-   17| l = c ( 12 and 65 - 32 , not a + b , 27 * 2321 / 3 + "Only the Love can save us" - $true + $false , ( printf ( "aaaa%xaaa" , 18 ) * ( - 12 ) ) ) nl 
+   12| fun 'c' ( ) nl 
+   13| 'h' = not 'a' - 'a' nl 
+   14| 'h' = not 'a' nl 
+   15| 'h' = - 'b' nl 
+   16| 'h' = - - - - - - - - 'a' nl 
+   17| 'l' = 'c' ( $12 and $65 - $32 , not 'a' + 'b' , $27 * $2321 / $3 + "Only the Love can save us" - $true + $false , ( 'printf' ( "aaaa%xaaa" , $18 ) * ( - $12 ) ) ) nl 
    18| end nl 
-   62| nl 
 
-	*Constantes(Identificadores, Strings, Inteiros, Caracteres e Booleanos) são impressos como seus valores armazenados
-	**Aspas e apóstrofos não fazem parte de Strings ou caracteres,respectivamente. Estas são impressas somente pra melhorar a visualização.
-	***Booleanos são prefixados de $ para melhoras a visualização
+
+	*Identificadores são impressos entre apóstrofos
+	**Aspas "externas" não fazem parte das strings. Estas são impressas somente pra melhorar a visualização.
+	***Booleanos e Inteiros são prefixados de cifrão($) para melhorar a visualização
 	
 ------- x -------
 

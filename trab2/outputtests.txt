@@ -1,0 +1,296 @@
+cd ../trab1/ && rm -f lex.yy.c && make lex.yy.c
+make[1]: Entering directory '/home/danilo/puc-rio/INF1715/trab1'
+flex --header-file=lex.yy.h mini0-lex.l 
+make[1]: Leaving directory '/home/danilo/puc-rio/INF1715/trab1'
+cd ../trab2/
+gcc -std=c99 -D_GNU_SOURCE -ggdb -o mini0-parser main.c recursive_parser.c recursive_parser.h ../trab1/token.h ../trab1/token.c ../trab1/token_list.h ../trab1/token_list.c ../trab1/lex.yy.h ../trab1/lex.yy.c ../trab1/mini0-lex.h ../trab1/mini0-lex.c 
+bash -c "source ../iterate_directory.sh; iterate_directory mini0-parser testes"
+
+==== --- |  Testing file 'testes/00-fail-empty.m0'  | --- =====
+
+Error. The file is Empty.
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/01-global.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/02-fun.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/03-nls.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/04-funglobal.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/05-params.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/06-declvar.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/07-if.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/08-fail-else.m0'  | --- =====
+
+Error at Line 4.
+An expression was expected but got '='.
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/09-fail-elseif.m0'  | --- =====
+
+Error at Line 5.
+An expression was expected but got 'nl'.
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/10-fail-if.m0'  | --- =====
+
+Error at Line 3.
+The expected was 'nl' but got 'ID'
+------- x -------
+
+
+==== --- |  Testing file 'testes/11-ifdecl.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/12-while.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/13-fail-while.m0'  | --- =====
+
+Error at Line 8.
+The expected was 'loop' but got 'end'
+------- x -------
+
+
+==== --- |  Testing file 'testes/14-ifwhile.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/15-fail-ifwhile.m0'  | --- =====
+
+Error at Line 7.
+An expression was expected but got '='.
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/16-atrib.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/17-call.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/18-fail-call.m0'  | --- =====
+
+Error at Line 5.
+The expected was '=' but got '('
+------- x -------
+
+
+==== --- |  Testing file 'testes/19-callargs.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/19-fail-callargs.m0'  | --- =====
+
+Error at Line 3.
+An expression was expected but got 'int'.
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/20-return.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/21-arrays.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/21-return-noargs.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/22-exp.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/22-fail-exp.m0'  | --- =====
+
+Error at Line 3.
+An expression was expected but got 'or'.
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/23-fail-fun.m0'  | --- =====
+
+Error at Line 2.
+The expected was 'ID' but got 'nl'
+------- x -------
+
+
+==== --- |  Testing file 'testes/24-fail-fun2.m0'  | --- =====
+
+Error at Line 2.
+The expected was 'ID' but got '('
+------- x -------
+
+
+==== --- |  Testing file 'testes/25-fail-fun3.m0'  | --- =====
+
+Error at Line 2.
+The expected was ')' but got 'INT_VAL'
+------- x -------
+
+
+==== --- |  Testing file 'testes/26-fail-fun4.m0'  | --- =====
+
+Error at Line 2.
+The expected was ':' but got '('
+------- x -------
+
+
+==== --- |  Testing file 'testes/27-fail-global.m0'  | --- =====
+
+Error at Line 2.
+The expected was 'a type' but got 'ID'
+------- x -------
+
+
+==== --- |  Testing file 'testes/28-fail-block.m0'  | --- =====
+
+Error at Line 4.
+Expected a function call or attribution, but got :
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/29-fail-params.m0'  | --- =====
+
+Error at Line 2.
+The expected was 'ID' but got ')'
+------- x -------
+
+
+==== --- |  Testing file 'testes/30-fail-param.m0'  | --- =====
+
+Error at Line 2.
+The expected was ':' but got ','
+------- x -------
+
+
+==== --- |  Testing file 'testes/31-fail-type.m0'  | --- =====
+
+Error at Line 2.
+The expected was 'nl' but got '['
+------- x -------
+
+
+==== --- |  Testing file 'testes/32-fail-declvar.m0'  | --- =====
+
+Error at Line 3.
+The expected was 'nl' but got '('
+------- x -------
+
+
+==== --- |  Testing file 'testes/33-fail-missingexp.m0'  | --- =====
+
+Error at Line 7.
+An expression was expected but got 'nl'.
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/34-fail-invalidexp.m0'  | --- =====
+
+Error at Line 3.
+An expression was expected but got '='.
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/35-expprio.m0'  | --- =====
+
+Correct Syntax!!!
+
+------- x -------
+
+
+==== --- |  Testing file 'testes/36-fail-roottoken.m0'  | --- =====
+
+Error at line 1.
+Expected 'fun' or an 'identifier' but got 'if'
+
+------- x -------
+

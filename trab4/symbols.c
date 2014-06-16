@@ -245,7 +245,6 @@ bool Symbols_BoolBinOp( SymbolTable* st, AST op ) {
    SymbolType tp;
    AST node;
    node = AST_GetFirstChild( op );
-   //Só vai ter dois mesmo...
    while( node != NULL) {
       ret = Symbols_ExpressionDescendants( st, node );
       if( !ret ) {
@@ -315,6 +314,7 @@ bool Symbols_IntBinOp( SymbolTable* st, AST op ) {
    bool ret;
    SymbolType tp;
    AST node;
+   ASTNodeType nodeTp = AST_GetType( op );
    //Primeiro Filho
    node = AST_GetFirstChild( op );
    //Só vai ter dois mesmo...
@@ -332,8 +332,12 @@ bool Symbols_IntBinOp( SymbolTable* st, AST op ) {
       }      
    node = AST_GetNextSibling( node );
    }
-
-   tp = SYM_NewSymbolType( SYM_INT, 0 );
+   if( nodeTp == AST_PLUS || nodeTp == AST_MUL || nodeTp == AST_MINUS || nodeTp == AST_DIV ) {
+      tp = SYM_NewSymbolType( SYM_INT, 0 );
+   }
+   else {
+      tp = SYM_NewSymbolType( SYM_BOOL, 0 );  
+   }
    AST_SetSymType(op, tp);
 
    return true;
@@ -354,6 +358,11 @@ bool Symbols_Operators( SymbolTable* st, AST node ) {
 
       case AST_NOT:
          return Symbols_NotOp( st, node );
+      break;
+
+      case AST_EQUAL:
+      case AST_DIFFERENT:
+
       break;
 
       default: //Só pode ser IntBinOP
@@ -556,9 +565,11 @@ bool Symbols_DeclFunction ( SymbolTable* st, AST declFunc ) {
    }
    else {
       if( SYM_IsFunctionType( sym->type ) ) {
-         return fail( "Redeclared function!", name, declFunc );
+         fail( "Redeclared function!", name, declFunc );
       }
-      fprintf(stderr,  "Redeclared name, previous declared as variable at line %d! - error at line %d\n", sym->line, AST_GetLine(declFunc) );
+      else {
+         fprintf(stderr,  "Redeclared name, previous declared as variable at line %d! - error at line %d\n", sym->line, AST_GetLine(declFunc) );
+      }
       return false;
    }
 }

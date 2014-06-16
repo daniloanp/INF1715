@@ -38,7 +38,7 @@ static TokenList comparisonOp( TokenList tl);
 static TokenList and( TokenList tl );
 
 static unsigned long line = 0;
-
+static char c = 0;
 
 
 
@@ -50,6 +50,7 @@ static callbackOnRule actinOnGetIntoRule = NULL;
 static callbackOnRule actinOnGetOutRule = NULL;
 
 static int callOnConsumeTerminal( NonTerminal rule, Token t, int line ) {
+	//scanf( "%c", &c);
 	if( actinOnTerminal != NULL && !hasErrors ) {
 		return actinOnTerminal( rule, t, line );
 	} 
@@ -95,9 +96,9 @@ static void printError(int line, char *expected, char *got) {
 
 static TokenList processTerminal( NonTerminal rule, TokenList tl, TokenKind tk ) {
 	Token t = TokenList_GetCurrentToken( tl );
-	if( hasErrors )
+	if( hasErrors ) {
 		return NULL;
-
+	}
 	else if ( tl == NULL ) {
 		if ( !hasErrors ) {
 		
@@ -119,11 +120,16 @@ static TokenList processTerminal( NonTerminal rule, TokenList tl, TokenKind tk )
 }
 
 static void getIntoRule( NonTerminal rule ) {
-	callOnGetIntoRule( rule, line );
+	if( ! hasErrors ) {
+		callOnGetIntoRule( rule, line );
+	}
 }
 
 static void getOutRule( NonTerminal rule ) {
-	callOnGetOutRule( rule, line );
+	if( ! hasErrors ) {
+		callOnGetOutRule( rule, line );
+	}
+	
 }
 
 /*
@@ -139,8 +145,8 @@ static TokenList type( TokenList tl ) {
 	
 
 	while( verifyCurrentToken( tl, TK_OP_BRACKET ) ) {
-				tl = processTerminal(NT_TYPE, tl, TK_OP_BRACKET );
-				tl = processTerminal(NT_TYPE, tl, TK_CL_BRACKET );	
+		tl = processTerminal(NT_TYPE, tl, TK_OP_BRACKET );
+		tl = processTerminal(NT_TYPE, tl, TK_CL_BRACKET );	
 	}
 
 	t = TokenList_GetCurrentToken( tl );
@@ -555,7 +561,7 @@ static TokenList commandWhile( TokenList tl ) {
 	tl = processTerminal( NT_COMMAND_WHILE, tl, TK_NL );
 	tl = block( tl );
 	tl = processTerminal( NT_COMMAND_WHILE, tl, TK_LOOP );
-	getOutRule( NT_COMMAND_ATTR_OR_CALL );
+	getOutRule( NT_COMMAND_WHILE );
 	return tl;
 }
 
@@ -678,12 +684,13 @@ static TokenList command( TokenList tl ) {
 				Token t = TokenList_GetCurrentToken( tl );
 				//printf( "\nToken: %s ", Token_GetStringForKind(t));
 				printf( "Error at Line %d.\nExpected identifier, if, return or while but got %s.\n", Token_GetLine(t), Token_GetStringForKind(t) );
-				return NULL;
+				tl =  NULL;
 			}
 		break;
 	}
+	tl = processTerminal( NT_COMMAND, tl, TK_NL );
 	getOutRule( NT_COMMAND );
-	return processTerminal( NT_COMMAND, tl, TK_NL );
+	return tl;
 };
 
 
@@ -700,17 +707,19 @@ static TokenList block( TokenList tl ) {
 		tl = declOrCommand( tl );//Recursividade
 	}
 	tlf = NULL;
-	while( tlf!=tl && tl ) {
+	while( (tl && tlf!=tl) || tlf ) {
 		t = TokenList_GetCurrentToken( tl );	
 		tlf = tl;
-		switch( Token_GetKind( t ) ) {
-			case TK_ELSE: case TK_END: case TK_LOOP:
-			break;
-
-			default:
-				tl = command( tl );
+		if( verifyCurrentToken( tl, TK_END) ||
+		 	verifyCurrentToken( tl, TK_LOOP ) || 
+		 	verifyCurrentToken( tl, TK_ELSE) 
+			) {
 			break;
 		}
+		else {
+			tl = command( tl );
+		}
+		
 	}
 	getOutRule( NT_BLOCK );
 	return tl;
@@ -781,7 +790,7 @@ static TokenList program( TokenList tl ) {
 	if(tl == NULL) {
 		printf("Error. The file is Empty.\n");
 		hasErrors = true;
-		return tl;
+		tl = NULL;
 	}
 
 	// "{NL}"

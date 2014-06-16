@@ -28,7 +28,7 @@ char * getOutPutFileName( char *inputf ) {
 	*c = '\0'; c++;
 	return s;
 }
-int main( int argc, char **argv ) {	
+int main( int argc, char **argv ) {
 	bool hasErrors;
 	FILE *input;
 	FILE *output;
@@ -58,6 +58,7 @@ int main( int argc, char **argv ) {
 	hasErrors = hasErrors || (! Symbols_annotate( tree ));
 
 	if ( ! hasErrors ) {
+			printf( "oi ");
 			IRCode code = buildIRCode( tree );
 			outputName = getOutPutFileName( argv[0] );
 			output = fopen( outputName, "w" );

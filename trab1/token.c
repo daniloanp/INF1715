@@ -68,16 +68,26 @@ static char* _fixString(char *s) {
 		}
 		if( *s=='\\' ) {
 			switch (*(s+1)) {
+				
 				case 'n':
-					t[i] = '\n'; break;
+					t[i] = '\n'; 
+				break;
+
 				case 't':
-					t[i] = '\t'; break;
+					t[i] = '\t';
+				break;
+
 				case '\\':
-					t[i] = '\\'; break;
+					t[i] = '\\';
+				break;
+
 				case '\"':
-					t[i] = '\"'; break;
+					t[i] = '\"';
+				break;
+
 				default: 
-					i--;break;
+					i--;
+				break;
 			}
 			++i;
 			++s;

@@ -1,0 +1,8 @@
+fun foo ()
+fun foo1 (x)
+fun foo2 (x, y)
+fun foo3 (x, y)
+fun foo4 ()
+fun foo5 (x)
+fun foo6 (x, y)
+fun foo7 (x, y)

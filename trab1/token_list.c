@@ -14,10 +14,6 @@ TokenList TokenList_New( Token t ) {
 	}
 	TokenList tl = NULL;
 	tl = (TokenList)malloc(sizeof(struct struct_token_list));
-	if ( !tl ) {
-		fprintf(stderr, "Malloc has failed! at TokenList_New function in the token_list.c file" );
-		return NULL;
-	}
 	tl->previous = NULL;
 	tl->next = NULL;
 	tl->token = t;
@@ -43,8 +39,9 @@ int TokenList_Destroy(TokenList tl) {
 
 int TokenList_Free(TokenList tl) {
 	TokenList next;
-	if(tl == NULL)
+	if(tl == NULL) {
 		return 1;
+	}
 	tl = TokenList_GetFirst(tl);
 	next = tl->next;
 
@@ -140,7 +137,7 @@ TokenList TokenList_GetLast( TokenList tl )
 
 TokenList TokenList_ExecuteForEach(TokenList tl, tokenCallBack func)
 {
-	tl = TokenList_GetFirst(tl);//Safe
+	tl = TokenList_GetFirst(tl);
 	for( ; tl != NULL; tl = tl->next ) {
 		func(tl->token);
 	}

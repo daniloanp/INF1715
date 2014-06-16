@@ -1,0 +1,1 @@
+make: *** No rule to make target 'mini0-ast', needed by 'test'.  Pare.

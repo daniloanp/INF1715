@@ -71,8 +71,6 @@ AST AST_InsertChild( AST parent, AST child ) {
 	child->prevSibling = sibling;
 	
 	return child;
-
-
 }
 
 AST AST_InsertSibling( AST sibling, AST newSibling ) {

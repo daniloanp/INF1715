@@ -29,7 +29,6 @@ void handleCmd( CTE cte, Endr* endr ) {
 		case ATTR_TO_ARR:
 		case ATTR_BYTE_TO_ARR:
 			cte->args[2] = endr[2];
-		
 		case ATTR_SIMPLE:
 		case ATTR_BYTE:
 		case ATTR_NOT:
@@ -100,6 +99,7 @@ static void Endr_DumpToFile( Endr e, FILE *f ) {
 		case ENDR_RETEXP:
 			fprintf( f,"$ret" );
 		break;
+		
 		default: break;
 	
 	
@@ -180,7 +180,7 @@ static void printCMD( CTE cte, FILE* f ) {
 			Endr_DumpToFile( cte->args[0], f);
 			fprintf(f, " = ");
 			Endr_DumpToFile( cte->args[1], f);
-			fprintf(f, " = ");
+			fprintf(f, " == ");
 			Endr_DumpToFile( cte->args[2], f);
 		break;
 		
@@ -280,24 +280,24 @@ static void printCMD( CTE cte, FILE* f ) {
 			Endr_DumpToFile( cte->args[0], f);
 		break;
 		case CALL:
-			fprintf(f, " call ");	
+			fprintf(f, "call ");	
 			Endr_DumpToFile( cte->args[0], f);
 		break;
 		case PARAM:
-			fprintf(f, " param ");	
+			fprintf(f, "param ");	
 			Endr_DumpToFile( cte->args[0], f);
 		break;
 		case RET_VAL:
-			fprintf(f, " ret ");	
+			fprintf(f, "ret ");	
 			Endr_DumpToFile( cte->args[0], f);
 		break;
 			
 		case RET:
-			fprintf(f, " ret ");	
+			fprintf(f, "ret ");	
 		break;
 		case LABEL:
 			Endr_DumpToFile( cte->args[0], f);
-			printf(":");
+			fprintf(f, 	":");
 		break;
 
 		default: break;

@@ -1,0 +1,17 @@
+fun fibo (i)
+$T0 = i <= 1
+ifFalse $T0 goto .L2
+ret 1
+goto .L1
+.L2:
+$T2 = i - 1
+param $T2
+call fibo
+$T1 = $ret
+$T3 = i - 2
+param $T3
+call fibo
+$T4 = $T1 + $ret
+ret $T4
+.L1:
+ret 

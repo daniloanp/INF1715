@@ -10,7 +10,7 @@ bash -c "source ../iterate_directory.sh; iterate_directory mini0-parser testes"
 
 Valid Program!!!
    Program
-      DeclVar '(i)'
+      DeclVar '(i)'  TYPE: INT
          tp_int(0)
 
 ------- x -------
@@ -20,7 +20,7 @@ Valid Program!!!
 
 Valid Program!!!
    Program
-      fun '(f)'
+      fun '(f)'  TYPE: FUN VOID
          Block
 
 ------- x -------
@@ -28,131 +28,110 @@ Valid Program!!!
 
 ==== --- |  Testing file 'testes/03-nls.m0'  | --- =====
 
+undeclared variable! - i at line 5
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/04-funglobal.m0'  | --- =====
 
+Redeclared variable, previous declared at line 1! - error at line 3
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/05-params.m0'  | --- =====
 
+Redeclared name, previous declared as variable at line 2! - error at line 5
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/06-declvar.m0'  | --- =====
 
+Non-numerical expression used with numerical operator - at line 11
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/07-if.m0'  | --- =====
 
+undeclared variable! - a at line 3
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/11-ifdecl.m0'  | --- =====
 
+undeclared variable! - a at line 3
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/12-while.m0'  | --- =====
 
+undeclared function! - printf at line 6
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/14-ifwhile.m0'  | --- =====
 
+undeclared function! - printf at line 10
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/16-atrib.m0'  | --- =====
 
-Valid Program!!!
-   Program
-      DeclVar '(i)'
-         tp_int(0)
-      fun '(f)'
-         ParamList
-            Param '(i)'
-               tp_int(0)
-         tp_int(0)
-         Block
-            DeclVar '(b)'
-               tp_char(1)
-            Attr
-               Var '(b)'
-               Exp
-                  strVal: "10"
-            Attr
-               Var '(i)'
-               Exp
-                  +
-                     Var '(i)'
-                     int: '(3)'
-      fun '(g)'
-         tp_bool(0)
-         Block
-            DeclVar '(i)'
-               tp_int(0)
-            Attr
-               Var '(i)'
-               Exp
-                  Call '(f)'
-                     Exp
-                        int: '(1)'
+Redeclared variable, previous declared at line 2! - error at line 11
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/17-call.m0'  | --- =====
 
-Valid Program!!!
+Line 7
+ Line 7
+ Valid Program!!!
    Program
-      fun '(fibo)'
+      fun '(fibo)'  TYPE: FUN INT
          ParamList
-            Param '(i)'
+            Param '(i)'  TYPE: INT
                tp_int(0)
          tp_int(0)
          Block
             If
-               Exp
-                  <=
-                     Var '(i)'
-                     int: '(1)'
+               Exp  TYPE: INT
+                  <=  TYPE: INT
+                     Var '(i)'  TYPE: INT
+                     int: '(1)'  TYPE: INT
                Block
                   Return
-                     Exp
-                        int: '(1)'
+                     Exp  TYPE: INT
+                        int: '(1)'  TYPE: INT
                Else
                   Block
                      Return
-                        Exp
-                           +
-                              Call '(fibo)'
-                                 Exp
-                                    -
-                                       Var '(i)'
-                                       int: '(1)'
-                              Call '(fibo)'
-                                 Exp
-                                    -
-                                       Var '(i)'
-                                       int: '(2)'
+                        Exp  TYPE: INT
+                           +  TYPE: INT
+                              Call '(fibo)'  TYPE: INT
+                                 Exp  TYPE: INT
+                                    -  TYPE: INT
+                                       Var '(i)'  TYPE: INT
+                                       int: '(1)'  TYPE: INT
+                              Call '(fibo)'  TYPE: INT
+                                 Exp  TYPE: INT
+                                    -  TYPE: INT
+                                       Var '(i)'  TYPE: INT
+                                       int: '(2)'  TYPE: INT
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/19-callargs.m0'  | --- =====
 
+Redeclared name, previous declared as variable at line 2! - error at line 6
 
 ------- x -------
 
@@ -161,18 +140,19 @@ Valid Program!!!
 
 Valid Program!!!
    Program
-      fun '(the_answer)'
+      fun '(the_answer)'  TYPE: FUN CHAR
          tp_char(0)
          Block
             Return
-               Exp
-                  int: '(42)'
+               Exp  TYPE: INT
+                  int: '(42)'  TYPE: INT
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/21-arrays.m0'  | --- =====
 
+incompatible types when assigning - at line 9
 
 ------- x -------
 
@@ -181,13 +161,13 @@ Valid Program!!!
 
 Valid Program!!!
    Program
-      fun '(sim)'
+      fun '(sim)'  TYPE: FUN VOID
          Block
             If
-               Exp
-                  >
-                     int: '(1)'
-                     int: '(2)'
+               Exp  TYPE: INT
+                  >  TYPE: INT
+                     int: '(1)'  TYPE: INT
+                     int: '(2)'  TYPE: INT
                Block
                   Return
 
@@ -196,18 +176,21 @@ Valid Program!!!
 
 ==== --- |  Testing file 'testes/22-exp.m0'  | --- =====
 
+undeclared variable! - i at line 3
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/35-expprio.m0'  | --- =====
 
+undeclared variable! - a at line 3
 
 ------- x -------
 
 
 ==== --- |  Testing file 'testes/37-invprio.m0'  | --- =====
 
+undeclared variable! - a at line 6
 
 ------- x -------
 

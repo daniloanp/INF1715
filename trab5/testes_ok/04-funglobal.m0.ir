@@ -1,0 +1,18 @@
+global x
+global z
+global g
+fun f (k)
+y = 0
+y = 0
+$T0 = new 20
+k = 1
+ret 
+fun c ()
+w = 0
+w = 0
+$T1 = 1
+ifFalse $T1 goto .L1
+$T2 = 1 == 1
+.L1:
+w = $T1
+ret 

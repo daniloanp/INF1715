@@ -64,9 +64,20 @@ static Endr _addBinOp( AST expr ) {
 	Endr endr, arg1, arg2;
 	CTE cte;
 	Instr instr;
-
-	arg1 = _addExprNode( AST_GetFirstChild( expr ) );
+	AST a1 = AST_GetFirstChild( expr );
+	if ( AST_GetType( a1 ) == AST_CALL ) {
+		arg1 = Endr_New( ENDR_TEMP, _newTemp( ) );
+		args[1] = _addExprNode( a1 );
+		args[0] = arg1;
+		cte = CTE_New ( ATTR_SIMPLE, args );
+		Function_AddCTE( _func, cte );
+	}
+	else {
+		arg1 = _addExprNode( a1 );	
+	}
+		
 	arg2 = _addExprNode( AST_GetLastChild( expr ) );
+	
 
 	switch ( AST_GetType( expr ) ) {
 		case AST_LESS:
@@ -144,20 +155,20 @@ static Endr _addOr( AST or ) {
 
 static Endr _addAnd( AST and ) {
 	CTE cte;
-	Endr eval, endOr;
-	endOr =  _newLabel( ); //RESULTADO do OR, vai ficar aqui.
+	Endr eval, endAnd;
+	endAnd =  _newLabel( ); //RESULTADO do OR, vai ficar aqui.
 
 	eval = Endr_New( ENDR_TEMP, _newTemp( ) );
 
 	_addExprNodeToEndr( AST_GetFirstChild( and ), eval );
 
 	args[0] = eval;
-	args[1] = endOr;
+	args[1] = endAnd;
 	cte = CTE_New( GOTO_IF_FALSE, args );
 	Function_AddCTE( _func, cte );
 
 	_addExprNodeToEndr( AST_GetLastChild( and ), eval ); //ATENÇÂO NO FILHO
-	_addLabel( endOr );
+	_addLabel( endAnd );
 	return eval;
 }
 
@@ -187,7 +198,7 @@ static Endr _addCall( AST call ) {
 	AST expr;
 	Endr endr;
 	CTE headCte = NULL, currCTE;
-	for( expr = AST_GetLastChild( call ); expr; AST_GetPrevSibling( expr ) ) {
+	for( expr = AST_GetLastChild( call ); expr; expr = AST_GetPrevSibling( expr ) ) {
 		endr = _addExpression( expr );
 		args[0] = endr;
 		if( !headCte ) {
@@ -272,7 +283,7 @@ static Endr _addExprNode( AST node ) {
 			endr = _addOr( node );
 		break;
 
-		case AST_VAR: //with array acess;
+		case AST_VAR: //with array acess or not;
 			endr = _addVar( node );
 		break;
 
@@ -364,12 +375,14 @@ static void _addReturn( AST ret ) {
 	CTE cte;
 	Endr endr;
 	if( AST_GetFirstChild( ret ) ) {
-		endr = _addExpression(  ret  );
+		endr = _addExpression(  AST_GetFirstChild( ret )  );
 		args[0] = endr;
 		cte = CTE_New( RET_VAL, args );
+		Function_AddCTE( _func, cte );
 	} 
 	else {
 		cte = CTE_New( RET, args );
+		Function_AddCTE( _func, cte );
 	}
 
 }
@@ -405,7 +418,6 @@ static void _addCommand ( AST cmd  ) {
 	AST rval, lval;
 	AST elIfNode;
 	AST _if;
-
 	switch ( AST_GetType( cmd ) ) {
 		case AST_DECL_VAR:
 			_addDeclVar(  cmd  );
@@ -422,12 +434,12 @@ static void _addCommand ( AST cmd  ) {
 			_addLabel(  labelEnd );
 		break;
 
-		case AST_IF:			
+		case AST_IF:
 			expNode = AST_GetFirstChild( cmd );
 			blockNode = AST_GetNextSibling( expNode );
 			elIfNode = blockNode;
-			labelEnd = _newLabel( );
-			labelNext;
+			labelNext = labelEnd = _newLabel( );
+			
 			_if = AST_GetNextSibling( blockNode );
 
 			// IF "NORMAL"
@@ -443,7 +455,7 @@ static void _addCommand ( AST cmd  ) {
 			_addBlock( blockNode );
 
 			if( _if ) {
-				_addGoto( labelEnd);
+				_addGoto( labelEnd );
 			}
 			
 			//FOI
@@ -504,6 +516,7 @@ static void _addArgs( AST paramList ) {
 }
 
 Function _buildFunction( AST nodeFunc ) {
+	CTE cte;
 	AST child;
 	Function function;
 	_func = Function_New( AST_GetStringValue( nodeFunc ) );
@@ -516,14 +529,18 @@ Function _buildFunction( AST nodeFunc ) {
 	}
 	
 	if ( AST_GetType( child ) != AST_BLOCK ) {
-		child = AST_GetNextSibling( child );	
+		child = AST_GetNextSibling( child ); // skip function's type	
 	}
 
 
 	_addBlock( child );
 
+	cte = Function_GetLastCTE( _func );
+	if ( cte && cte->cmd != RET && cte->cmd != RET_VAL ) {
+		cte = CTE_New( RET, args );
+		Function_AddCTE( _func, cte );
+	}
 	return _func;
-
 }
 
 void _addFunction( AST nodeFunc ) {

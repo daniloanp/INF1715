@@ -1,0 +1,16 @@
+FUN fibo ( )
+	$t1 = i LE 1
+	ifFalse t1 goto lnext:
+		ret 1
+		goto lend
+	lnext:
+		$t2 = i -1
+		param $t2;
+		call fibo
+		$t3 = i-2
+		param $t3
+		call fibo
+		t3 = t2 + $ret
+		ret t3
+	lend:
+ret

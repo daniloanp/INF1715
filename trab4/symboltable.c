@@ -19,10 +19,6 @@ static unsigned long hash(unsigned char *str)
 
 SymbolTable* SymbolTable_new( SymbolTable* parent ) {
 	SymbolTable* st = ( SymbolTable* )malloc( sizeof( SymbolTable ) );
-	if( !st ) {
-		printf("Malloc has failed at SymbolTable_new!");
-		return NULL;
-	}
 	st->parent = parent;
 	memset ( st->symbols, 0, sizeof(Symbol*) * HASH_SIZE );
 	return st;
