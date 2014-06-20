@@ -24,7 +24,7 @@ char * getOutPutFileName( char *inputf ) {
 
 
 int main(int argc, char** argv) {
-	//BasicBlock* head;
+	BasicBlock* head = NULL;
 	char* asmFileName;
 	FILE* output;
 	int err;
@@ -45,9 +45,9 @@ int main(int argc, char** argv) {
 	free( asmFileName );
 	//We need do Something here;
 
+	head = IR_BuildBlocks( ir, stdout );
+	IR_dump(ir, stdout, head);
 
-	//end
-	/*head =*/ IR_BuildBlocks(ir, stdout, NULL);
 	fclose( output );
 	
 	return 0;

@@ -8,7 +8,7 @@
 #include "ir.h"
 
 
-
+static BasicBlock* head = NULL;
 static PrevLabels* prevLabels = NULL; 
 static UpcomingLeaders* ucLeaders = NULL; 
 
@@ -252,41 +252,47 @@ Instr* Instr_new(Opcode op, ...) {
 /*
 Output an instruction to the given file descriptor.
 */
-static void Instr_dump(Instr* ins, FILE* fd) {
+static BasicBlock* Instr_dump(Instr* ins, FILE* fd, BasicBlock* block) {
 	const char* x = ins->x.str;
 	const char* y = ins->y.str;
 	const char* z = ins->z.str;
 	const char* fmt;
 	switch (ins->op) {
-		case OP_LABEL:		fmt = "%s:\n";			break;
-		case OP_GOTO:		fmt = "\tgoto %s\n";		break;
-		case OP_PARAM:		fmt = "\tparam %s\n";		break;
-		case OP_CALL:		fmt = "\tcall %s %s\n";		break;
-		case OP_IF:		fmt = "\tif %s goto %s\n";	break;
-		case OP_IF_FALSE:	fmt = "\tifFalse %s goto %s\n";	break;
-		case OP_SET:		fmt = "\t%s = %s\n";		break;
-		case OP_SET_BYTE:	fmt = "\t%s = byte %s\n";	break;
-		case OP_SET_IDX:	fmt = "\t%s = %s[%s]\n";	break;
-		case OP_SET_IDX_BYTE:	fmt = "\t%s = byte %s[%s]\n";	break;
-		case OP_IDX_SET:	fmt = "\t%s[%s] = %s\n";	break;
-		case OP_IDX_SET_BYTE:	fmt = "\t%s[%s] = byte %s\n";	break;
-		case OP_RET:		fmt = "\tret\n";		break;
-		case OP_RET_VAL:	fmt = "\tret %s\n";		break;
-		case OP_NE:		fmt = "\t%s = %s != %s\n";	break;
-		case OP_EQ:		fmt = "\t%s = %s == %s\n";	break;
-		case OP_LT:		fmt = "\t%s = %s < %s\n";	break;
-		case OP_GT:		fmt = "\t%s = %s > %s\n";	break;
-		case OP_LE:		fmt = "\t%s = %s <= %s\n";	break;
-		case OP_GE:		fmt = "\t%s = %s >= %s\n";	break;
-		case OP_ADD:		fmt = "\t%s = %s + %s\n";	break;
-		case OP_SUB:		fmt = "\t%s = %s - %s\n";	break;
-		case OP_DIV:		fmt = "\t%s = %s / %s\n";	break;
-		case OP_MUL:		fmt = "\t%s = %s * %s\n";	break;
-		case OP_NEG:		fmt = "\t%s = - %s\n";		break;
-		case OP_NEW:		fmt = "\t%s = new %s\n";	break;
-		case OP_NEW_BYTE:	fmt = "\t%s = new byte %s\n";	break;
+		case OP_LABEL:		fmt = "%s:";			break;
+		case OP_GOTO:		fmt = "\tgoto %s";		break;
+		case OP_PARAM:		fmt = "\tparam %s";		break;
+		case OP_CALL:		fmt = "\tcall %s %s";		break;
+		case OP_IF:		fmt = "\tif %s goto %s";	break;
+		case OP_IF_FALSE:	fmt = "\tifFalse %s goto %s";	break;
+		case OP_SET:		fmt = "\t%s = %s";		break;
+		case OP_SET_BYTE:	fmt = "\t%s = byte %s";	break;
+		case OP_SET_IDX:	fmt = "\t%s = %s[%s]";	break;
+		case OP_SET_IDX_BYTE:	fmt = "\t%s = byte %s[%s]";	break;
+		case OP_IDX_SET:	fmt = "\t%s[%s] = %s";	break;
+		case OP_IDX_SET_BYTE:	fmt = "\t%s[%s] = byte %s";	break;
+		case OP_RET:		fmt = "\tret";		break;
+		case OP_RET_VAL:	fmt = "\tret %s";		break;
+		case OP_NE:		fmt = "\t%s = %s != %s";	break;
+		case OP_EQ:		fmt = "\t%s = %s == %s";	break;
+		case OP_LT:		fmt = "\t%s = %s < %s";	break;
+		case OP_GT:		fmt = "\t%s = %s > %s";	break;
+		case OP_LE:		fmt = "\t%s = %s <= %s";	break;
+		case OP_GE:		fmt = "\t%s = %s >= %s";	break;
+		case OP_ADD:		fmt = "\t%s = %s + %s";	break;
+		case OP_SUB:		fmt = "\t%s = %s - %s";	break;
+		case OP_DIV:		fmt = "\t%s = %s / %s";	break;
+		case OP_MUL:		fmt = "\t%s = %s * %s";	break;
+		case OP_NEG:		fmt = "\t%s = - %s";		break;
+		case OP_NEW:		fmt = "\t%s = new %s";	break;
+		case OP_NEW_BYTE:	fmt = "\t%s = new byte %s";	break;
 	}
 	fprintf(fd, fmt, x, y, z);
+	if( block &&  block->leader == ins ) {
+		printf("\t LEADER");
+		block = block->next;
+	}
+	fprintf(fd, "\n");
+	return block;
 }
 
 
@@ -294,16 +300,21 @@ static void Instr_dump(Instr* ins, FILE* fd) {
 Output an instruction to the given file descriptor.
 */
 static BasicBlock* Instr_build(Instr* ins, FILE* fd, BasicBlock* block) {
-	char *target = NULL;
-	Instr_dump( ins, fd );
+	char* target = NULL;
+	
 	switch( ins->op ) {
 		case OP_LABEL:
 			if( UpcomingLeaders_Get(ucLeaders, ins->x.str ) ) {
+				if( ins != block->leader ) {
+					block = BasicBlock_Add( block, ins );
+				}
 				UpcomingLeaders_Remove( ucLeaders, ins->x.str );
-				block = BasicBlock_Add( block, ins );
-				block = NULL;
+				prevLabels = PrevLabels_Add( prevLabels, ins, NULL );
 			}
-			PrevLabels_Add( prevLabels, ins, block );
+			else {
+				prevLabels = PrevLabels_Add( prevLabels, ins, block );
+			}
+			
 		break;
 		case OP_GOTO:
 			block = BasicBlock_Add( block, ins->next );
@@ -312,35 +323,45 @@ static BasicBlock* Instr_build(Instr* ins, FILE* fd, BasicBlock* block) {
 		case OP_IF:
 		case OP_IF_FALSE:
 			block = BasicBlock_Add( block, ins->next );
-			target = ins->z.str;
+			target = ins->y.str;
 		break;
 
 		default: break;
 	}
+
 	if( target ) {
+		
 		PrevLabels* label = PrevLabels_Get( prevLabels, target );
 		if ( !label ) {
-			UpcomingLeaders_Add( ucLeaders, target );
+			printf("(1) %s\n\n", target);
+			ucLeaders = UpcomingLeaders_Add( ucLeaders, target );
 		}
 		else if (  label->parent ) {
-			BasicBlock_AddInOrder(  label );
+			printf("(2) %s\n\n", target);
+			BasicBlock_AddInOrder( label );
 		}
 	}
 	return block;
 }
 
-void BasicBlock_AddInOrder( PrevLabels* label ) {
-	BasicBlock* parent = label->parent;
-	BasicBlock* helper;
-	PrevLabels* iterator;
+void BasicBlock_AddInOrder( PrevLabels* plabel ) {
+	BasicBlock* parent = plabel->parent;
+	BasicBlock* helper = NULL;
+	PrevLabels* iterator = NULL;
+
 	BasicBlock* newBlock = NULL;
  	newBlock = (BasicBlock*)malloc(sizeof(BasicBlock));
+ 	newBlock->leader = plabel->label;
+
  	helper = parent->next;
- 	parent->next = newBlock;
  	newBlock->next = helper;
-	for( iterator = label->next; iterator && iterator->parent == parent; iterator = iterator->next) {
+ 	parent->next = newBlock;
+ 	
+
+	for( iterator = plabel->next; iterator && iterator->parent == parent; iterator = iterator->next) {
 		iterator->parent = newBlock;
 	}
+	plabel->parent = NULL;
 }
 
 // -------------------- Function --------------------
@@ -364,8 +385,9 @@ Function* Function_new(char* name, Variable* args) {
 Output a function to the given file descriptor.
 */
 static BasicBlock* Function_dump(Function* fun, FILE* fd, BasicBlock* block) {
+	Variable* arg;
 	fprintf(fd, "fun %s (", fun->name);
-	Variable* arg = fun->locals;
+	arg = fun->locals;
 	for (int i = 0; i < fun->nArgs; i++) {
 		if (i > 0) {
 			fprintf(fd, ", ");
@@ -374,7 +396,23 @@ static BasicBlock* Function_dump(Function* fun, FILE* fd, BasicBlock* block) {
 		arg = arg->next;
 	}
 	fprintf(fd, ")\n");
-	for (Instr* ins = fun->code; ins; ins = ins->next) {
+	
+	for (Instr* ins = fun->code; ins; ins = ins->next ) {
+		block = Instr_dump( ins, fd, block );
+	}
+	return block;
+}
+
+static BasicBlock* Function_build( Function* fun, FILE* fd, BasicBlock* block ) {
+	Instr* ins;
+	ins = fun->code;
+	block = BasicBlock_Add( block, ins );
+	if ( !head ) {
+		head = block;
+	}
+
+	//another instructions 
+	for ( ins = (fun->code)? fun->code->next: NULL; ins; ins = ins->next ) {
 		block = Instr_build(ins, fd, block);
 	}
 	return block;
@@ -419,15 +457,22 @@ void IR_addFunction(IR* ir, Function* fun) {
 	lastFn->next = fun;
 }
 
+
+BasicBlock* IR_BuildBlocks(IR* ir, FILE* fd ) {
+	BasicBlock* block;
+	for (Function* fun = ir->functions; fun; fun = fun->next) {
+		block = Function_build(fun, fd, block);
+	}
+	block = head;
+	head = NULL;
+
+	return block;
+}
 /*
 Output the entire IR data structure to the given file descriptor.
-This outputs a file equivalent to the one given as input to the program.
+This outputs a file equivalent to the one given as input to the program. With annotation about basic blocks
 */
-BasicBlock* IR_BuildBlocks(IR* ir, FILE* fd, BasicBlock* head) {
-	BasicBlock* block;
-	if ( ir->functions ) {
-		head = block=  BasicBlock_Add(head,  ir->functions->code );
-	}
+void IR_dump(IR* ir, FILE* fd, BasicBlock* block) {
 	for (String* s = ir->strings; s; s = s->next) {
 		fprintf(fd, "string %s = %s\n", s->name, s->value);
 	}
@@ -437,14 +482,15 @@ BasicBlock* IR_BuildBlocks(IR* ir, FILE* fd, BasicBlock* head) {
 	}
 	fprintf(fd, "\n");
 	for (Function* fun = ir->functions; fun; fun = fun->next) {
-		block = Function_build(fun, fd, block);
+		block = Function_dump(fun, fd, block);
 		fprintf(fd, "\n");
 	}
-	return head;
 }
 
 BasicBlock* BasicBlock_Add(BasicBlock* blocks, Instr* ins ) { //don't keep the head
-	assert(ins);
+	if( !ins ) {
+		return blocks;
+	}
 	BasicBlock* el;
 	BasicBlock* block  = ( BasicBlock*) malloc( sizeof( BasicBlock ));
 	block->next = NULL;
@@ -460,6 +506,7 @@ BasicBlock* BasicBlock_Add(BasicBlock* blocks, Instr* ins ) { //don't keep the h
 }
 
 PrevLabels* PrevLabels_Add( PrevLabels* list, Instr* label, BasicBlock *parent ) {
+	printf("add:, %s\n", label->x.str);
 	assert(label);
 	PrevLabels* el;
 	PrevLabels* newLabel = (PrevLabels*)malloc(sizeof(PrevLabels));
@@ -496,7 +543,7 @@ UpcomingLeaders* UpcomingLeaders_Add( UpcomingLeaders* list, char* name ) {
 PrevLabels* PrevLabels_Get( PrevLabels* list, char* str ) {
 	PrevLabels* el;
 	for( el = list; el; el = el->next ) {
-		if( !strcmp( el->label->x.str, str ) ) {//pointer comparison. Assumes that only one label of a kind can exists
+		if( !strcmp( el->label->x.str, str ) ) {
 			return el;
 		}
 	}

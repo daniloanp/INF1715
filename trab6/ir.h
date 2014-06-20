@@ -192,8 +192,7 @@ IR* IR_new();
 void IR_setStrings(IR* ir, String* strings);
 void IR_setGlobals(IR* ir, Variable* globals);
 void IR_addFunction(IR* ir, Function* fun);
-void IR_dump(IR* ir, FILE* fd);
-BasicBlock* IR_BuildBlocks(IR* ir, FILE* fd, BasicBlock* block);
+BasicBlock* IR_BuildBlocks(IR* ir, FILE* fd);
 
 String* String_new(char* name, char* value);
 #define String_link(_l1, _l2) ((String*)List_link((List*)(_l1), (List*)(_l2)))
@@ -222,3 +221,5 @@ UpcomingLeaders* UpcomingLeaders_Add( UpcomingLeaders* list, char* leader );
 UpcomingLeaders* UpcomingLeaders_Get( UpcomingLeaders* list, char* leader );
 UpcomingLeaders* UpcomingLeaders_Remove( UpcomingLeaders* list, char* name );
 void BasicBlock_AddInOrder( PrevLabels* label );
+
+void IR_dump(IR* ir, FILE* fd, BasicBlock* block);

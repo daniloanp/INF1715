@@ -86,7 +86,7 @@ Gramática
    55     | NEW
    56     | NEW BYTE
 
-   57 call: params CALL ID
+   57 call: params CALL ID LITNUM
 
    58 params: param nl params
    59       | %empty
@@ -127,7 +127,7 @@ CALL (270) 57
 RET (271) 42 43
 NL (272) 11 12
 LITSTRING (273) 14
-LITNUM (274) 28
+LITNUM (274) 28 57
 EQ (275) 44
 NE (276) 45
 LE (277) 49
@@ -691,7 +691,7 @@ State 52
 
 State 53
 
-   57 call: params . CALL ID
+   57 call: params . CALL ID LITNUM
 
     CALL  deslocar, e ir ao estado 66
 
@@ -813,7 +813,7 @@ State 65
 
 State 66
 
-   57 call: params CALL . ID
+   57 call: params CALL . ID LITNUM
 
     ID  deslocar, e ir ao estado 79
 
@@ -939,9 +939,9 @@ State 78
 
 State 79
 
-   57 call: params CALL ID .
+   57 call: params CALL ID . LITNUM
 
-    $padrão  reduzir usando a regra 57 (call)
+    LITNUM  deslocar, e ir ao estado 100
 
 
 State 80
@@ -970,7 +970,7 @@ State 83
    29 rval: id .
    36 command: id '=' BYTE id . '[' rval ']'
 
-    '['  deslocar, e ir ao estado 100
+    '['  deslocar, e ir ao estado 101
 
     $padrão  reduzir usando a regra 29 (rval)
 
@@ -997,7 +997,7 @@ State 86
     LITNUM  deslocar, e ir ao estado 56
 
     id    ir ao estado 57
-    rval  ir ao estado 101
+    rval  ir ao estado 102
 
 
 State 87
@@ -1078,7 +1078,7 @@ State 97
     LITNUM  deslocar, e ir ao estado 56
 
     id    ir ao estado 57
-    rval  ir ao estado 102
+    rval  ir ao estado 103
 
 
 State 98
@@ -1093,10 +1093,17 @@ State 99
    35 command: id '[' rval ']' . '=' rval
    37        | id '[' rval ']' . '=' BYTE rval
 
-    '='  deslocar, e ir ao estado 103
+    '='  deslocar, e ir ao estado 104
 
 
 State 100
+
+   57 call: params CALL ID LITNUM .
+
+    $padrão  reduzir usando a regra 57 (call)
+
+
+State 101
 
    36 command: id '=' BYTE id '[' . rval ']'
 
@@ -1104,51 +1111,51 @@ State 100
     LITNUM  deslocar, e ir ao estado 56
 
     id    ir ao estado 57
-    rval  ir ao estado 104
-
-
-State 101
-
-   34 command: id '=' id '[' rval . ']'
-
-    ']'  deslocar, e ir ao estado 105
+    rval  ir ao estado 105
 
 
 State 102
+
+   34 command: id '=' id '[' rval . ']'
+
+    ']'  deslocar, e ir ao estado 106
+
+
+State 103
 
    32 command: id '=' rval binop rval .
 
     $padrão  reduzir usando a regra 32 (command)
 
 
-State 103
+State 104
 
    35 command: id '[' rval ']' '=' . rval
    37        | id '[' rval ']' '=' . BYTE rval
 
-    BYTE    deslocar, e ir ao estado 106
+    BYTE    deslocar, e ir ao estado 107
     ID      deslocar, e ir ao estado 44
     LITNUM  deslocar, e ir ao estado 56
 
     id    ir ao estado 57
-    rval  ir ao estado 107
-
-
-State 104
-
-   36 command: id '=' BYTE id '[' rval . ']'
-
-    ']'  deslocar, e ir ao estado 108
+    rval  ir ao estado 108
 
 
 State 105
+
+   36 command: id '=' BYTE id '[' rval . ']'
+
+    ']'  deslocar, e ir ao estado 109
+
+
+State 106
 
    34 command: id '=' id '[' rval ']' .
 
     $padrão  reduzir usando a regra 34 (command)
 
 
-State 106
+State 107
 
    37 command: id '[' rval ']' '=' BYTE . rval
 
@@ -1156,24 +1163,24 @@ State 106
     LITNUM  deslocar, e ir ao estado 56
 
     id    ir ao estado 57
-    rval  ir ao estado 109
+    rval  ir ao estado 110
 
 
-State 107
+State 108
 
    35 command: id '[' rval ']' '=' rval .
 
     $padrão  reduzir usando a regra 35 (command)
 
 
-State 108
+State 109
 
    36 command: id '=' BYTE id '[' rval ']' .
 
     $padrão  reduzir usando a regra 36 (command)
 
 
-State 109
+State 110
 
    37 command: id '[' rval ']' '=' BYTE rval .
 
