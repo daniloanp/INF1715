@@ -4,13 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
 #include "ir.h"
 
-
-static BasicBlock* head = NULL;
-static PrevLabels* prevLabels = NULL; 
-static UpcomingLeaders* ucLeaders = NULL; 
 
 
 // -------------------- List --------------------
@@ -28,6 +23,22 @@ List* List_link(List* l1, List* l2) {
 		last = last->next;
 	}
 	last->next = l2;
+	return l1;
+}
+
+Instr* Instr_link(Instr* l1, Instr* l2) {
+	if (!l1) {
+		return l2;
+	}
+	Instr* last = l1;
+	while (last->next) {
+		last = last->next;
+	}
+	if( l2 ) {
+		l2->prev = last;
+	}
+	last->next = l2;
+
 	return l1;
 }
 
@@ -246,125 +257,15 @@ Instr* Instr_new(Opcode op, ...) {
 		}
 	}
 	va_end(ap);
+	ins->next = NULL;
+	ins->prev = NULL;
+	ins->xUseInfo = NULL;
+	ins->yUseInfo = NULL;
+	ins->zUseInfo = NULL;
 	return ins;
 }
 
-/*
-Output an instruction to the given file descriptor.
-*/
-static BasicBlock* Instr_dump(Instr* ins, FILE* fd, BasicBlock* block) {
-	const char* x = ins->x.str;
-	const char* y = ins->y.str;
-	const char* z = ins->z.str;
-	const char* fmt;
-	switch (ins->op) {
-		case OP_LABEL:		fmt = "%s:";			break;
-		case OP_GOTO:		fmt = "\tgoto %s";		break;
-		case OP_PARAM:		fmt = "\tparam %s";		break;
-		case OP_CALL:		fmt = "\tcall %s %s";		break;
-		case OP_IF:		fmt = "\tif %s goto %s";	break;
-		case OP_IF_FALSE:	fmt = "\tifFalse %s goto %s";	break;
-		case OP_SET:		fmt = "\t%s = %s";		break;
-		case OP_SET_BYTE:	fmt = "\t%s = byte %s";	break;
-		case OP_SET_IDX:	fmt = "\t%s = %s[%s]";	break;
-		case OP_SET_IDX_BYTE:	fmt = "\t%s = byte %s[%s]";	break;
-		case OP_IDX_SET:	fmt = "\t%s[%s] = %s";	break;
-		case OP_IDX_SET_BYTE:	fmt = "\t%s[%s] = byte %s";	break;
-		case OP_RET:		fmt = "\tret";		break;
-		case OP_RET_VAL:	fmt = "\tret %s";		break;
-		case OP_NE:		fmt = "\t%s = %s != %s";	break;
-		case OP_EQ:		fmt = "\t%s = %s == %s";	break;
-		case OP_LT:		fmt = "\t%s = %s < %s";	break;
-		case OP_GT:		fmt = "\t%s = %s > %s";	break;
-		case OP_LE:		fmt = "\t%s = %s <= %s";	break;
-		case OP_GE:		fmt = "\t%s = %s >= %s";	break;
-		case OP_ADD:		fmt = "\t%s = %s + %s";	break;
-		case OP_SUB:		fmt = "\t%s = %s - %s";	break;
-		case OP_DIV:		fmt = "\t%s = %s / %s";	break;
-		case OP_MUL:		fmt = "\t%s = %s * %s";	break;
-		case OP_NEG:		fmt = "\t%s = - %s";		break;
-		case OP_NEW:		fmt = "\t%s = new %s";	break;
-		case OP_NEW_BYTE:	fmt = "\t%s = new byte %s";	break;
-	}
-	fprintf(fd, fmt, x, y, z);
-	if( block &&  block->leader == ins ) {
-		printf("\t LEADER");
-		block = block->next;
-	}
-	fprintf(fd, "\n");
-	return block;
-}
-
-
-/*
-Output an instruction to the given file descriptor.
-*/
-static BasicBlock* Instr_build(Instr* ins, FILE* fd, BasicBlock* block) {
-	char* target = NULL;
-	
-	switch( ins->op ) {
-		case OP_LABEL:
-			if( UpcomingLeaders_Get(ucLeaders, ins->x.str ) ) {
-				if( ins != block->leader ) {
-					block = BasicBlock_Add( block, ins );
-				}
-				UpcomingLeaders_Remove( ucLeaders, ins->x.str );
-				prevLabels = PrevLabels_Add( prevLabels, ins, NULL );
-			}
-			else {
-				prevLabels = PrevLabels_Add( prevLabels, ins, block );
-			}
-			
-		break;
-		case OP_GOTO:
-			block = BasicBlock_Add( block, ins->next );
-			target = ins->x.str;
-		break;
-		case OP_IF:
-		case OP_IF_FALSE:
-			block = BasicBlock_Add( block, ins->next );
-			target = ins->y.str;
-		break;
-
-		default: break;
-	}
-
-	if( target ) {
-		
-		PrevLabels* label = PrevLabels_Get( prevLabels, target );
-		if ( !label ) {
-			printf("(1) %s\n\n", target);
-			ucLeaders = UpcomingLeaders_Add( ucLeaders, target );
-		}
-		else if (  label->parent ) {
-			printf("(2) %s\n\n", target);
-			BasicBlock_AddInOrder( label );
-		}
-	}
-	return block;
-}
-
-void BasicBlock_AddInOrder( PrevLabels* plabel ) {
-	BasicBlock* parent = plabel->parent;
-	BasicBlock* helper = NULL;
-	PrevLabels* iterator = NULL;
-
-	BasicBlock* newBlock = NULL;
- 	newBlock = (BasicBlock*)malloc(sizeof(BasicBlock));
- 	newBlock->leader = plabel->label;
-
- 	helper = parent->next;
- 	newBlock->next = helper;
- 	parent->next = newBlock;
- 	
-
-	for( iterator = plabel->next; iterator && iterator->parent == parent; iterator = iterator->next) {
-		iterator->parent = newBlock;
-	}
-	plabel->parent = NULL;
-}
-
-// -------------------- Function --------------------
+///------------------- Function --------------------
 
 /*
 Allocate a new function, with a given name and a given set of arguments.
@@ -381,42 +282,6 @@ Function* Function_new(char* name, Variable* args) {
 	return fun;
 }
 
-/*
-Output a function to the given file descriptor.
-*/
-static BasicBlock* Function_dump(Function* fun, FILE* fd, BasicBlock* block) {
-	Variable* arg;
-	fprintf(fd, "fun %s (", fun->name);
-	arg = fun->locals;
-	for (int i = 0; i < fun->nArgs; i++) {
-		if (i > 0) {
-			fprintf(fd, ", ");
-		}
-		fprintf(fd, "%s", arg->name);
-		arg = arg->next;
-	}
-	fprintf(fd, ")\n");
-	
-	for (Instr* ins = fun->code; ins; ins = ins->next ) {
-		block = Instr_dump( ins, fd, block );
-	}
-	return block;
-}
-
-static BasicBlock* Function_build( Function* fun, FILE* fd, BasicBlock* block ) {
-	Instr* ins;
-	ins = fun->code;
-	block = BasicBlock_Add( block, ins );
-	if ( !head ) {
-		head = block;
-	}
-
-	//another instructions 
-	for ( ins = (fun->code)? fun->code->next: NULL; ins; ins = ins->next ) {
-		block = Instr_build(ins, fd, block);
-	}
-	return block;
-}
 
 // -------------------- IR --------------------
 
@@ -457,131 +322,6 @@ void IR_addFunction(IR* ir, Function* fun) {
 	lastFn->next = fun;
 }
 
-
-BasicBlock* IR_BuildBlocks(IR* ir, FILE* fd ) {
-	BasicBlock* block;
-	for (Function* fun = ir->functions; fun; fun = fun->next) {
-		block = Function_build(fun, fd, block);
-	}
-	block = head;
-	head = NULL;
-
-	return block;
+bool isAddrVar( Addr addr ) {
+	return ( addr.type == AD_GLOBAL || addr.type == AD_LOCAL || addr.type == AD_TEMP );
 }
-/*
-Output the entire IR data structure to the given file descriptor.
-This outputs a file equivalent to the one given as input to the program. With annotation about basic blocks
-*/
-void IR_dump(IR* ir, FILE* fd, BasicBlock* block) {
-	for (String* s = ir->strings; s; s = s->next) {
-		fprintf(fd, "string %s = %s\n", s->name, s->value);
-	}
-	fprintf(fd, "\n");
-	for (Variable* v = ir->globals; v; v = v->next) {
-		fprintf(fd, "global %s\n", v->name);
-	}
-	fprintf(fd, "\n");
-	for (Function* fun = ir->functions; fun; fun = fun->next) {
-		block = Function_dump(fun, fd, block);
-		fprintf(fd, "\n");
-	}
-}
-
-BasicBlock* BasicBlock_Add(BasicBlock* blocks, Instr* ins ) { //don't keep the head
-	if( !ins ) {
-		return blocks;
-	}
-	BasicBlock* el;
-	BasicBlock* block  = ( BasicBlock*) malloc( sizeof( BasicBlock ));
-	block->next = NULL;
-	block->leader = ins;
-	if( !blocks ) {
-		return block;
-	}
-	else {
-		for( el = blocks; el->next; el = el->next );
-		el->next = block;
-		return block;
-	}
-}
-
-PrevLabels* PrevLabels_Add( PrevLabels* list, Instr* label, BasicBlock *parent ) {
-	printf("add:, %s\n", label->x.str);
-	assert(label);
-	PrevLabels* el;
-	PrevLabels* newLabel = (PrevLabels*)malloc(sizeof(PrevLabels));
-	newLabel->label = label;
-	newLabel->parent = parent;
-	newLabel->next = NULL;
-
-	if( !list ) {
-		return newLabel;
-	}
-	else {
-		for( el = list; el->next; el = el->next );
-		el->next  = newLabel;
-		return list;
-	} 
-}
-
-UpcomingLeaders* UpcomingLeaders_Add( UpcomingLeaders* list, char* name ) {
-	assert(name);
-	UpcomingLeaders* el;
-	UpcomingLeaders* upcLeader = (UpcomingLeaders*)malloc(sizeof(UpcomingLeaders));
-	upcLeader->name = name;
-	upcLeader->next = NULL;
-	if( !list ) {
-		return upcLeader;
-	}
-	else {
-		for( el = list; el->next; el = el->next );
-		el->next  = upcLeader;
-		return list;
-	} 
-}
-
-PrevLabels* PrevLabels_Get( PrevLabels* list, char* str ) {
-	PrevLabels* el;
-	for( el = list; el; el = el->next ) {
-		if( !strcmp( el->label->x.str, str ) ) {
-			return el;
-		}
-	}
-	return NULL;
-}
-UpcomingLeaders* UpcomingLeaders_Remove( UpcomingLeaders* list, char* name ) {
-	UpcomingLeaders* el;
-	UpcomingLeaders* prev = NULL;
-	for( el = list; el; prev = el, el = el->next ) {
-		if( ! strcmp( el->name,  name ) ) {
-			if( prev == NULL ) {
-				prev = el;
-				el = el->next;
-				free( prev );
-				return el;
-			}
-			else {
-				prev->next = el->next;
-				free(el);
-				return prev;
-			}
-
-		}
-	}
-	return NULL;
-}
-
-UpcomingLeaders* UpcomingLeaders_Get( UpcomingLeaders* list, char* name ) {
-	UpcomingLeaders* el;
-	for( el = list; el; el = el->next ) {
-		if( ! strcmp( el->name,  name ) ) {
-			return el;
-		}
-	}
-	return NULL;
-}
-
-
-
-
-

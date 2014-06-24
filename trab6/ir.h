@@ -1,9 +1,7 @@
-
 #ifndef IR_H
 #define IR_H
-
 #include <stdio.h>
-
+#include <stdbool.h>
 /*
 Opcodes for IR instructions.
 */
@@ -71,6 +69,8 @@ typedef struct Addr_ {
 	int num;	            
 } Addr;
 
+bool isAddrVar( Addr addr );
+
 typedef struct List_ List;
 struct List_ {
 	List* next;
@@ -80,14 +80,27 @@ struct List_ {
 An instruction in the three-address code format of our IR.
 Instructions are stored as a linked list.
 */
+typedef struct NextUseInfo_ NextUseInfo;
 typedef struct Instr_ Instr;
 struct Instr_ {
 	Instr* next;
+	Instr* prev;
 	Opcode op;
 	Addr x;
 	Addr y;
 	Addr z;
+	NextUseInfo* xUseInfo;
+	NextUseInfo* yUseInfo;
+	NextUseInfo* zUseInfo;
 };
+
+struct NextUseInfo_ {
+   char* name;
+   bool isALive;
+   Instr* nextUse;
+   NextUseInfo* next;
+};
+
 
 /*
 A literal string. 
@@ -158,31 +171,6 @@ typedef struct IR_ {
 	Function* functions;
 } IR;
 
-/*
-Basic Block struct.
-A basic block ends when the "this"->next->leader is achivied by a pathway through "this"->leader following isntructions
-*/
-typedef struct _BasicBlock BasicBlock;
-struct _BasicBlock {
-	BasicBlock* next;
-	Instr* leader;
-};
-
-/* A List of visited labels with a flag to status saying if  or not. */
-typedef struct _PrevLabels PrevLabels;
-struct _PrevLabels {
-	PrevLabels* next;
-	Instr* label;
-	BasicBlock* parent; //if the label is a leader itself, then parent is NULL
-};
-
-/* A List of next labels to be added with ( just for labels ) */
-typedef struct _UpcomingLeaders UpcomingLeaders;
-struct _UpcomingLeaders {
-	UpcomingLeaders* next;
-	char* name;
-};
-
 
 // -------------------- Functions, documented in ir.c --------------------
 
@@ -192,7 +180,7 @@ IR* IR_new();
 void IR_setStrings(IR* ir, String* strings);
 void IR_setGlobals(IR* ir, Variable* globals);
 void IR_addFunction(IR* ir, Function* fun);
-BasicBlock* IR_BuildBlocks(IR* ir, FILE* fd);
+
 
 String* String_new(char* name, char* value);
 #define String_link(_l1, _l2) ((String*)List_link((List*)(_l1), (List*)(_l2)))
@@ -201,7 +189,8 @@ Variable* Variable_new(char* name);
 #define Variable_link(_l1, _l2) ((Variable*)List_link((List*)(_l1), (List*)(_l2)))
 
 Instr* Instr_new(Opcode op, ...);
-#define Instr_link(_l1, _l2) ((Instr*)List_link((List*)(_l1), (List*)(_l2)))
+Instr* Instr_link( Instr* l1, Instr* l2 );
+//#define Instr_link(_l1, _l2) ((Instr*)List_link((List*)(_l1), (List*)(_l2)))
 
 Addr Addr_litNum(int num);
 Addr Addr_label(char* label);
@@ -211,15 +200,6 @@ Addr Addr_resolve(char* name, IR* ir, Function* fun);
 Function* Function_new(char* name, Variable* args);
 
 
-BasicBlock* BasicBlock_Add(BasicBlock* blocks, Instr* i );
-#define BasicBlock_link(_l1, _l2) ((BasicBlock*)List_link((BasicBlock*)(_l1), (BasicBlock*)(_l2)))
 #endif
 
-PrevLabels* PrevLabels_Add( PrevLabels* list, Instr* label, BasicBlock* parent );
-PrevLabels* PrevLabels_Get( PrevLabels* list, char* label );
-UpcomingLeaders* UpcomingLeaders_Add( UpcomingLeaders* list, char* leader );
-UpcomingLeaders* UpcomingLeaders_Get( UpcomingLeaders* list, char* leader );
-UpcomingLeaders* UpcomingLeaders_Remove( UpcomingLeaders* list, char* name );
-void BasicBlock_AddInOrder( PrevLabels* label );
 
-void IR_dump(IR* ir, FILE* fd, BasicBlock* block);
